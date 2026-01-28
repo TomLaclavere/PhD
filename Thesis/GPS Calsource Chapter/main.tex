@@ -1,45 +1,13 @@
-\documentclass{article}
-\usepackage{blindtext}
-\usepackage[hyphens]{url}
-\usepackage{hyperref}
-\Urlmuskip=0mu plus 1mu
-\usepackage{cite}
-\usepackage{titlesec}
-\usepackage{amsmath}
-\usepackage{graphicx}
-\usepackage[labelformat=simple]{subcaption}
-\usepackage{multirow}
-\usepackage{xcolor}
-\emergencystretch=1em
-
-\newcommand{\rmk}{\textcolor{blue}}
-
-\titleclass{\subsubsubsection}{straight}[\subsection]
-\newcounter{subsubsubsection}[subsubsection]
-\renewcommand\thesubsubsubsection{\thesubsubsection. \arabic{subsubsubsection}}
-
-\titleformat{\subsubsubsection}
-{\normalfont\normalsize\bfseries}{\thesubsubsubsection}{1em}{}
-\titlespacing*{\subsubsubsection}
-{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
-
-\makeatletter
-\def\toclevel@subsubsubsection{4}
-\def\l@subsubsubsection{\@dottedtocline{4}{7em}{4em}}
-
-\setcounter{secnumdepth}{4}
-\setcounter{tocdepth}{4}
-
-\title{Thesis Chapter: Calibration Source \& GPS}
-\author{Tom Laclavère}
-
+\documentclass[../main.tex]{subfiles}
 \begin{document}
 
 \maketitle
 
 \tableofcontents
 
-\section{Introduction}
+\chapter{Calibration Source \& GPS}
+
+\section{Introduction}    
 
 Minimizing the impact of instrumental effects is one of the most challenging goals, with the reduction of foreground contamination, of experiments targeting B-mode patterns in the CMB. Calibrating the instrument is required to reduce systematics, necessary to achieve high sensitivity. In addition to classical calibration, an innovative method used in radio-interferometry~\cite{paper_selfcal_1,paper_selfcal_2}, called self-calibration\footnote{See Cornwell \& Fomalont~\cite{selfcal_overview} for a detailed overview}, was shown to apply to QUBIC. This method relies on comparing the different baselines of an interferometer to characterize its systematic effects. In this context, accurate knowledge of the position and orientation of the calibration source, placed on a 50 m tower where the wind can induce motion, is needed. A differential GPS will be used for this purpose. Various people have contributed to this work: Claude Boutonnet, who integrated the integration of electronics, as well as planning the location of each subsystem in the calibration box; Manuel Gonzalez who studied commercially available GPS systems and made the first tests with the system; Jean Lesrel who did the integration of surge protection components; Steve Torchinsky, who wrote the software to communicate with the GPS and worked on the testing and the analysis; Eda Atav, a first year engineering student that I surveyed to help me to do experiment on the GPS and who started the noise analysis of the data.
 
