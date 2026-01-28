@@ -1,0 +1,684 @@
+\documentclass{article}
+\usepackage{blindtext}
+\usepackage[hyphens]{url}
+\usepackage{hyperref}
+\Urlmuskip=0mu plus 1mu
+\usepackage{cite}
+\usepackage{titlesec}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[labelformat=simple]{subcaption}
+\usepackage{multirow}
+\usepackage{xcolor}
+\emergencystretch=1em
+
+\newcommand{\rmk}{\textcolor{blue}}
+
+\titleclass{\subsubsubsection}{straight}[\subsection]
+\newcounter{subsubsubsection}[subsubsection]
+\renewcommand\thesubsubsubsection{\thesubsubsection. \arabic{subsubsubsection}}
+
+\titleformat{\subsubsubsection}
+{\normalfont\normalsize\bfseries}{\thesubsubsubsection}{1em}{}
+\titlespacing*{\subsubsubsection}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
+\makeatletter
+\def\toclevel@subsubsubsection{4}
+\def\l@subsubsubsection{\@dottedtocline{4}{7em}{4em}}
+
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
+
+\title{Thesis Chapter: Calibration Source \& GPS}
+\author{Tom Laclavère}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+
+Minimizing the impact of instrumental effects is one of the most challenging goals, with the reduction of foreground contamination, of experiments targeting B-mode patterns in the CMB. Calibrating the instrument is required to reduce systematics, necessary to achieve high sensitivity. In addition to classical calibration, an innovative method used in radio-interferometry~\cite{paper_selfcal_1,paper_selfcal_2}, called self-calibration\footnote{See Cornwell \& Fomalont~\cite{selfcal_overview} for a detailed overview}, was shown to apply to QUBIC. This method relies on comparing the different baselines of an interferometer to characterize its systematic effects. In this context, accurate knowledge of the position and orientation of the calibration source, placed on a 50 m tower where the wind can induce motion, is needed. A differential GPS will be used for this purpose. Various people have contributed to this work: Claude Boutonnet, who integrated the integration of electronics, as well as planning the location of each subsystem in the calibration box; Manuel Gonzalez who studied commercially available GPS systems and made the first tests with the system; Jean Lesrel who did the integration of surge protection components; Steve Torchinsky, who wrote the software to communicate with the GPS and worked on the testing and the analysis; Eda Atav, a first year engineering student that I surveyed to help me to do experiment on the GPS and who started the noise analysis of the data.
+
+In this chapter, our aim is to explain the calibration method for the QUBIC Instrument, particularly the differential GPS associated with the calibration source, its characteristics, and its use within the calibration procedure, including a study of the noise of this system. My contributions are related to the study of differential GPS. I ran tests to understand its functioning and the meaning of the output data. I also analysed the noise of this system, which will be used to choose the best way to install it at the observation site. This work is presented in section~\ref{section: gps}. Then, I wrote a software adapted to our specific use that is detailed in Section~\ref{section: calsource pos & orientation}. Finally, the installation at the observation site and the first data from the system are described in Section~\ref{section: data on site}.
+
+\section{Calibration for QUBIC}
+We describe the calibration method for a Bolometric Interferometer as QUBIC. In particular, we present how to apply the self-calibration method used in radio-interferometry on a Bolometric Interferometer. This method is based on the observation and comparison of a known calibration source through different baselines of the interferometer. We describe it using a simple formalism to understand its principle. Then, the calibration source that will be used to self-calibrate the QUBIC Instrument and the associated specific calibration procedure are discussed.
+
+\subsection{Self-Calibration}
+The self-calibration method, widely used in radio-interferometry, is applicable with small changes for QUBIC, as was studied by Marie-Anne Bigot-Sazy during her PhD. Details can be found in her thesis\cite{thesismarie} and her published paper on the topic~\cite{paper_marie_selfcal}. \\
+Bolometric Interferometry differs from other CMB instruments by its interferometric aspect, leading to the possibility of performing self-calibration. The idea consists in comparing the image of a known source by observing it through different pairs of antennas to estimate systematic effects. These pairs are described by their baseline, a vector defined by the separation of antennas in wavelength units:
+
+\begin{equation}
+    \vec{u} = \frac{\vec{d_2} - \vec{d_1}}{\lambda},
+\end{equation}
+
+where $\vec{d_1}$ and $\vec{d_2}$ are the position vectors of antennas 1 and 2, and $\lambda$ is the wavelength.
+
+The simplest case of self-calibration is to compare redundant baselines, for example, two pairs of horns separated by the same distance with baselines oriented toward the same direction, as shown in Figure~\ref{fig:redundant baseline}~\footnote{Note that self-calibration also works for non-redundant baselines. The redundant baseline case is used for the sake of pedagogy~\cite{paper_marie_selfcal}}. In this case, we should observe the same interference pattern for both baselines for an ideal instrument. In a realistic case, we observe differences between the two patterns, due to systematic effects (size of horns, position of horns, mirror misalignment, ...). However, we are not limited to redundant baselines and can use any baseline of the instrument in this method\cite{paper_marie_selfcal}. By comparing all the different baselines of the interferometer, we then have information from each detector and each horn on the systematic effects (horn radius, distance between horns, optical aberration, mirror misalignment, detector position and orientation, etc.), allowing us to characterize and reduce them.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{Figures/redundant baseline.png}
+    \caption{Illustration showing two redundant baselines on the left, and two non-redundant baselines on the right. Taken from \cite{thesisromain}}
+    \label{fig:redundant baseline}
+\end{figure}
+
+This method is only possible if we have more baselines to compare than parameters describing the instrumental systematics. For the QUBIC Full Instrument, the horn array will contain 400 horns~\cite{qubic1}, meaning $n(n-1)/2 = 79800$ baselines, which is largely sufficient for this purpose\footnote{Even the 64 horns use for the Technical Demonstrator of the QUBIC Instrument are enough to perform self-calibration.}. 
+
+\subsection{Calibration Source's characteristics} \label{section: calsource characteristics}
+All the technical details concerning the calibration source and its use are described in the QUBIC Laboratory Characterization paper\cite{qubic3}. We propose here to summarize the information from this article. \\
+The calibration source system was purchased from Virginia Diodes Incorporated (VDI) electronics\footnote{\url{https://vadiodes.com}}. It comprises two parts: the source itself and the electronics to control it. We have two calibration sources, for the 150 \& 220 GHz channels of QUBIC. The frequency range of the first one is between 130 and 170 GHz, and the second observes between 190 and 245 GHz, both with a tuning resolution of 144 Hz.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Figures/Calsource system.png}
+    \caption{Picture of the 150 GHz calibration source system, including its electronics and the waveguide horn. Taken from \cite{qubic3}}
+    \label{fig:calsource}
+\end{figure}
+
+The calibration source and its electronics are placed in a calibration box to protect them from weather conditions. This box acts as a Faraday cage to avoid electromagnetic disturbances. Insulating foam is also glued to the walls of the box for thermal insulation, in addition to an active temperature control with a heater and a fan to remain at a constant temperature. You can find pictures of the inside and outside the calibration box in Figure~\ref{fig:pictures box}.
+
+\begin{figure}[!htbp]
+    \begin{minipage}{0.44\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Figures/calbox picture.png}
+    \end{minipage}
+    \begin{minipage}{0.54\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Figures/Picture Cal box.png}
+    \end{minipage}
+    \caption{(left) Photo of the calibration box, on top of the chariot. 
+             (right) Photo of the inside of the calibration box. 
+             The GPS PCB is included within the box. 
+             The integration was made by Claude Boutonnet at APC.}
+    \label{fig:pictures box}
+\end{figure}
+
+\subsection{Calibration procedure}
+QUBIC has specific constraints regarding the calibration process, which are presented in this section. An important comment is that self-calibration can take place alternately with the observation process, as we can estimate the systematic effects and take them into account in the data analysis algorithms afterward.
+
+\subsubsection{Calibration Schedule} \label{section: calib_schedule}
+An important specificity of the QUBIC Instrument, and for all other ground-based experiments\footnote{It is also a problem for space experiment, as they are not able to observe close to the Sun or to the Earth for example.}, is that its target sky patch is not always visible. This patch is centred on the position (RA = 0°, DEC = 57°), known for its low dust emission, and represents $\sim$ 1. 5\% of the entire sky. Thus, we can take advantage of this non-observing time to perform self-calibration to decrease QUBIC's systematics. As said before, it is not mandatory to self-calibrate before observation, we can run both alternatively : observing when the patch is visible and self-calibrating when not. Then, we can use the systematic characterization from the self-calibration to improve the data analysis process during the whole observation program. \\
+It has been shown in \cite{paper_marie_selfcal} that spending 1 second calibrating per baseline can improve the leakage from E to B modes by one order of magnitude, while it can improve it by two orders of magnitude when spending 100 s per baseline. This second case corresponds to spending 100 seconds for each of the 79800 baselines, which is equivalent to 91 days of observation (approximately $25\%$ of the observation time in one year). It represents a huge fraction of the total observation time per day. In addition to that, we have another constraint: the time to recycle the fridges, which will take about 4 hours per day. However, the observation patch being visible approximately 40\% of the time from the QUBIC position, as shown in Figure~\ref{fig:patch_visible_time}, it is not a problem to spend such a time performing self-calibration. \\
+This work was done thirteen years ago, a more up-to-date analysis, taking into account the evolution of the instrumental design and of our understanding, is needed to confirm these predictions.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{Figures/tom_window 2.png}
+    \caption{Plot showing the visible time of the targeted QUBIC patch during one sidereal day from the instrument point of view. This plot includes the instrumental limitation of observing between [30, 70]° to keep the maximal efficiency of the cryogenic system. In addition, we added the width of the QUBIC beam ($\sim$ 13°) in order to compute the maximum time of visibility of the patch. This plot was made by Sofia Ferazzoli, a master intern student at Università di Roma La Sapienza working on QUBIC. \rmk{I am waiting for Sofia's code to redo this plot : increasing fontsize $\&$ reducing window [30, 70] + 13°/2.}}
+    \label{fig:patch_visible_time}
+\end{figure}
+
+\subsubsection{Calibration Tower} \label{cal tower}
+The QUBIC Collaboration has chosen to use a tower to hold the Calibration Source. This choice is motivated by the need for self-calibration of long-time observation through the calibration source (when the targeted sky patches will not be in the instrumental field of view, see previous subsection). \\
+This tower has to respect different constraints for the observation. It has to be high enough to avoid ground emission and far enough to consider the source as a point source, but also, it has to be in the field of view of the instrument. This last limitation comes from a technical constraint of the cryogenic system, the pulse tubes, which can't be tilted more than twenty degrees up or down without losing cryogenic efficiency. Because of that, we are limited to 30 through 70 degrees in elevation. Finally, the tower should not perturb the observation of the target sky patch. \\
+As shown in \cite{qubic3}, the calibration source can be considered in the far field, even at 11.4 m from the instrument, as the angular resolution of QUBIC is particularly low, being about 0.5 deg (even the moon is seen as a point source). The tower distance is then not a strong constraint. To be visible from the instrument, the tower's height is about 54 m, while the distance to the QUBIC shelter is approximately 38.5 m. The calibration source will be placed close to the anti-rotation structure, visible in Figure~\ref{fig:photo_caltower}, around 50 m from the ground. Knowing that the QUBIC instrument is at 4 m from the ground, the calibration will be seen at an elevation of about 40.8°. Also, the calibration tower has been placed to the North of the instrument, to avoid the situation where the tower can be in front of the target sky patch, mostly towards the South. \\
+Finally, the last requirement for the tower is its possible movements. Because the tower is tall and located in a place with sometimes strong winds, it is mandatory to prevent the displacement of the structure. Otherwise, the calibration source will not point directly at the instrument window, meaning uncontrolled phase shifts and amplitude for the observed signal, while we want a constant flux during data taking for calibration. As said above, the tower has an anti-rotation structure, where the calibration source will be placed, and guy wires to limit its movements. It is important to note that the tower will have very small movements in normal conditions, and that we will not observe in case of strong winds (< 30 km/s). In addition to that, a differential GPS will be used to track the deviated position and orientation of the source and then be able to correct for the actual received power from the source to the instrument. This system is detailed in the third part of this chapter, section~\ref{section: gps}.
+
+\begin{figure}[!htbp]
+    \begin{minipage}{0.57\linewidth}
+        \centerline{\includegraphics[width=1\linewidth]{Figures/photo_caltower.jpg}}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.41\linewidth}
+        \centerline{\includegraphics[width=1\linewidth]{Figures/anti-rotational_structure.jpg}}
+    \end{minipage}
+    \hfill
+    \caption[]{(left) Photo of the calibration tower with QUBIC instrument. (right) Photo of the anti-rotational structure, where the calibration box will be placed.}
+    \label{fig:photo_caltower}
+\end{figure}
+
+\subsubsection{Equivalent two-horns open procedure}
+As described above, self-calibration consists in comparing observed signals coming from the same source with different pairs of horns. These comparisons will allow us to characterize the instrumental systematics. Unfortunately, it is not easy to observe the source with only two horns open because of one of the key points of the QUBIC instrument : the Transition Edge Sensors (TES). These bolometers are placed at the transition of superconductivity. During this transition, a small temperature change produces an important change in resistivity. Meaning that even a small amount of temperature change is easily measurable, resulting in an improved sensitivity. But, the system needs to be adapted regarding the total power received such that the bolometers can reach the proper temperature. So, If we open only two horns, the cryogenic system would need to be tuned specifically for a power which is very different from the one received with all the horns open. Thus, if we calibrate with a different setup than the one used for observation, the systematics will not be correctly characterized because the tuning will not be the same for observation and calibration. One can also note that it is not feasible to change the tuning each day, as will be able to observe and calibrate alternatively (see section~\ref{section: calib_schedule} for more details). To address this issue, it becomes necessary to design an ``equivalent two-horns procedure'', where more than two horns are open to be able to reach the transition temperature, while the system remains as simple as it is when only two horn are open to facilitate the self-calibration. Marie-Anne Bigot-Sazy described this procedure in her thesis~\cite{thesismarie}. She has shown that it is mathematically equivalent to open only two horns and to open all the horns except two. Following this idea, we can then perform self-calibration in the simplest case without changing the tuning of the cryogenic system.
+
+\section{GPS} \label{section: gps}
+For calibration, it is mandatory to know exactly the signal coming from the source. We described the characteristics of this source in section~\ref{section: calsource characteristics}. But, it is not enough, as the calibration source will move with the calibration tower because of the wind. This change in position and orientation can significantly modify the calibration source position and amplitude observed by the instrument. An analysis was run by Sabrina Marwede, PhD student from Maynooth University working on the optic simulations for QUBIC, to observe the effect of such deviation on the amplitude of the received signal. One example can be found in Figure~\ref{fig:calsource deviation on signal intensity}. In this plot, we can see the evolution of the source amplitude if the source is displaced by various angle values.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{Figures/calsource_amplitude_variations_yaw.png}
+    \caption{Plot showing the beam relative difference in amplitude between the case where the calibration source is aligned with QUBIC's line of sight and when the source is rotated by an angle $\psi$ around the vertical axis. It shows that the more the source is deviated from the line of sight, the lower the beam amplitude becomes, emphasizing the need to track calibration source position and orientation. The plot is build from simulation data made by Sabrina Marwede from Maynooth University, a PhD Student working on optical simulation for QUBIC.}
+    \label{fig:calsource deviation on signal intensity}
+\end{figure}
+
+It becomes important to track these displacements to avoid accuracy losses during the self-calibration process. A differential GPS (Global Positioning System) will be used for this purpose.
+
+\subsection{Characteristics}
+The GPS was purchased from \textbf{ArduSimple}~\footnote{\url{https://fr.ardusimple.com/}} and its native software was designed by \textbf{EPS Works}~\footnote{\url{https://www.eps-works.com/}}. This system is composed of three antennas and electronics to process the data. Pictures of the antennas and the GPS card can be found in Figure~\ref{fig:pictures GPS}. Within these antennas, one will be fixed with a known position, called the ``base antenna''. The two others can move, and the system will compute their position relative to the fixed one. We will call them ``Antenna 1'' and ``Antenna 2''. This kind of system is called Real Time Kinematic (RTK), and it is used for tracking, or for plane autopilot for example. Of course, the precision on the absolute position is limited by the precision on the base antenna position. The accuracy of this system is typically of the order of the centimetre~\cite{dgps_accuracy}, better than Standard GPS (GNSS) which has an accuracy of the order of the meter~\cite{gps_accuracy}. We verified this during the noise analysis, describe in section~\ref{section: noise analysis}.\\
+The position of the receivers is computed by communicating with geostationary satellites. The internal clock of both the receiver and the satellite being synchronous, the receiver will determine the time shift introduced by the travel of light from the satellite to compute the distance between them. When you have at least 3 satellites, you can use this method to compute the position of the antenna on Earth \rmk{(Add a schema to describe that, maybe from \url{https://docs.centipede.fr/docs/centipede/2_RTK.html}), but I can't find the same in English.} Different phenomena can produce errors during this computation, for example: if the signal is reflected, if the two clocks are not synchronized, if the slowdown of the signal within the ionosphere or troposphere is wrongly estimated, etc.\footnote{(More detailed can be found on: \url{https://en.wikipedia.org/wiki/Real-time_kinematic_positioning})}
+
+\begin{figure}[!htbp]
+    \begin{minipage}{0.39\linewidth}
+        \centerline{\includegraphics[width=1\linewidth]{Figures/Antennas.jpg}}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.59\linewidth}
+        \centerline{\includegraphics[width=1\linewidth]{Figures/Picture Cal box.png}}
+    \end{minipage}
+    \hfill
+    \caption[]{(left) Picture of the three antennas. (right) Picture of the inside of the calibration box. The GPS PCB is included within the box.}
+    \label{fig:pictures GPS}
+\end{figure}
+
+\subsection{GPS Data}
+After describing the GPS, we will focus on understanding the data it provides. Figure~\ref{fig:GPS data table} shows a resume of the data given by the system. This information will be described in the following sections.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{Figures/GPS data table.png}
+    \caption{Table summarizing the data provided by the GPS.}
+    \label{fig:GPS data table}
+\end{figure}
+
+\subsubsection{Relative Position Vector}
+The first data that we can look at is the relative position vector, called rpN, rpE, and rpD. These three quantities correspond to the relative position (to the base antenna) on the North, East, and Down axes of the Antenna 1. We set up a very simple experiment to confirm that : we keep the base antenna fixed, and we move one of the two antennas to different positions. The goal is to confirm the antennas' configuration we set with the GPS data. An example of two configurations during these tests is visible in Figure~\ref{fig:test_position_a}. After that, we can look at the data in Figure~\ref{fig:b}, where we can confirm that rpN, rpE and rpD only evolve when we move the antenna 1, and which correspond to the distances measured when moving the antennas.
+
+\begin{figure}[!htbp]
+    \centering
+
+    % --- First plot ---
+    \begin{subfigure}{\linewidth}
+        \centering
+        \includegraphics[width=\textwidth]{Figures/test antenna position.png}
+        \caption{}
+        \label{fig:test_position_a}
+    \end{subfigure}
+
+    \vspace{0.5cm}
+
+    % --- Second plot ---
+    \begin{subfigure}{\linewidth}
+        \centering
+        \includegraphics[width=\textwidth]{Figures/plot gps data.png}
+        \caption{\phantom{}} 
+        \label{fig:b}
+    \end{subfigure}
+
+    \caption{Simulated GPS data with correlated noise. 
+    (a) (Top) Example of the test performed to validate the GPS data. The antennas are moved to different positions, the small aluminium pad visible on the photos, while the base antenna remains fixed at the centre. 
+    (b) (Bottom) Corresponding data acquired from the test. Only the roll angle is changing during this experiment, as only the orientation of the antennas' vector is changing while the distances between the antennas and the base antenna remain constant.}
+    \label{fig:gps_test}
+\end{figure}
+
+\subsubsection{GNSS Angles}
+The system does not provide the position of the second antenna directly, but the value of the roll and yaw angles. GNSS stands for Global Navigation Satellite System. It is a more general name to talk about using satellites to compute position on Earth, GPS corresponding in fact to the specific satellite system developed by the USA. \\
+We are used to the names ``roll'' and ``yaw'' to talk about two of the three rotation axes of an aircraft. They are not defined in the same way in our case: the Roll angle corresponds to the angle between the North axis and the vector formed by the two antennas (from antenna 1 to antenna 2), while the Yaw angle is the angle between the antennas' vectors and the ground. It has been confirmed by the data shown in Figure~\ref{fig:b}.
+
+% . To understand their definitions, we can use the data from the experiment described in the previous subsection. In these data, we can see that the roll angle value evolved by step, with the different positions of the two antennas. Thus, roll angle has to be defined regarding the position of the two antennas. We found that it is defined as the angle between the North axis and the vector formed by the two antennas (from antenna 1 to antenna 2). We ran a more specific test to confirm this hypothesis by aligning the ``antennas vector'' at a known angle with the North axis using a compass and observing that we found the same value in the GPS data. \\
+% For the yaw angle, as its value did not change during all the previous tests, we made the hypothesis that it is defined with the vertical plane. Then, we tried to put the antennas at different heights for each other, and then compute the angle between the antennas' vectors and the ground. This angle corresponded to the yaw angle in the GPS data. \\
+
+\subsection{Antennas' Position} \label{section: antennas' position}
+Now that we have validated our understanding of the output data of the GPS, we can discuss how to use it to know the position and orientation of the calibration source in real-time. The first step for this purpose is to be able to compute the position of the two antennas with respect to the base. To summarize what was explained in the previous section, we have drawn a frame where the different data are illustrated, to represent what they correspond to, in Figure~\ref{fig:drawing gps}.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.7\linewidth]{Figures/drawing Gps data.png}
+    \caption{Drawing of the different GPS output data. rpN, rpE, and rpD correspond to the relative position of antenna 1 in the (North, East, Down) Cartesian coordinate system. Roll and Yaw correspond to azimuth and elevation angles between the two antennas. Figure by Eda Atav, a bachelor's student who worked with me on this topic during her internship.}
+    \label{fig:drawing gps}
+\end{figure}
+
+rpN, rpE, and rpD are the Cartesian coordinates of antenna 1 in the (North, East, Down) frame, centred on the base antenna when roll and yaw are the angles between the antennas' vector and, respectively, the North axis and the horizontal plane. This means that roll and yaw correspond to the azimuth and elevation angles of antenna 2 in the spherical frame centred on antenna 1. Then, it is trivial to compute the position of antenna 1: it is just three translations of rpN, rpE, and rpD from the (known) position of the base antenna. But, we require one additional parameter to deduce the position of antenna 2: the distance between the antennas. As the two have to stay fixed in our system (fixed with respect to the calibration source), we will need to measure the distance between the two when the GPS is installed on the calibration tower. Once this distance is known, we can compute easily the relative coordinate of antenna 1 with the base antenna using :
+
+\begin{equation}
+    \begin{split}
+        rpN_2 & = rpN_1 + d_{antennas} \cos(roll) \sin(\pi/2-yaw),  \\
+        rpE_2 & = rpE_1 + d_{antennas} \sin(roll) \sin(\pi/2 -yaw), \\
+        rpD_2 & = rpD_1 + d_{antennas} \cos(\pi/2 - yaw).           \\
+    \end{split}
+\end{equation}
+
+\subsection{Noise Analysis} \label{section: noise analysis}
+At this point, we understand the output data of the GPS, and we know how to compute the position of the two antennas. Before discussing how to use this information to compute the position and orientation of the calibration source, it is important to understand the noise properties of our system to estimate its accuracy and the best installation configuration on the calibration tower. We saw empirically that the noise amplitude increases when the antennas are close to each other, which is logical. The idea is to understand how it evolves, and then to determine the best distance between them to minimize the noise level of the system.
+
+\subsubsection{Methodology}
+We start by describing the methodology used to study the noise in the GPS data. Our main interest is to study how the noise evolves with the distance between the antenna, in order to estimate the best configuration to minimize the noise when installed on the calibration tower. \\
+We ran the following experiment: we set a distance between the base antenna and antenna 1, then we set a distance between antennas 1 and 2, the antenna 2 being perpendicular to the antenna 1 - base antenna vector (see \ref{fig:experiment_configuration}). Then, we took data for 5 minutes without moving anything. Once done, we set different distances and repeat. At the end, we took 41 different configurations, with distances between  60 and 600 centimetres. The data taken during this experiment is shown in Figure~\ref{fig:gps_data_w_pb}. One can note that this experiment was done without changing the height of the antennas, which is not optimal to study the rpD and the yaw angle noises. 
+
+\begin{figure}[ht]
+    \begin{minipage}{0.49\linewidth}
+        \centerline{\includegraphics[width=1\linewidth]{Figures/experiment_configuration.png}}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.49\linewidth}
+        \centerline{\includegraphics[width=1\linewidth]{Figures/distances_during_experiment.png}}
+    \end{minipage}
+    \hfill
+    \caption[]{(left) Experiment configurations diagram. We took data for 5 minutes without moving the antennas, and then change one of the two distances. This was repeated for 41 configurations. (right) Plot summarising all the distances between the three antennas used during the experiment.}
+    \label{fig:experiment_configuration}
+\end{figure}
+
+\subsubsection{Data cleaning}
+
+The data shown in Figure~\ref{fig:gps_data_w_pb} needs to be cleaned before running any analysis. First, we need to build separations between the different configurations to operate on them separately, but also to remove the data when the antennas are moving. Second, I spotted issues in the data: long time delay to update the position or signal loss, as shown in Figure~\ref{fig:gps_data_w_pb}, that needed to be discarded. These issues are a worry for calibration, but I assume that they are due to the specific environment of the APC laboratory's roof, where I ran my experiment relatively close to a wall, which can reflect or mask the signal from satellites. We do not expect that from the observing site, where the antennas will be installed on a calibration tower at 50 meters above ground, with nothing around it.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{Figures/gps_data_w_pb.png}
+    \caption{GPS data showing some problems: a loss of signal and some unknown features.}
+    \label{fig:gps_data_w_pb}
+\end{figure}
+
+\subsubsection{Standard Deviation Analysis}
+
+As a first estimation of the noise level in the GPS, we can compute the standard deviation for each dataset and for each different configuration, and see how it evolves with the distance between antennas. A more advanced analysis is done in the next section, analysing the power spectrum of these data. The result of computing the standard deviation is shown in Figure~\ref{fig:std_deviation}. The plain lines represent the relative position parameters of antenna 1, while the dashed lines represent the angles between the antennas.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{Figures/std_deviation.png}
+    \caption{Standard deviation of the five GPS data, plotted for the different distance configurations. The left y-axis is position (solid curves) and the right y-axis is angle (dashed curves).}
+    \label{fig:std_deviation}
+\end{figure}
+
+The first important result is that the standard deviation value clearly depends on the configuration, as we can see peaks and troughs. Second, we can see that the relative position data are correlated with each other (their value evolves similarly from one configuration to another). The same remark applies for the two angles. Finally, it seems that the plain lines and the dashed lines are not correlated with each other. This last point is somehow expected, as angles between antennas are computed through a differential phase measurement between the two antennas and the base, while it is a simple phase measurement to compute the position of one antenna. Taking that, it seems evident that the evolution of the noise with the decrease of the baseline will be higher for the angles than for the position. This effect has been confirmed with a different analysis, as we discuss in the following.
+
+The next step is to understand the evolution of the standard deviation with the distances between the antennas. We start by showing this plot for the data rpN in Figure~\ref{fig:std_rpN}.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{Figures/standard_deviation_rpN.png}
+    \caption{Standard deviation of the relative position North as a function of the distance between antenna 1 and the base, for different distances between the antennas. The peak at 3.6 m is probably a bad measurement for two
+of the curves (2.4 m and 3.6 m)}
+    \label{fig:std_rpN}
+\end{figure}
+
+In this plot, it is not clear that the standard deviation is affected by the distance between the two antennas. To understand that, we can think about the reasons that can raise noise in the data. The main contribution will be if the two antennas are receiving the same signal from one satellite, meaning if they are separated by less than the wavelength of this signal. Usually, GNSS use frequency channels of the order of 1 GHz (commonly, 1575.42 MHz from L1 satellites or 1227.6 MHz from L2 satellites~\cite{gps_frequencies}, as used by our system~\cite{gps_model}). These frequencies correspond to $\approx20$ cm, 3 times less than the smallest distance I tried during my experiment. We can then conclude that the distances between antennas are not a big concern to compute the position of antenna 1 as long as we keep them above 20 centimetres, as confirmed by the Figure~\ref{fig:std_rpN}.
+Then, we can do the same figure for one of the angles between the two antennas, for example, the roll angle, as shown in Figure~\ref{fig:std_roll}.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{Figures/standard_deviation_roll.png}
+    \caption{Standard deviation of the roll data as a function of the distance between the antennas, for different distances between the base and antenna 1.}
+    \label{fig:std_roll}\end{figure}
+
+In this case, we can see a clear dependence of the standard deviation on the distance between antennas, even if this distance is at a higher distance than the wavelength ($\sim$ 20 cm). As said, it is due to the method used to compute the angle, which uses the differential phase between the two antennas, meaning a higher noise contribution when the distance between antennas is low. This figure shows that the distance between the antennas should be more than 2 meters to minimize the noise level. \\
+On this figure, we can also see an effect of the distance with the base antenna : higher distances seem to correspond to higher standard deviation. We can then ask what can happen if we put the base antenna far from the two others, as it will be the case on the calibration tower (approximately 30 meters). It is not clear if this effect is real or if it is just statistical fluctuations. It seems complicated to extrapolate from these measurements, we will then have to check this effect when the GPS will be installed on the calibration tower (see section~\ref{section: data on site}).
+
+\subsubsection{Power Spectrum Analysis} \label{Section: PS analysis}
+After examining the standard deviation of the GPS data to have an idea about how this noise evolves with the distance between the antennas, we now do a more advanced analysis to better understand the noise structure. To do that, we study their power spectrum for the different GPS data and different distances between the antennas. We try to fit a generic noise model :
+
+\begin{equation} \label{eq: noise model}
+    P(f) = A_{white}^2(1+|\frac{f_{knee}}{f}|^{\alpha}).
+\end{equation}
+
+The idea of this model is to have a low-frequency white noise, with the amplitude given by $A_{white}$, and a noise of $(1/f)$ with a spectral index $\alpha$ at low frequency. The transition between white and $(1/f)$ noise occurs at the frequency $f_{knee}$. We then fit these three parameters (namely $A_{white}$, $f_{knee}$, and $\alpha$) for all instrumental configurations for the five GPS data. An example of such a fit can be found in Figure~\ref{fig:ps_fit}.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{Figures/ps_fit.png}
+    \caption{Power Spectrum (in blue) for rpE data for the configuration 19. The fitted model \ref{eq: noise model} is displayed (in red) above the data. The parameters value of the model and their associated error is shown, in addition to the $\chi^2$ value divided by the degree of freedom.}
+    \label{fig:ps_fit}
+\end{figure}
+
+We need to perform this fit on the 41 different configurations for each five GPS data. These results are resume in the Figure~\ref{fig:power_spectrum_gps}. We will describe this figure part by part to extract all the relevant information.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{Figures/power_spectrum_gps.png}
+    \caption{Figure to summarize the fitting of the noise model \ref{eq: noise model}. The 3 lines represent the three parameters of the model $A_{white}$, $f_{knee}$ and $\alpha$. The five columns designate the GPS data. The x-axis is the index of the instrumental configuration, while the y-axis is the value of the model parameter for the given GPS data. In this plot, I removed point with $f_{knee}$ above 10 Hz, as they are not relevant since our sampling rate is 8 Hz.}
+    \label{fig:power_spectrum_gps}
+\end{figure}
+
+First, a general comment is that the quality of the fits is heterogeneous along the different data or configurations, which is not what I would have expected. This issue is certainly coming from the low acquisition rate of the GPS data, coupled with the high value of $f_{knee}$. This rate is 8 Hz while the fitted value of $f_{knee}$ is of the order of [1, 10] Hz. Then, there is not enough data at high frequency to fit this value properly, resulting in errors for $f_{knee}$ and $\alpha$. On the other hand, the white noise amplitude $A_{white}$ is far better fitted, for each configuration and each data. \\
+Now, we can focus on the result for each parameter separately. First, the fits of $\alpha$ are giving a consistent value and error between each GPS data and each configuration. It means that the slope of the 1/f noise is not affected by the distances between antennas, as well as by the computing method of the GPS data (between relative positions and angles). \\
+Then, looking at the fitting of $f_{knee}$, we can see a difference in terms of value and error between the relative position data and the angles, which are lower in this second case. As discussed above, I explain the high error on the fit of $f_{knee}$ for the relative position parameters by its high value, which is very close to the acquisition rate of the GPS data. \\
+Finally, the $A_{white}$ parameter also has different features between the relative position and the angles. For the relative position, the white noise amplitude and errors remain small and seem not affected by the instrumental configuration. On the contrary, we can clearly see patterns that depend on the instrumental configuration for the white noise amplitude of the two angles. This result confirms what was seen with the standard deviation analysis. Then, it is interesting to look exactly how this amplitude evolves with the distances between antennas. The results are shown in Figure~\ref{fig:white_noise_amplitude_power_spectrum}. This plot shows that the white noise amplitude decreases with the increase of the distance between the two antennas. This result confirms the one we found with the standard deviation analysis. We found again that the optimal distance between the antennas should be of the order of 2 meters or more. With such a distance, we should be sure that we can place the antennas so that we can consider the system being fixed, meaning that the mechanical structure to attach the antennas to the calibration box is completely rigid (which cannot be possible for a too far distance).
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{Figures/noise_ps_awhite_roll.png}
+    \caption{Amplitude of the white noise amplitude for the roll data as a function of the distance between the antennas, for different distances between the base and antenna 1.}
+    \label{fig:white_noise_amplitude_power_spectrum}
+\end{figure}
+
+\section{Calibration Source position and orientation} \label{section: calsource pos & orientation}
+In this section, we explain how the orientation and position of the calibration source are computed using the GPS described in section~\ref{section: gps}. In particular, we need to discuss some limitations of this system, which lead to constraints on the installation of the system on-site.
+
+\subsection{System limitations and Hypothesis} \label{section: GPS hyp}
+As described before, the system suffers from intrinsic limitations. In order to circumvent them, we must make some simplifying hypotheses and then constrain the system's installation.
+
+\subsubsection{Satellites signal reception}
+The main issue we faced during our experiments was the loss of signal from the satellites. As described in section~\ref{section: gps}, we need to communicate with at least three satellites to compute positions. In addition, the system needs some time to adjust to the satellites. To perform our tests, we needed to put the GPS far from any obstacles to be able to detect the satellites. For that, all the experiments were done on the roof of the APC laboratory's building. These issues should not be a problem on top of the calibration tower, but they considerably slowed down our tests in Paris.
+
+\subsubsection{System rigidity}
+To be able to compute the position and orientation of the calibration source using the antennas' positions, we need to assume that the ensemble consisting of the calibration source, antenna 1, and antenna 2 is perfectly rigid. Firstly, and as explained in section~\ref{section: antennas' position}, the distance between the two antennas needs to be fixed and known to compute the position of antenna 2. Then, for the same reason, the distance between the antennas and the calibration source needs to be fixed and known to compute its position and orientation. \\
+Section~\ref{section: noise analysis} shows that antennas 1 and 2 should be separated by at least 2 meters. We then need to find a technical solution to ensure rigidity for such a distance between the antennas.
+
+\subsubsection{Rotation around the antennas vector}
+\rmk{Ajouter un dessin  pour montrer le design qu'on envisage (cf notes JC)}
+Because we are using only two antennas, it appears that we cannot reconstruct the calibration source's position and orientation in 3 dimensions: we are blind to one of them. Then, even if the system is rigid, we will always be blind to rotation around the antenna's vector. This situation is illustrated in Figure~\ref{fig:drawing GPS issue}. As we are blind to rotation around this axis, and knowing the position of the antennas and the distances d1 and d2 to the source, it happens that the position of the calibration source is degenerated on the blue circle.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{Figures/drawing Gps issue.png}
+    \caption{Drawing to illustrate the fact that we are blind to rotation around the antennas' vector, the position of the calibration source can be anywhere on the blue circle.}
+    \label{fig:drawing GPS issue}
+\end{figure}
+
+To break this degeneracy, we need to make the hypothesis that there is no rotation around this axis. Of course, we can't impose that on a real system. To make this hypothesis reasonable, one can choose to place the source as close to this axis as possible. In this case, even if the system rotates around it, we will still be able to compute the position of the source as the rotation does not affect it. In addition to that, the calibration tower is made in such a way that it limits the rotations around this axis. \\
+Also, we have the same issue with the orientation of the calibration source: as we are blind to one rotation axis, the orientation degenerates in a circle, as shown in Figure~\ref{fig:drawing GPS issue}. To solve this problem, we can set that the orientation of the source is aligned with the antennas' vector. Then, for the same reason as before, if the system rotates around this axis, we will still be able to compute the orientation of the source. This second hypothesis is far from being perfect. Because the source is symmetrical; rotation around its orientation does not affect the amplitude of its signal if we look only at the signal intensity. But, the calibration source is linearly polarised, so the signal going through the polariser of QUBIC will change depending on the orientation of the source. That means that we have detector response varying because of both movements and rotation of the source, and we should try to decouple these effects. A drawing of the expected position for the antennas is visible in Figure~\ref{fig:drawing antennas position}. \\
+To break completely this degeneracy, we could add a third antenna. But, it would complicate a lot the installation of the system on the calibration tower, and it would be more difficult to ensure the rigidity of the system. In addition, it would not be possible to place this third antenna as close as possible to the calibration source line-of-sight, which is a key point to minimize the effect of rotation around the antennas' vector. Another possibility might be to monitor the calibration source and measure the polarisation angle as a function of time. The calibration source is linearly polarised, and if it rotates around its line-of-sight, we will be able to measure this rotation by looking at the polarisation angle of the source. This solution is not implemented yet, but it might be interesting to consider it in the future. \\
+In this drawing, one can see that Antenna 1 is fixed as close as possible to the Calibration Source line-of-sight, while Antenna 2 is attached on a rod which is again align with the line of sight. Regarding the position of the base, multiple positions were considered : top of the tower, bottom of the tower, close the QUBIC shelter, etc. The key point to choose which position we will use is to minimize the noise. As we saw in the previous sections, the distance between the base and the two antennas does not change much the noise in the data. But, if we want to compute the position and the orientation of the calibration source for QUBIC point of view, we will have to measure the distance between the base antenna and QUBIC with precision. So, we would prefer to avoid having a very long distance between the two, for example if the base antenna is placed close to the tower (at more than 60 meters from QUBIC), reducing then the absolute error introduced by such a measurement. Then, the best choice is to have the base antennas as close as possible from the QUBIC line-of-sight, as shown in the drawing in Figure~\ref{fig:drawing antennas position}. 
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{Figures/antennas_position.png}
+    \caption{Drawing to show the expected position for the GPS antennas. The base antenna is located as close as possible from QUBIC line-of-sight, on the left. On the right, the Calibration Source is fixed on the Calibration Tower, the Antenna 1 (A1) is attached as close as possible from the line-of-sight of the source, while the Antenna 2 (A2) is placed on a rigid rod, again align with the line-of-sight.}
+    \label{fig:drawing antennas position}
+\end{figure}
+
+\subsection{Initial Configuration}
+The idea to compute the calibration source orientation and position at each time is to compare the movement of the system with respect to a known initial situation. As said in section~\ref{section: GPS hyp}, the source might be placed on the antennas' axis, with its line of sight aligned with it. It is important to say that the software that I developed does not assume this specific situation, but because of the degeneracy discussed previously, it can be inaccurate outside this situation. When the GPS is installed, the source will be placed in such a way that it points exactly at the centre of the QUBIC instrument. Then, during this initial condition, the source orientation and the antennas' axis will align with the instrument's line of sight, and the distance between the source and the antenna will be measured. In this situation, we can compute the orientation and position of the source at any time.
+
+\subsection{Calibration Source Position}
+Under these hypotheses, it becomes easy to compute the position of the calibration source. Using the fact that we know the initial position of the calibration source with respect to the antenna and that antenna 1 is placed as close as possible to the source, we can assume that the antenna 1 translation is the same as the source's translation, if we can consider the system rigid. We can then compute the translation of antenna 1 at a given time using:
+
+\begin{equation}
+    \vec{T}(t) = \vec{r_{A_1}}(t) - \vec{r_{A_1}}(t = 0)
+\end{equation}
+
+Then, we can use this translation vector to compute the actual position of the source from:
+
+\begin{equation}
+    \vec{r_{cal}}(t) = \vec{r_{cal}}(t=0) + \vec{T}
+\end{equation}
+
+As mentioned above, it is necessary to have a rigid system for this computation to be realistic. Otherwise, it is not possible to deduce the position of the calibration source from the antenna's one.
+
+\subsection{Calibration Source Orientation}
+As said above, we will compute the orientation of the calibration source by calculating the rotation between the initial and current antennas vector. As the system is rigid, the calibration will follow the same rotation from its initial orientation. Using general vectorial analysis, the rotation axis can be defined as the normal vector between the initial and the rotated vector, given by the following:
+
+\begin{equation}
+    \vec{n} = \frac{\vec{v_1} \times \vec{v_2}}{||\vec{v_1} \times \vec{v_2}||}.
+\end{equation}
+
+Then, the rotation angle $\alpha$ between two vectors is defined by the following two formulas:
+
+\begin{equation}
+    \begin{split}
+        \vec{v_1} \cdot \vec{v_2} = |\vec{v_1}| \cdot |\vec{v_2}| \cdot \cos(\alpha),  \\
+        \vec{v_1} \times \vec{v_2} = |\vec{v_1}| \cdot |\vec{v_2}| \cdot \sin(\alpha). \\
+    \end{split}
+\end{equation}
+
+An important remark is that we want to avoid using $\arcsin$ or $\arccos$, as they are defined, respectively, on $[-\pi/2, \pi/2]$ and $[0, \pi]$. We prefer to use $\arctan$, which is defined in $[-\pi, \pi]$, avoiding trigonometric issues. Then, $\alpha$ is computed from:
+
+\begin{equation}
+    \alpha = \arctan(\frac{ \vec{v_1} \times \vec{v_2}}{\vec{v_1} \cdot \vec{v_2}}),
+\end{equation}
+where we use the function arctan2 from \textbf{NumPy}~\footnote{\url{https://numpy.org/doc/2.1/reference/generated/numpy.arctan2.html}}, which properly accounts for the quadrant in the trigonometric circle. 
+
+With this angle and the rotation axis of the rotation, we can define a rotation vector by: $\vec{n} \cdot \alpha$, from which we can decompose the 3D rotation into rotation around the three axes of a Cartesian frame using a specialized library like \textbf{SciPy Rotation.} Once this instance is built, we can apply the rotation on the calibration source to obtain its orientation at the considered time.
+
+\subsection{Results}
+With these two steps, and under the discussed hypotheses, we can compute the position and orientation of the calibration source. For that, we need to have the initial position and orientation of the calibration source, which is done at the beginning of the experiment. Then, we can compute the position and orientation of the calibration source at any time, using the GPS data. 
+The algorithm I wrote takes this information as input, and then computes the position and orientation of the calibration source at each time step. The output is a list of the position and orientation of the calibration source at each time step, which can be used for further analysis or visualisation. In particular, I wrote visualisation functions, allowing to plot the position and orientation of the calibration source in 3D, as well as the position of the antennas. This is useful to verify that the computation is coherent with the expected behaviour of the system.
+An example of this is given in Figure~\ref{fig:plot orientation and position calsource}. This plot is done with real data and is confirmed by the software to build the operations described above.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{Figures/calsource_deviation.png}
+    \caption{Plot to show the position of the GPS antennas, the calibration source and QUBIC, in three dimensions. The initial position of the antennas is illustrated by light colours : light blue for antenna 1, light orange for antenna 2 and light red for calibration source, while the position at the given time is presented in blue, orange and red, respectively. At initial time, the calibration is pointing toward the QUBIC instrument, in brown. The base antenna is also visible on this plot, in purple. This example shows an anticlockwise rotation around the antenna 2. We can see that the position of the antenna 1 is modified with compare to the initial time, and we can see that the calibration and its line-of-sight have followed this rotation. Note that this plot is made with real data, the calibration source and QUBIC are only added for visualisation purpose.}
+    \label{fig:plot orientation and position calsource}
+\end{figure}
+
+\section{Calibration source intensity's uncertainties from GPS uncertainties}
+In this section, we aim to provide an estimation of the calibration source's uncertainties, due to the error on the source's position and orientation. It is an important task, as it will give an upper limit to the accuracy of the self-calibration process. For that, we consider ideal conditions, along with simplifying assumptions: our goal is not to compute accurate uncertainty, it is to find the order of magnitude of the limitation due to GPS inaccuracy.
+
+\subsection{Physical context and coordinates system}
+First, we need to define carefully our physical system, with proper Cartesian coordinates. We forget about the tower for this section, and we consider QUBIC and the calibration source to be on the same horizontal plane. It is only for the sake of simplicity, as it does not change anything except simplifying the computations and the visualisation. The calibration source will emit a beam toward the QUBIC instrument, this beam will be perfectly aligned with QUBIC's line-of-sight. We define the x-axis as this line-of-sight (beam axis). The z-axis is the vertical axis, oriented upwards. The y-axis is the horizontal axis, orthogonal to x and z. In this frame, the azimuth angle $\phi$ is a rotation around the z-axis, causing the beam to sweep left or right, modifying the y coordinate. The elevation angle $\theta$ is a rotation around the y-axis, causing the beam to sweep up or down, modifying the z coordinate. A drawing of this coordinate system is shown in Figure~\ref{fig:uncertainty_computation_figure}.
+\rmk{It will make more sense to inverse theta and phi to match the usual spherical coordinates. Also, it can make more sense to put the frame on the calibration source rather than on QUBIC, so that the angles are exactly roll and yaw (even if it is equivalent).}
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{Figures/Uncertainty_computations_figure.png}
+    \caption{Drawing to show the position of the calibration source and of QUBIC for the uncertainties computations. The x-axis is the line-of-sight, the y-axis is horizontal, and the z-axis is vertical.}
+    \label{fig:uncertainty_computation_figure}
+\end{figure}
+
+At initial position, as described in this introduction, the vector between the calibration source and QUBIC can be written as :
+
+\begin{equation}
+    \vec{v_{cal}} = (d_{cal}, 0, 0),
+\end{equation}
+
+where $d_{cal}$ is the distance between the calibration source and QUBIC. As said in the Section~\ref{cal tower}, the calibration source will be placed at 48.6 m height, the distance on the ground between the tower and QUBIC is 38.44 m while the height of QUBIC from the ground is approximatively 4 m. By simple trigonometry, we can set that $d_{cal}= 58.88$ m from these values.
+
+\subsection{Uncertainties from GPS data}
+In a previous Section (~\ref{Section: PS analysis}), we presented an analysis of the power spectrum of the GPS data, for different antenna configurations. We want to use this information on the noise to compute the error on the GPS data, and by extension on the calibration source position and orientation. To do this, we use the noise model \ref{eq: noise model} as before. To compute the error on the data, we have to integrate the power spectra over all the frequency range, where $f_{max}$ is given by the sampling rate and $f_{min}$ is as close as possible to 0 :
+
+\begin{equation}
+    \sigma^2 = \int^{f_{max}}_{f_{min}} P(f) df.
+\end{equation}
+
+In the following, we consider three antenna configurations : one optimistic, where the distance between antennas is the higher (too high to ensure rigidity in real case), one realistic, where the distance is high enough to guaranty rigid and with the lowest noise possible, and one pessimistic, where the antennas are very close to each other, leading to higher noise in GPS data. We will use the notation of the GPS data to describe the coordinates: x, y, z, $\theta$ and $\phi$ are called respectively rpN, rpE, rpD, roll and yaw. The information on the error of the GPS data for the three configurations is shown in the Table~\ref{tab: data error}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Error on GPS data}
+    \label{tab: data error}
+    \begin{tabular}{|p{4cm}||p{2cm}|p{2cm}|p{2cm}|}
+        \hline
+        \multicolumn{4}{|c|}{Error on GPS data}                           \\
+        \hline
+        Configuration              & Optimistic & Realistic & Pessimistic \\
+        \hline
+        Distance Antennas (m)      & 4.2        & 2.4       & 0.6       \\
+        \hline
+        rpN error (mm)             & 3.002      & 4.686     & 5.300       \\
+        rpE error (mm)             & 1.786      & 2.573     & 5.512       \\
+        rpD error (mm)             & 2.131      & 3.657     & 2.845       \\
+        roll error ($1e^{-3}$ deg) & 0.600      & 0.999     & 4.320       \\
+        yaw  error ($1e^{-3}$ deg) & 0.815      & 2.294     & 4.167       \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsection{Calibration source beam}
+The detailed characteristics of the calibration source have been discussed in the Section~\ref{section: calsource characteristics}. For this work, we use some simplifying hypothesis : we consider that the calibration source's beam is perfectly Gaussian (which is a reasonable assumption at long distance, where the source can be considered as a point source), it emits at 150 GHz, with a Full Width at Half Maximum (FHWM) of 13°.
+
+The intensity of a Gaussian beam follows this formula :
+
+\begin{equation}
+    I(r, x) = I_0 (\frac{w_0}{w(r)})^2 exp(-\frac{2x^2}{w^2(r)}),
+\end{equation}
+
+where r is the radial distance from the centre (m), x is the distance from the beam waist (m), $w_0$ is the beam waist radius (m) and $I_0$ is the peak intensity at the beam waist ($W/m^2$). The beam waist radius can be computed from :
+
+\begin{equation}
+    w_0 = \frac{2 \sqrt{2 \ln2} \lambda}{\pi FWHM}.
+\end{equation}
+
+Also, $w_R$, the Rayleigh range, is defined as :
+
+\begin{equation}
+    z_R = \frac{\pi w_0^2}{c},
+\end{equation}
+
+while $w(x)$ is the beam radius at distance x, given by:
+
+\begin{equation}
+    w(x) = w_0 \sqrt{1 + (\frac{x}{z_R})^2}.
+\end{equation}
+
+\subsection{Beam amplitude uncertainty}
+We can divide the uncertainties in two categories : uncertainties on position, $\delta_x$, $\delta_y$ and $\delta_z$, and on orientation, namely $\delta_{az}$ and $\delta_{el}$. To estimate the uncertainty on the amplitude of the calibration source beam, we use a Monte-Carlo method: we generate errors on position and orientation according to the noise computes previously. We then propagate these errors to the intensity of the Gaussian beam, to see the modification induces by them.
+
+\subsubsection{Correlated noise simulation}
+To simulate the noise, we have to use the noise model\ref{eq: noise model}, with the parameters fitted in section\ref{Section: PS analysis}. Additionally, we want to take into account the correlation between the different GPS data. We describe here the method used to simulate the noise. \\
+First, we generate white noise for each GPS data, with a standard deviation of 1. Then, we apply a Fourier transform to these data using Fast Fourier Transform from NumPy\footnote{\url{https://numpy.org/doc/stable/reference/routines.fft.html}}, to work in the frequency domain. \\
+Then, we build the target power spectrum density (PSD) for the noise model\ref{eq: noise model}, using the parameters value fitted for each of the three configurations (optimistic, realistic and pessimistic). After that, we need to normalise this PSD according to the standard deviation measured on the GPS data for each configuration, resumed in Table\ref{tab: data error}. We compute the scale factor from the ratio between the standard deviation measured and the standard deviation of the simulated noise. We then multiply the target PSD by this scale factor.
+We now have to impose the spectral shape and the correlation between the GPS data. We use the matrix D, encoding the spectral amplitude for each mode, defined as :
+
+\begin{equation}
+    D(f) = 
+    \begin{pmatrix}
+        \sqrt{S_{rpN}(f)}   & 0                   & 0                   & 0                     & 0                   \\
+        0                   & \sqrt{S_{rpE}(f)}   & 0                   & 0                     & 0                   \\
+        0                   & 0                   & \sqrt{S_{rpD}(f)}   & 0                     & 0                   \\
+        0                   & 0                   & 0                   & \sqrt{S_{roll}(f)}    & 0                   \\
+        0                   & 0                   & 0                   & 0                     & \sqrt{S_{yaw}(f)}   \\
+    \end{pmatrix}
+\end{equation}
+
+where $S_{data}(f)$ is the target PSD for the given GPS data. By using the correlation matrix C, we can compute the cross-spectral density matrix S from:
+
+\begin{equation}
+    S(f) = D(f) \cdot C \cdot D(f).
+\end{equation}
+
+We perform an eigendecomposition on this matrix :
+
+\begin{equation}
+    S(f) = V \cdot \Lambda \cdot V^T,
+\end{equation}
+
+where V is the matrix of eigenvectors and $\Lambda$ is the diagonal matrix of eigenvalues. We can then compute the square root of S to obtain a frequency-domain mixing matrix M :
+
+\begin{equation}
+    M(f) = V \cdot \sqrt{\Lambda} \cdot V^T.
+\end{equation}
+
+Applying M to the white noise spectrum W enforces that the simulated noise has the desired PSD and correlation properties. We then apply the inverse Fourier transform to return to the time domain. \\
+This procedure leads to simulated GPS data with the desired noise characteristics, according to the work presented in Section\ref{Section: PS analysis}. An example of this simulated noise is shown in Figure~\ref{fig:simulated_correlated_noise}. Looking at the plots on top, we can confirm that the standard deviation of the simulated data is consistent with the one presented in the Table\ref{tab: data error}. The bottoms plots show the marginal distribution of the simulated noise. We can see that they are centred on 0, with a Gaussian shape, as expected from the central limit theorem.
+
+\begin{figure}[!htbp] 
+    \centering
+
+    % --- First plot ---
+    \begin{minipage}{\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Figures/simulated_correlated_noise.png}
+        \caption*{(a) Example of simulated GPS data with correlated noise, 
+        for the pessimistic, the realistic and the pessimistic configurations. 
+        The amplitude of the noise is in millimetres for the position data 
+        and in $10^{-3}$ degrees for the angles. These noises are simulated over one million time sample, with a sampling rate of 8 Hz, same as the real GPS.}
+    \end{minipage}
+
+    \vspace{0.5cm}
+
+    % --- Second plot ---
+    \begin{minipage}{\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Figures/simulated_correlated_noise_distribution.png}
+        \caption*{(b) Marginal distributions of the simulated GPS data with correlated noise, 
+        for the pessimistic, the realistic and the pessimistic configurations.}
+    \end{minipage}
+
+    \caption{Simulated GPS data with correlated noise. 
+    (a) Time series of simulated signals. 
+    (b) Corresponding marginal distributions.}
+    \label{fig:simulated_correlated_noise}
+\end{figure}
+
+Additionally, we want to ensure that the simulated data have the same correlation as the real data. For that, we can compare the difference between the correlation matrix computed from real data and the one computed from simulated data. The result is shown in Figure\ref{fig:diff_corr_matrix}. 
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{Figures/difference_correlation_matrix.png}
+    \caption{Difference element-by-element between the correlation matrix computed from real data and the one computed from simulated data for the three configurations.}
+    \label{fig:diff_corr_matrix}
+\end{figure}
+
+We observe that the difference between the correlation matrices is of the order of the percent for the three configurations, except for the pessimistic configuration where a difference of 8$\%$ is observed for the correlation between roll and rpN. This difference can be explained by the poor quality of the data for this case, leading to unexpected statistical effects. The other difference remains of the order of one or two percent. This plot shows that our simulated noise conserves the similar correlation properties than the GPS data. The next step will then to use this simulated noise to estimate the uncertainty on the calibration source beam's amplitude using a Monte-Carlo.
+
+\subsubsection{Estimation of the uncertainty on the Calibration Source's beam from the GPS noise}
+
+To estimate the uncertainty on the amplitude of the calibration source beam, we use a Monte-Carlo method: the errors on position and orientation of the calibration source are computed from the noise generated in the previous chapter, we then propagate these errors to the intensity of the Gaussian beam, to see the modification induced by them. 
+First, we can start by propagating the uncertainties on the orientation of the calibration source. For that, we need to compute the rotation matrices. The rotation matrix for azimuth (rotation around z) and the rotation matrix for elevation (rotation around y), are written as :
+
+\begin{equation}
+    R_{az} =
+    \begin{bmatrix}
+        \cos\delta_{az} & -\sin\delta_{az} & 0 \\
+        \sin\delta_{az} &  \cos\delta_{az} & 0 \\
+        0               &  0               & 1
+    \end{bmatrix},
+    \quad
+    R_{el} =
+    \begin{bmatrix}
+        \cos\delta_{el}  & 0 & \sin\delta_{el} \\
+        0                & 1 & 0               \\
+        -\sin\delta_{el} & 0 & \cos\delta_{el}
+    \end{bmatrix}.
+\end{equation}
+
+Now that we have defined these rotation matrices, we can compute the orientation's uncertainties on the calibration source vector $\vec{v_{cal}}$ by matrix product: $R_{az} \cdot R_{el} \cdot \vec{v_{cal}}$.
+
+To propagate the position's uncertainties, we just have to add them to the calibration source vector : $\vec{v_{cal}} + (\delta_x, \delta_y, \delta_z)$. 
+
+After these operations, the uncertainties on the calibration source vector are given by :
+
+\begin{equation}
+    \vec{\delta_{cal}} =
+    \begin{bmatrix}
+        d_{cal} \cos\delta_{az}\cos\delta_{el} + \delta_x \\
+        d_{cal} \sin\delta_{az}\cos\delta_{el} + \delta_y \\
+        - d_{cal} \sin\delta_{el} + \delta_z              \\
+    \end{bmatrix}.
+\end{equation}
+
+Finally, to propagate these uncertainties on the Gaussian beam's intensity, we have to compute the uncertainty on the distance between the source and QUBIC and on the radial distance. The distance between QUBIC and the source is then given by $\vec{\delta_{cal}} \cdot \vec{e_x}$, while the radial distance is computed with $\sqrt{(\vec{\delta_{cal}}\cdot\vec{e_y})^2 + (\vec{\delta_{cal}}\cdot\vec{e_Z})^2}$. By filling these values in the Gaussian beam intensity formula, we have the intensity of the beam with the uncertainties generated by Monte-Carlo on the source position and orientation. \\
+To avoid complicated unit comparison, we normalise the beam intensity by dividing by the intensity at QUBIC at the initial position. The result of the Monte-Carlo is shown in Figure~\ref{fig:MC Amplitude Distrib}.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{Figures/MC_amplitude_distrib.png}
+    \caption{Plot of the normalised amplitude of the Calibration Source beam for the three different configurations considered (Optimistic, realistic, and pessimistic). These distributions are centred on 0, with a standard deviation increasing with the distance between the GPS antennas (meaning, with the noise in the GPS data). As expected, the optimistic is the best one, but the realistic and the pessimistic end to be close to each other.}
+    \label{fig:MC Amplitude Distrib}
+\end{figure}
+
+We can see that the distributions are centred on 0, as it should. Also, the standard deviation is very small, of the order of $1\times10^{-4}$. This means that the uncertainties on the position and orientation of the calibration source due to noise in GPS data will be very small. Still, it will be very small, and perhaps negligible. We have to study if this error on the calibration source amplitude is enough to perform an efficient self-calibration.
+
+To summarise the results obtained in this chapter, we started by an analysis of the noise in the GPS data: at first by looking at the standard deviation, then with a more detailed study on the noise power spectra, focusing on how the distance between the antennas affects the noise in data. We then wanted to compute the impact of this noise on the self-calibration, by looking at the uncertainties on the position and orientation of the calibration source, coming from the GPS noise. For that, we simulated noise following the power spectrum properties and the correlation of the real one, and propagated it on the position and orientation by Monte-Carlo. From these, we deduced the uncertainty on the beam's amplitude of the calibration source. This leads to an upper limit of self-calibration method for the QUBIC Instrument, based on the noise of the GPS. 
+
+\section{Data on Site} \label{section: data on site}
+\rmk{Not yet.}
+
+\begin{thebibliography}{9}
+    \bibitem{paper_selfcal_1}
+    T. J. Cornwell and P. N. Wilkinson, “A new method for making maps with unstable radio interferometers,” MNRAS, vol. 196, pp. 1067–1086, Sep 1981.
+
+    \bibitem{paper_selfcal_2}
+    T. J. Pearson and A. C. S. Readhead, ``Image formation by self-calibration in radio astronomy'',  Annual review of astronomy and astrophysics. Volume 22. Palo Alto, CA, Annual Reviews, Inc., 1984, p. 97-130.
+
+    \bibitem{selfcal_overview}
+    T. Cornwell and E. B. Fomalont, “Self-Calibration,” in Synthesis Imaging in Radio Astronomy II (G. B. Taylor, C. L. Carilli, and R. A. Perley, eds.), vol. 180 of Astronomical Society of the Pacific Conference Series, p. 187, Jan 1999.
+
+    \bibitem{thesislouise}
+    L. Mousset, ``Exploring the primordial Universe, inflation and primordial gravitational waves with QUBIC, the Q and U Bolometric Interferometer for Cosmology'', PhD Thesis, 2021.
+
+    \bibitem{thesismarie}
+    M. A. Bigot-Sazy, ``Mesure des anisotropies de polarisation du fond diffus cosmologique avec l'interferomètre bolométrique QUBIC'', PhD Thesis, 2013.
+ 
+    \bibitem{thesisromain}
+    R. Charlassier, “Mesure des anisotropies de polarisation du fond diffus cosmologique avec
+    l’interféromètre bolomètrique QUBIC,” Paris 7, 2010, 1 vol. (244 p.) (Cit. on pp. 13, 34, 50).
+
+    \bibitem{paper_marie_selfcal}
+    M.-A. Bigot-Sazy et al., ``Self-Calibration: an efficient method to control systematic effects in Bolometric Interferometry'', A\&A, vol. 550, p. A59, Feb 2013.
+
+    \bibitem{qubic1}
+    J.-Ch. Hamilton et al., ``QUBIC I: Overview and Science Program'', 2021.
+
+    \bibitem{qubic3}
+    S.A. Torchinsky et al., ``QUBIC III: Laboratory Characterization'', 2022.
+
+    \bibitem{dgps_accuracy}
+    C. Blesing et al., ``Accuracy evaluation of a Low-Cost Differential Global Positioning System for mobile robotics'', 2023.
+
+    \bibitem{gps_accuracy}
+    \url{https://www.gps.gov/systems/gps/performance/accuracy/}
+
+    \bibitem{gps_frequencies}
+    \url{https://gssc.esa.int/navipedia/index.php/GNSS_signal}
+
+    \bibitem{gps_model}
+    \url{https://www.ardusimple.com/product/simplertk2b-starter-kit-mr-ip65/}
+
+\end{thebibliography}
+
+\end{document}

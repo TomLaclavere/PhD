@@ -1,0 +1,2 @@
+{"rule":"OXFORD_SPELLING_Z_NOT_S","sentence":"^\\Q(right) Plot summarising all the distances between the three antennas used during the experiment.\\E$"}
+{"rule":"OXFORD_SPELLING_Z_NOT_S","sentence":"^\\QNoise Analysis.\\E$"}
