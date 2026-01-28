@@ -5,6 +5,7 @@
 \usepackage{graphicx}
 \usepackage[hyphens]{url}
 \Urlmuskip=0mu plus 1mu
+\usepackage{subfiles}
 
 % caption/subcaption: load caption before subcaption
 \usepackage{caption}
@@ -32,13 +33,12 @@
 
 \begin{document}
 
-\frontmatter
+
 \maketitle
 \clearpage
 \thispagestyle{empty}
 \tableofcontents
 
-\mainmatter
 
 \part{Cosmological Context}
 
@@ -68,7 +68,7 @@ From Dodelson
 \part{QUBIC instrument: the first bolometric interferometer for cosmology}
 
 \chapter{Bolometric Interferometry and QUBIC}
-
+ 
 \section{Classical telescope for CMB physics: Imager}
 
 \section{Innovative approach: Bolometric Interferometer}
@@ -83,38 +83,38 @@ From Dodelson
 
 \section{Spectral Imaging}
 
-\chapter{GPS for Self-Calibration}
-% See GPS chapter.
+\subfile{GPS Calsource Chapter/main.tex}
+
+\chapter{Qubicsoft development}
 
 \part{Map-Making}
 
-\chapter{Forward Map-Making}
-
-\section{Frequency Map-Making}
+\chapter{Frequency Map-Making}
 % See FMM paper.
 
-\section{Component Map-Making}
+\chapter{Component Map-Making}
 % See CMM paper.
 
-\section{Realistic TOD Simulation}
+\chapter{Realistic TOD Simulation}
 % Chapter order to be reviewed.
 
-\subsection{How to define Realistic TOD}
+\section{How to define Realistic TOD}
 
-\subsection{Convolution approximation}
+\section{Convolution approximation}
 
-\subsection{TOD convergence problem: Pixelisation vs Number of Frequency}
+\section{TOD convergence problem: Pixelisation vs Number of Frequency}
 
-\subsection{\texorpdfstring{Effect of $N_{\text{sub,TOD}} = N_{\text{sub,rec}}$}{Effect of Nsub\_TOD = Nsub\_rec}}
+\section{\texorpdfstring{Effect of $N_{\text{sub,TOD}} = N_{\text{sub,rec}}$}{Effect of Nsub\_TOD = Nsub\_rec}}
 
-\subsection{External data addition effect (Planck)}
+\section{External data addition effect (Planck)}
 
-\subsection{Simulation hyperparameters optimisation: $N_{\text{sub}}$, $N_{\text{pointings}}$, $N_{\text{iter}}$, $N_{\text{loop}}$ (CMM), \dots}
+\section{Simulation hyperparameters optimisation: $N_{\text{sub}}$, $N_{\text{pointings}}$, $N_{\text{iter}}$, $N_{\text{loop}}$ (CMM), \dots}
 
-\chapter{Inverse Map-Making}
 
-\section{Neural Network Map-Making}
+\chapter{Neural-Network approximation of the Inverse Map-Making}
 % Wait NNMM paper.
+
+\part{Components separation and Cosmological parameters' estimation.}
 
 \chapter{Atmospheric Mitigation}
 % Wait Atm paper.
