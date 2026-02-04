@@ -1,43 +1,53 @@
-\documentclass{book}
+\documentclass[twoside, 12pt]{book}
 
-% Core packages
-\usepackage{amsmath}
-\usepackage{graphicx}
-\usepackage[hyphens]{url}
-\Urlmuskip=0mu plus 1mu
-\usepackage{subfiles} 
+% Import packages and utils
+\input{packages.tex}
+\input{utils.tex}
 
-% caption/subcaption: load caption before subcaption
-\usepackage{caption}
-\usepackage[labelformat=simple]{subcaption}
+% Import Figures for each chapter
+\graphicspath{{Figures/}{Chapters/GPS_Calsource/Figures/}}
 
-\usepackage{multirow}
-\usepackage{xcolor}
-\usepackage{titlesec}
-\usepackage{cite}
+% Import Bibliography for each chapter
+% Add chapter-local bibliographies when building the full thesis only.
+% When compiling a chapter directly, the relative path below would not exist
+% from the chapter directory, so guard with \IfFileExists to avoid adding
+% an invalid path to the .bcf (which prevents biber from running).
+\IfFileExists{Chapters/GPS_Calsource/refs.bib}{\addbibresource{Chapters/GPS_Calsource/refs.bib}}{}
 
-\emergencystretch=1em 
-
-% hyperref should be loaded last (except packages that explicitly must be after it)
-\usepackage[hidelinks]{hyperref}
-
-% small helper command: use one argument
-\newcommand{\rmk}[1]{\textcolor{blue}{#1}}
-
-\setcounter{secnumdepth}{4}
-\setcounter{tocdepth}{4}
-
-\title{Thesis}
-\author{Tom Laclavère}
-\date{\today} 
 
 \begin{document}
 
+\dominitoc
 
-\maketitle
-\clearpage
+\input{title.tex}
+\newpage
+
+\input{Chapters/abstract.tex}
+\newpage
+
+\newpage
 \thispagestyle{empty}
-\tableofcontents
+\mbox{}
+\newpage
+
+\input{Chapters/remerciements.tex}
+\newpage
+
+% \tableofcontents
+% \addstarredchapter{Table of contents}
+
+% \addstarredchapter{List of figures}
+% \listoffigures
+
+% \addstarredchapter{List of tables}
+% \listoftables
+% %%%\pagestyle{fancy}
+% %%%\fancyhead{}
+
+
+
+% \input{Chapters/intro.tex}
+% \addstarredchapter{Introduction}
 
 
 \part{Cosmological Context}
@@ -83,7 +93,7 @@ From Dodelson
 
 \section{Spectral Imaging}
 
-\subfile{Chapters/GPS Calsource Chapter/main.tex}
+\subfile{Chapters/GPS_Calsource/main.tex}
 
 \chapter{Qubicsoft development}
 
@@ -157,9 +167,9 @@ From Dodelson
 
 \subsection{Exploring exotic models}
 
+% Bibliography
 \backmatter
-\begin{thebibliography}{9}
-    % add bib items here
-\end{thebibliography}
+\printbibliography
+
 
 \end{document}

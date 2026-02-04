@@ -2,3 +2,5 @@
 *.synctex.gz
 *.vscode
 *.bbl
+output/*
+!output/.gitkeep

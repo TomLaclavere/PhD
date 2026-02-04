@@ -1,0 +1,7 @@
+$out_dir = '/home/laclavere/Thesis/PhD/Thesis/output';
+$aux_dir = '/home/laclavere/Thesis/PhD/Thesis/output';
+$pdf_mode = 1;
+$interaction = 'nonstopmode';
+$shell_escape = 1;
+
+$clean_ext = 'aux bbl bcf blg fls log run.xml synctex.gz toc out lof lot';
