@@ -4,4 +4,7 @@ $pdf_mode = 1;
 $interaction = 'nonstopmode';
 $shell_escape = 1;
 
+# Ensure biber can find .bib files in chapter subdirectories
+$ENV{'BIBINPUTS'} = '.:/home/laclavere/Thesis/PhD/Thesis:/home/laclavere/Thesis/PhD/Thesis/Chapters/GPS_Calsource:';
+
 $clean_ext = 'aux bbl bcf blg fls log run.xml synctex.gz toc out lof lot';
