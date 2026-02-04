@@ -1,9 +1,6 @@
 \documentclass[../../main.tex]{subfiles}
+
 \graphicspath{{Figures/}}
-
-
-\IfFileExists{refs.bib}{\addbibresource{refs.bib}}{}
-
 
 \begin{document}
 \chapter{Calibration Source \& GPS}
@@ -542,6 +539,7 @@ This procedure leads to simulated GPS data with the desired noise characteristic
         (a) Time series of simulated signals.
         (b) Corresponding marginal distributions.}
     \label{fig:simulated_correlated_noise}
+
 \end{figure}
 
 Additionally, we want to ensure that the simulated data have the same correlation as the real data. For that, we can compare the difference between the correlation matrix computed from real data and the one computed from simulated data. The result is shown in Figure\ref{fig:diff_corr_matrix}.
@@ -608,8 +606,10 @@ To summarise the results obtained in this chapter, we started by an analysis of 
 \section{Data on Site} \label{section: data on site}
 \rmk{Not yet.}
 
-% \IfSubfileClassLoaded{
-%     \printbibliography
-% }{}
+\ifdefined\documentclass
+    % Standalone compilation: print bibliography
+    \printbibliography
+    \addstarredchapter{Bibliography}
+\fi
 
 \end{document}

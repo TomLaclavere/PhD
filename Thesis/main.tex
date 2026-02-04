@@ -8,12 +8,7 @@
 \graphicspath{{Figures/}{Chapters/GPS_Calsource/Figures/}}
 
 % Import Bibliography for each chapter
-% Add chapter-local bibliographies when building the full thesis only.
-% When compiling a chapter directly, the relative path below would not exist
-% from the chapter directory, so guard with \IfFileExists to avoid adding
-% an invalid path to the .bcf (which prevents biber from running).
-\IfFileExists{Chapters/GPS_Calsource/refs.bib}{\addbibresource{Chapters/GPS_Calsource/refs.bib}}{}
-
+\addbibresource{Chapters/GPS_Calsource/biblio.bib}
 
 \begin{document}
 
@@ -33,18 +28,14 @@
 \input{Chapters/remerciements.tex}
 \newpage
 
-% \tableofcontents
-% \addstarredchapter{Table of contents}
+\tableofcontents
+\addstarredchapter{Table of contents}
 
 % \addstarredchapter{List of figures}
 % \listoffigures
 
 % \addstarredchapter{List of tables}
 % \listoftables
-% %%%\pagestyle{fancy}
-% %%%\fancyhead{}
-
-
 
 % \input{Chapters/intro.tex}
 % \addstarredchapter{Introduction}
@@ -168,8 +159,7 @@ From Dodelson
 \subsection{Exploring exotic models}
 
 % Bibliography
-\backmatter
 \printbibliography
-
+\addstarredpart{Bibliography}
 
 \end{document}
