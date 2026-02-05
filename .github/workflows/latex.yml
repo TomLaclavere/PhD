@@ -41,38 +41,55 @@ jobs:
             echo "▶ Building $chapter"
             cd "$(dirname $f)"
             latexmk -pdf -interaction=nonstopmode -outdir=../../output/chapters main.tex
-            cd ../../../..
+            cd ../../..
           done
 
-        # Generate index.html
+      # Generate index.html
       - name: Generate index.html
         run: |
           # Start HTML
           cat > Thesis/output/index.html <<'EOF'
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-            <meta charset="UTF-8">
-            <title>Thesis PDFs</title>
-            </head>
-            <body>
-            <h1>Thesis PDFs</h1>
-            <ul>
-                <li><a href="main.pdf">Full Thesis</a></li>
-            EOF
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+          <meta charset="UTF-8">
+          <title>Thesis PDFs</title>
+          <style>
+          body { font-family: sans-serif; margin: 40px; }
+          h1 { color: #333; }
+          ul { list-style-type: none; padding: 0; }
+          li { margin: 10px 0; }
+          a { 
+              text-decoration: none; 
+              color: #0366d6;
+              padding: 8px 12px;
+              border: 1px solid #e1e4e8;
+              border-radius: 6px;
+              display: inline-block;
+              transition: background-color 0.2s;
+          }
+          a:hover { background-color: #f6f8fa; }
+          </style>
+          </head>
+          <body>
+          <h1>Thesis PDFs</h1>
+          <ul>
+          <li><a href="main.pdf">Full Thesis (main.pdf)</a></li>
+          EOF
 
-                    # Add each chapter PDF
-                    for f in Thesis/output/chapters/*.pdf; do
-                        fname=$(basename "$f")
-                        echo "    <li><a href=\"chapters/$fname\">$fname</a></li>" >> Thesis/output/index.html
-                    done
+          # Add each chapter PDF
+          for f in Thesis/output/chapters/*.pdf; do
+            fname=$(basename "$f")
+            chapter_name="${fname%.pdf}"  # Remove .pdf extension
+            echo "  <li><a href=\"chapters/$fname\">$chapter_name</a></li>" >> Thesis/output/index.html
+          done
 
-                    # Close HTML
-                    cat >> Thesis/output/index.html <<'EOF'
-            </ul>
-            </body>
-            </html>
-            EOF
+          # Close HTML
+          cat >> Thesis/output/index.html <<'EOF'
+          </ul>
+          </body>
+          </html>
+          EOF
 
       # Deploy to GitHub Pages
       - name: Deploy PDFs to GitHub Pages
