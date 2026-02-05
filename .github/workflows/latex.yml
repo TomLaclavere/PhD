@@ -16,14 +16,9 @@ jobs:
 
       # Install TeX Live + Biber + latexmk
       - name: Install TeX Live
-        uses: xu-cheng/latex-action@v3
-        with:
-          root_file: Thesis/main.tex  
-          extra_system_packages: >
-            texlive-latex-extra
-            texlive-bibtex-extra
-            biber
-            latexmk
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y texlive-full biber latexmk
 
       # Compile full thesis
       - name: Compile full thesis
