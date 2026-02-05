@@ -1,0 +1,109 @@
+name: Build Thesis
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install TeX Live (latexmk + biber)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            texlive-latex-recommended \
+            texlive-latex-extra \
+            texlive-fonts-recommended \
+            biber \
+            latexmk \
+            gettext   # ← needed for envsubst
+
+      - name: Compile full thesis
+        run: |
+          mkdir -p Thesis/output
+          if [ -f Thesis/main.tex ]; then
+            pushd Thesis
+            latexmk -pdf -interaction=nonstopmode -outdir=output main.tex
+            popd
+          else
+            echo "Thesis/main.tex not found — skipping full thesis build"
+          fi
+
+      - name: Compile chapters
+        run: |
+          mkdir -p Thesis/output/chapters
+          index=1
+          for f in Thesis/Chapters/*/main.tex Thesis/chapters/*/main.tex; do
+            [ -f "$f" ] || continue
+            chapter_dir=$(dirname "$f")
+            echo "▶ Building chapter in $chapter_dir (index $index)"
+            pushd "$chapter_dir"
+            latexmk -pdf -interaction=nonstopmode \
+              -outdir=../../output/chapters \
+              -jobname="chapter$index" main.tex
+            popd
+            index=$((index + 1))
+          done
+
+      - name: Generate index.html
+        run: |
+          # Metadata
+          REPO_NAME="${GITHUB_REPOSITORY#*/}"
+          CURRENT_DATE=$(date +"%Y-%m-%d")
+
+          chapter_count=$(ls Thesis/output/chapters/chapter*.pdf 2>/dev/null | wc -l)
+
+          if [ "$chapter_count" -eq 1 ]; then
+            chapter_text="chapter"
+          else
+            chapter_text="chapters"
+          fi
+
+          export REPO_NAME CURRENT_DATE chapter_count chapter_text
+
+          # Generate base HTML
+          envsubst < Thesis/output/index.html.in > Thesis/output/index.html
+
+          # Append chapter cards
+          index=1
+          for f in Thesis/output/chapters/chapter*.pdf; do
+            [ -f "$f" ] || continue
+            fname=$(basename "$f")
+            filesize=$(ls -lh "$f" | awk '{print $5}')
+
+            cat >> Thesis/output/index.html <<EOF
+
+            <!-- Chapter $index -->
+            <div class="pdf-card">
+              <div class="pdf-card-header">
+                <div class="pdf-icon"><i class="fas fa-file-alt"></i></div>
+                <div class="pdf-title">$REPO_NAME – Chapter $index</div>
+                <div class="pdf-description">Individual chapter</div>
+              </div>
+              <div class="pdf-card-body">
+                <div class="pdf-meta">
+                  <span>$filesize</span>
+                  <span>$fname</span>
+                </div>
+                <a href="chapters/$fname" class="download-btn">
+                  <i class="fas fa-download"></i> Download Chapter $index
+                </a>
+              </div>
+            </div>
+                EOF
+                            index=$((index + 1))
+                        done
+
+      - name: Deploy PDFs to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: Thesis/output
+          publish_branch: gh-pages
+          force_orphan: true
