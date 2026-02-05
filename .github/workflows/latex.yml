@@ -10,16 +10,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout repo
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Get repository name
       - name: Get repository name
         id: get_repo_name
-        run: echo "repo_name=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_OUTPUT
+        run: |
+          # GITHUB_REPOSITORY is set by GH Actions (owner/repo)
+          echo "repo_full=$GITHUB_REPOSITORY" >> $GITHUB_OUTPUT
+          # repo_name is the second field (repo)
+          repo_name=$(echo "$GITHUB_REPOSITORY" | awk -F'/' '{print $2}')
+          echo "repo_name=$repo_name" >> $GITHUB_OUTPUT
 
-      # Install TeX Live + Biber + latexmk
       - name: Install TeX Live
         run: |
           sudo apt-get update
@@ -30,37 +32,46 @@ jobs:
             biber \
             latexmk
 
-      # Compile full thesis
       - name: Compile full thesis
         run: |
           mkdir -p Thesis/output
-          cd Thesis
-          latexmk -pdf -interaction=nonstopmode -outdir=output main.tex
+          if [ -f Thesis/main.tex ]; then
+            pushd Thesis
+            latexmk -pdf -interaction=nonstopmode -outdir=output main.tex
+            popd
+          else
+            echo "Thesis/main.tex not found, skipping full thesis build"
+          fi
 
-      # Compile each chapter
       - name: Compile chapters
         run: |
           mkdir -p Thesis/output/chapters
           index=1
+          # adjust the pattern if your chapters directory is lowercase/uppercase
           for f in Thesis/Chapters/*/main.tex; do
-            chapter=$(basename $(dirname $f))
+            [ -f "$f" ] || continue
+            chapter_dir=$(dirname "$f")
+            chapter=$(basename "$chapter_dir")
             echo "▶ Building $chapter (Chapter $index)"
-            cd "$(dirname $f)"
+            pushd "$chapter_dir"
+            # write outputs to the centralized output/chapters dir; jobname to avoid collisions
             latexmk -pdf -interaction=nonstopmode -outdir=../../output/chapters -jobname="chapter$index" main.tex
-            cd ../../..
-            ((index++))
+            popd
+            index=$((index + 1))
           done
 
-      # Generate index.html
       - name: Generate index.html
         env:
           REPO_NAME: ${{ steps.get_repo_name.outputs.repo_name }}
+          REPO_FULL: ${{ steps.get_repo_name.outputs.repo_full }}
         run: |
-          # Get current date
+          set -euo pipefail
+
+          mkdir -p Thesis/output
           CURRENT_DATE=$(date '+%B %d, %Y')
-          
-          # Start HTML with modern design
-          cat > Thesis/output/index.html <<'EOF'
+
+          # Start HTML (unquoted heredoc so shell vars expand)
+          cat > Thesis/output/index.html <<EOF
             <!DOCTYPE html>
             <html lang="en">
             <head>
@@ -69,6 +80,7 @@ jobs:
                 <title>Thesis Repository - $REPO_NAME</title>
                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
                 <style>
+                    /* (style content kept identical to original) */
                     :root {
                         --primary-color: #2563eb;
                         --primary-dark: #1d4ed8;
@@ -83,13 +95,7 @@ jobs:
                         --radius: 12px;
                         --transition: all 0.3s ease;
                     }
-                    
-                    * {
-                        margin: 0;
-                        padding: 0;
-                        box-sizing: border-box;
-                    }
-                    
+                    * { margin:0; padding:0; box-sizing:border-box; }
                     body {
                         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
                         line-height: 1.6;
@@ -98,219 +104,48 @@ jobs:
                         padding: 20px;
                         min-height: 100vh;
                     }
-                    
-                    .container {
-                        max-width: 1200px;
-                        margin: 0 auto;
+                    .container { max-width: 1200px; margin: 0 auto; }
+                    header { text-align:center; padding:40px 0 30px; margin-bottom:40px; border-bottom:1px solid var(--border-color); }
+                    .logo { font-size:2.8rem; color:var(--primary-color); margin-bottom:15px; }
+                    h1 { font-size:2.5rem; color:var(--text-color); margin-bottom:10px; font-weight:700; }
+                    .subtitle { font-size:1.2rem; color:var(--text-light); margin-bottom:25px; }
+                    .stats { display:flex; justify-content:center; gap:30px; margin-top:25px; flex-wrap:wrap; }
+                    .stat-item { display:flex; align-items:center; gap:10px; padding:12px 20px; background:var(--card-background); border-radius:var(--radius); box-shadow:var(--shadow); }
+                    .stat-icon { font-size:1.3rem; color:var(--primary-color); }
+                    .pdf-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap:25px; margin-bottom:50px; }
+                    .pdf-card { background:var(--card-background); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); transition:var(--transition); border:1px solid var(--border-color); }
+                    .pdf-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); }
+                    .pdf-card-header { padding:25px 25px 15px; background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); color:white; }
+                    .pdf-card.full-thesis .pdf-card-header { background: linear-gradient(135deg, #7c3aed, #6d28d9); }
+                    .pdf-icon { font-size:2rem; margin-bottom:15px; }
+                    .pdf-title { font-size:1.4rem; font-weight:600; margin-bottom:5px; }
+                    .pdf-description { font-size:0.95rem; opacity:0.9; }
+                    .pdf-card-body { padding:20px 25px; }
+                    .pdf-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; font-size:0.9rem; color:var(--text-light); }
+                    .file-size { display:flex; align-items:center; gap:5px; }
+                    .download-btn { display:inline-flex; align-items:center; justify-content:center; gap:10px; width:100%; padding:14px; background:var(--primary-color); color:white; text-decoration:none; border-radius:8px; font-weight:600; transition:var(--transition); border:none; cursor:pointer; font-size:1rem; }
+                    .download-btn:hover { background:var(--primary-dark); transform: translateY(-2px); }
+                    .download-btn i { font-size:1.1rem; }
+                    footer { text-align:center; padding:30px 0; margin-top:50px; border-top:1px solid var(--border-color); color:var(--text-light); font-size:0.95rem; }
+                    .footer-links { display:flex; justify-content:center; gap:20px; margin-top:15px; }
+                    .footer-links a { color:var(--primary-color); text-decoration:none; transition:var(--transition); }
+                    .footer-links a:hover { text-decoration:underline; }
+                    @media (max-width:768px) {
+                        .pdf-grid { grid-template-columns:1fr; }
+                        h1 { font-size:2rem; }
+                        .stats { flex-direction:column; align-items:center; }
+                        .stat-item { width:100%; max-width:300px; }
                     }
-                    
-                    header {
-                        text-align: center;
-                        padding: 40px 0 30px;
-                        margin-bottom: 40px;
-                        border-bottom: 1px solid var(--border-color);
-                    }
-                    
-                    .logo {
-                        font-size: 2.8rem;
-                        color: var(--primary-color);
-                        margin-bottom: 15px;
-                    }
-                    
-                    h1 {
-                        font-size: 2.5rem;
-                        color: var(--text-color);
-                        margin-bottom: 10px;
-                        font-weight: 700;
-                    }
-                    
-                    .subtitle {
-                        font-size: 1.2rem;
-                        color: var(--text-light);
-                        margin-bottom: 25px;
-                    }
-                    
-                    .stats {
-                        display: flex;
-                        justify-content: center;
-                        gap: 30px;
-                        margin-top: 25px;
-                        flex-wrap: wrap;
-                    }
-                    
-                    .stat-item {
-                        display: flex;
-                        align-items: center;
-                        gap: 10px;
-                        padding: 12px 20px;
-                        background: var(--card-background);
-                        border-radius: var(--radius);
-                        box-shadow: var(--shadow);
-                    }
-                    
-                    .stat-icon {
-                        font-size: 1.3rem;
-                        color: var(--primary-color);
-                    }
-                    
-                    .pdf-grid {
-                        display: grid;
-                        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-                        gap: 25px;
-                        margin-bottom: 50px;
-                    }
-                    
-                    .pdf-card {
-                        background: var(--card-background);
-                        border-radius: var(--radius);
-                        overflow: hidden;
-                        box-shadow: var(--shadow);
-                        transition: var(--transition);
-                        border: 1px solid var(--border-color);
-                    }
-                    
-                    .pdf-card:hover {
-                        transform: translateY(-5px);
-                        box-shadow: var(--shadow-hover);
-                    }
-                    
-                    .pdf-card-header {
-                        padding: 25px 25px 15px;
-                        background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-                        color: white;
-                    }
-                    
-                    .pdf-card.full-thesis .pdf-card-header {
-                        background: linear-gradient(135deg, #7c3aed, #6d28d9);
-                    }
-                    
-                    .pdf-icon {
-                        font-size: 2rem;
-                        margin-bottom: 15px;
-                    }
-                    
-                    .pdf-title {
-                        font-size: 1.4rem;
-                        font-weight: 600;
-                        margin-bottom: 5px;
-                    }
-                    
-                    .pdf-description {
-                        font-size: 0.95rem;
-                        opacity: 0.9;
-                    }
-                    
-                    .pdf-card-body {
-                        padding: 20px 25px;
-                    }
-                    
-                    .pdf-meta {
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        margin-bottom: 20px;
-                        font-size: 0.9rem;
-                        color: var(--text-light);
-                    }
-                    
-                    .file-size {
-                        display: flex;
-                        align-items: center;
-                        gap: 5px;
-                    }
-                    
-                    .download-btn {
-                        display: inline-flex;
-                        align-items: center;
-                        justify-content: center;
-                        gap: 10px;
-                        width: 100%;
-                        padding: 14px;
-                        background: var(--primary-color);
-                        color: white;
-                        text-decoration: none;
-                        border-radius: 8px;
-                        font-weight: 600;
-                        transition: var(--transition);
-                        border: none;
-                        cursor: pointer;
-                        font-size: 1rem;
-                    }
-                    
-                    .download-btn:hover {
-                        background: var(--primary-dark);
-                        transform: translateY(-2px);
-                    }
-                    
-                    .download-btn i {
-                        font-size: 1.1rem;
-                    }
-                    
-                    footer {
-                        text-align: center;
-                        padding: 30px 0;
-                        margin-top: 50px;
-                        border-top: 1px solid var(--border-color);
-                        color: var(--text-light);
-                        font-size: 0.95rem;
-                    }
-                    
-                    .footer-links {
-                        display: flex;
-                        justify-content: center;
-                        gap: 20px;
-                        margin-top: 15px;
-                    }
-                    
-                    .footer-links a {
-                        color: var(--primary-color);
-                        text-decoration: none;
-                        transition: var(--transition);
-                    }
-                    
-                    .footer-links a:hover {
-                        text-decoration: underline;
-                    }
-                    
-                    @media (max-width: 768px) {
-                        .pdf-grid {
-                            grid-template-columns: 1fr;
-                        }
-                        
-                        h1 {
-                            font-size: 2rem;
-                        }
-                        
-                        .stats {
-                            flex-direction: column;
-                            align-items: center;
-                        }
-                        
-                        .stat-item {
-                            width: 100%;
-                            max-width: 300px;
-                        }
-                    }
-                    
-                    .badge {
-                        display: inline-block;
-                        padding: 4px 12px;
-                        background: rgba(255, 255, 255, 0.2);
-                        border-radius: 20px;
-                        font-size: 0.85rem;
-                        font-weight: 600;
-                    }
+                    .badge { display:inline-block; padding:4px 12px; background:rgba(255,255,255,0.2); border-radius:20px; font-size:0.85rem; font-weight:600; }
                 </style>
             </head>
             <body>
                 <div class="container">
                     <header>
-                        <div class="logo">
-                            <i class="fas fa-book-open"></i>
-                        </div>
+                        <div class="logo"><i class="fas fa-book-open"></i></div>
                         <h1>$REPO_NAME</h1>
                         <p class="subtitle">Thesis Repository & Documentation</p>
-                        
+
                         <div class="stats">
                             <div class="stat-item">
                                 <i class="fas fa-file-pdf stat-icon"></i>
@@ -335,114 +170,82 @@ jobs:
                             </div>
                         </div>
                     </header>
-                    
+
                     <main>
                         <h2 style="margin-bottom: 25px; font-size: 1.8rem; color: var(--text-color);">
                             <i class="fas fa-download" style="margin-right: 10px;"></i>Available Downloads
                         </h2>
-                        
+
                         <div class="pdf-grid">
                             <!-- Full Thesis Card -->
                             <div class="pdf-card full-thesis">
                                 <div class="pdf-card-header">
-                                    <div class="pdf-icon">
-                                        <i class="fas fa-book"></i>
-                                    </div>
+                                    <div class="pdf-icon"><i class="fas fa-book"></i></div>
                                     <div class="pdf-title">Complete Thesis</div>
                                     <div class="pdf-description">Full document with all chapters</div>
-                                    <div style="margin-top: 10px;">
-                                        <span class="badge">Complete Version</span>
-                                    </div>
+                                    <div style="margin-top: 10px;"><span class="badge">Complete Version</span></div>
                                 </div>
                                 <div class="pdf-card-body">
                                     <div class="pdf-meta">
-                                        <div class="file-size">
-                                            <i class="fas fa-hdd"></i>
-                                            <span id="full-thesis-size">PDF Document</span>
-                                        </div>
-                                        <div>
-                                            <i class="fas fa-calendar"></i>
-                                            <span>$CURRENT_DATE</span>
-                                        </div>
+                                        <div class="file-size"><i class="fas fa-hdd"></i><span id="full-thesis-size">PDF Document</span></div>
+                                        <div><i class="fas fa-calendar"></i><span>$CURRENT_DATE</span></div>
                                     </div>
-                                    <a href="main.pdf" class="download-btn">
-                                        <i class="fas fa-download"></i>
-                                        Download Full Thesis
-                                    </a>
+                                    <a href="main.pdf" class="download-btn"><i class="fas fa-download"></i>Download Full Thesis</a>
                                 </div>
                             </div>
             EOF
 
-                    # Add chapter cards
+                    # Add chapter cards (append)
                     chapter_count=0
                     index=1
                     for f in Thesis/output/chapters/chapter*.pdf; do
                         if [ -f "$f" ]; then
                         chapter_count=$((chapter_count + 1))
                         fname=$(basename "$f")
-                        
-                        # Get file size in a readable format
                         filesize=$(ls -lh "$f" | awk '{print $5}')
-                        
-                        cat >> Thesis/output/index.html <<EOF
-                            
+            cat >> Thesis/output/index.html <<EOF
+
                             <!-- Chapter $index Card -->
                             <div class="pdf-card">
                                 <div class="pdf-card-header">
-                                    <div class="pdf-icon">
-                                        <i class="fas fa-file-alt"></i>
-                                    </div>
+                                    <div class="pdf-icon"><i class="fas fa-file-alt"></i></div>
                                     <div class="pdf-title">$REPO_NAME - Chapter $index</div>
                                     <div class="pdf-description">Individual chapter document</div>
-                                    <div style="margin-top: 10px;">
-                                        <span class="badge">Chapter $index</span>
-                                    </div>
+                                    <div style="margin-top: 10px;"><span class="badge">Chapter $index</span></div>
                                 </div>
                                 <div class="pdf-card-body">
                                     <div class="pdf-meta">
-                                        <div class="file-size">
-                                            <i class="fas fa-hdd"></i>
-                                            <span>$filesize</span>
-                                        </div>
-                                        <div>
-                                            <i class="fas fa-file"></i>
-                                            <span>$fname</span>
-                                        </div>
+                                        <div class="file-size"><i class="fas fa-hdd"></i><span>$filesize</span></div>
+                                        <div><i class="fas fa-file"></i><span>$fname</span></div>
                                     </div>
-                                    <a href="chapters/$fname" class="download-btn">
-                                        <i class="fas fa-download"></i>
-                                        Download Chapter $index
-                                    </a>
+                                    <a href="chapters/$fname" class="download-btn"><i class="fas fa-download"></i>Download Chapter $index</a>
                                 </div>
                             </div>
             EOF
-                        ((index++))
+                        index=$((index + 1))
                         fi
                     done
 
-                    # Update chapter count in JavaScript
-                    cat >> Thesis/output/index.html <<EOF
+            cat >> Thesis/output/index.html <<EOF
                         </div>
                     </main>
-                    
+
                     <footer>
                         <p>Generated automatically by GitHub Actions</p>
                         <p>All documents are compiled from LaTeX source</p>
                         <div class="footer-links">
-                            <a href="https://github.com/${{ github.repository }}"><i class="fab fa-github"></i> View Source</a>
+                            <a href="https://github.com/$REPO_FULL"><i class="fab fa-github"></i> View Source</a>
                             <a href="https://pages.github.com"><i class="fas fa-globe"></i> GitHub Pages</a>
                             <a href="https://www.latex-project.org"><i class="fas fa-code"></i> LaTeX Project</a>
                         </div>
-                        <p style="margin-top: 20px; font-size: 0.85rem;">
-                            <i class="fas fa-sync-alt"></i> Updated on $CURRENT_DATE
-                        </p>
+                        <p style="margin-top: 20px; font-size: 0.85rem;"><i class="fas fa-sync-alt"></i> Updated on $CURRENT_DATE</p>
                     </footer>
                 </div>
-                
+
                 <script>
-                    // Update chapter count
-                    document.getElementById('chapter-count').textContent = '$chapter_count Chapter' + ($chapter_count !== 1 ? 's' : '');
-                    
+                    // Update chapter count (inserted from shell variable)
+                    document.getElementById('chapter-count').textContent = '${chapter_count} Chapter' + (${chapter_count} !== 1 ? 's' : '');
+
                     // Add file size for main thesis if available
                     fetch('main.pdf', { method: 'HEAD' })
                         .then(response => {
@@ -452,18 +255,15 @@ jobs:
                                 document.getElementById('full-thesis-size').textContent = sizeInMB + ' MB';
                             }
                         })
-                        .catch(() => {
-                            // If can't get size, keep default text
-                        });
-                    
-                    // Add smooth hover effects
+                        .catch(() => { /* keep default */ });
+
+                    // Hover and load animations
                     document.querySelectorAll('.pdf-card').forEach(card => {
                         card.addEventListener('mouseenter', function() {
                             this.style.transition = 'transform 0.3s ease, box-shadow 0.3s ease';
                         });
                     });
-                    
-                    // Add animation on page load
+
                     document.addEventListener('DOMContentLoaded', function() {
                         const cards = document.querySelectorAll('.pdf-card');
                         cards.forEach((card, index) => {
@@ -480,12 +280,3 @@ jobs:
             </body>
             </html>
             EOF
-
-      # Deploy to GitHub Pages
-      - name: Deploy PDFs to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: Thesis/output
-          publish_branch: gh-pages
-          force_orphan: true
