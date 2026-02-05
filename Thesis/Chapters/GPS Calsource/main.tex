@@ -606,10 +606,10 @@ To summarise the results obtained in this chapter, we started by an analysis of 
 \section{Data on Site} \label{section: data on site}
 \rmk{Not yet.}
 
-\ifdefined\documentclass
-    % Standalone compilation: print bibliography
-    \printbibliography
+\ifSubfilesClassLoaded{
+    % This code runs only if the subfile is compiled standalone
     \addstarredchapter{Bibliography}
-\fi
+    \printbibliography
+}{}
 
 \end{document}
