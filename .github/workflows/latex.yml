@@ -49,8 +49,7 @@ jobs:
       # Generate index.html
       - name: Generate index.html
         run: |
-          cat > Thesis/output/index.html <<EOL
-            <!DOCTYPE html>
+            echo '<!DOCTYPE html>
             <html lang="en">
             <head>
             <meta charset="UTF-8">
@@ -59,23 +58,22 @@ jobs:
             <body>
             <h1>Thesis PDFs</h1>
             <ul>
-                <li><a href="main.pdf">Full Thesis</a></li>
-            EOL
+                <li><a href="main.pdf">Full Thesis</a></li>' > Thesis/output/index.html
 
-                    for f in Thesis/Chapters/*/main.tex; do
-                        chapter=$(basename $(dirname "$f"))
-                        echo "▶ Building $chapter"
-                        latexmk -pdf -interaction=nonstopmode -outdir=Thesis/output/chapters "$f"
-                        done
+            for f in Thesis/output/chapters/*.pdf; do
+            fname=$(basename "$f")
+            echo "        <li><a href=\"chapters/$fname\">$fname</a></li>" >> Thesis/output/index.html
+            done
 
+            echo '      </ul>
+            </body>
+            </html>' >> Thesis/output/index.html
 
-                    echo "  </ul></body></html>" >> Thesis/output/index.html
-
-      # Deploy to GitHub Pages
-      - name: Deploy PDFs to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
-            publish_dir: Thesis/output
-            publish_branch: gh-pages
-            force_orphan: true
+            # Deploy to GitHub Pages
+            - name: Deploy PDFs to GitHub Pages
+                uses: peaceiris/actions-gh-pages@v4
+                with:
+                    github_token: ${{ secrets.GITHUB_TOKEN }}
+                    publish_dir: Thesis/output
+                    publish_branch: gh-pages
+                    force_orphan: true
