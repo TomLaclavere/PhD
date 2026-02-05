@@ -1,7 +1,8 @@
-name: LaTeX build
+name: Build Thesis
 
 on:
   push:
+    branches: [ main ]
   pull_request:
 
 jobs:
@@ -9,26 +10,63 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout repo
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install TeX Live + Biber
+      # Install TeX Live + Biber + latexmk
+      - name: Install TeX Live
         uses: xu-cheng/latex-action@v3
         with:
+          root_file: Thesis/main.tex  
           extra_system_packages: >
             texlive-latex-extra
             texlive-bibtex-extra
             biber
+            latexmk
 
-      - name: Build full thesis
-        working-directory: Thesis
+      # Compile full thesis
+      - name: Compile full thesis
         run: |
-          latexmk -pdf -interaction=nonstopmode main.tex
+          mkdir -p Thesis/output
+          latexmk -pdf -interaction=nonstopmode -outdir=Thesis/output Thesis/main.tex
 
-      - name: Build chapters independently
+      # Compile each chapter
+      - name: Compile chapters
         run: |
-          set -e
+          mkdir -p Thesis/output/chapters
           for f in Thesis/Chapters/*/main.tex; do
-            echo "▶ Building $f"
-            latexmk -pdf -interaction=nonstopmode "$f"
+            chapter=$(basename $(dirname $f))
+            echo "▶ Building $chapter"
+            latexmk -pdf -interaction=nonstopmode -outdir=Thesis/output/chapters "$f"
           done
+
+      # Generate index.html
+      - name: Generate index.html
+        run: |
+          cat > Thesis/output/index.html <<EOL
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+            <meta charset="UTF-8">
+            <title>Thesis PDFs</title>
+            </head>
+            <body>
+            <h1>Thesis PDFs</h1>
+            <ul>
+                <li><a href="main.pdf">Full Thesis</a></li>
+            EOL
+
+                    for f in Thesis/output/chapters/*.pdf; do
+                        fname=$(basename "$f")
+                        echo "    <li><a href=\"chapters/$fname\">$fname</a></li>" >> Thesis/output/index.html
+                    done
+
+                    echo "  </ul></body></html>" >> Thesis/output/index.html
+
+      # Deploy to GitHub Pages
+      - name: Deploy PDFs to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: Thesis/output
