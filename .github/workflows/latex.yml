@@ -44,9 +44,10 @@ jobs:
             cd ../../../..
           done
 
-      # Generate index.html
+        # Generate index.html
       - name: Generate index.html
         run: |
+          # Start HTML
           cat > Thesis/output/index.html <<'EOF'
             <!DOCTYPE html>
             <html lang="en">
@@ -60,14 +61,18 @@ jobs:
                 <li><a href="main.pdf">Full Thesis</a></li>
             EOF
 
+                    # Add each chapter PDF
                     for f in Thesis/output/chapters/*.pdf; do
                         fname=$(basename "$f")
                         echo "    <li><a href=\"chapters/$fname\">$fname</a></li>" >> Thesis/output/index.html
                     done
 
-                    echo '  </ul>
+                    # Close HTML
+                    cat >> Thesis/output/index.html <<'EOF'
+            </ul>
             </body>
-            </html>' >> Thesis/output/index.html
+            </html>
+            EOF
 
       # Deploy to GitHub Pages
       - name: Deploy PDFs to GitHub Pages
