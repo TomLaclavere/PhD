@@ -51,9 +51,10 @@ jobs:
             index=$((index + 1))
           done
 
+      # ⭐ NEW STEP ⭐
       - name: Generate index.html
         run: |
-          # Metadata
+          # -------- Metadata --------
           REPO_NAME="${GITHUB_REPOSITORY#*/}"
           CURRENT_DATE=$(date +"%Y-%m-%d")
 
@@ -67,10 +68,10 @@ jobs:
 
           export REPO_NAME CURRENT_DATE chapter_count chapter_text
 
-          # Generate base HTML
+          # -------- Generate base HTML --------
           envsubst < Thesis/output/index.html.in > Thesis/output/index.html
 
-          # Append chapter cards
+          # -------- Append chapter cards --------
           index=1
           for f in Thesis/output/chapters/chapter*.pdf; do
             [ -f "$f" ] || continue
@@ -96,9 +97,9 @@ jobs:
                 </a>
               </div>
             </div>
-                EOF
-                            index=$((index + 1))
-                        done
+EOF
+            index=$((index + 1))
+          done
 
       - name: Deploy PDFs to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
