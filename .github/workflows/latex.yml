@@ -14,12 +14,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Convert EOL to Unix
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y dos2unix
-          find Thesis -type f -name "*.tex" -exec dos2unix {} \;
-
       # Install TeX Live + Biber + latexmk
       - name: Install TeX Live
         run: |
@@ -35,18 +29,22 @@ jobs:
       # Compile full thesis
       - name: Compile full thesis
         run: |
-          mkdir -p Thesis/output
-          latexmk -pdf -interaction=nonstopmode -outdir=Thesis/output Thesis/main.tex
+            mkdir -p Thesis/output
+            cd Thesis
+            latexmk -pdf -interaction=nonstopmode -outdir=output main.tex
+
 
       # Compile each chapter
       - name: Compile chapters
         run: |
-          mkdir -p Thesis/output/chapters
-          for f in Thesis/Chapters/*/main.tex; do
+            mkdir -p Thesis/output/chapters
+            for f in Thesis/Chapters/*/main.tex; do
             chapter=$(basename $(dirname $f))
             echo "▶ Building $chapter"
-            latexmk -pdf -interaction=nonstopmode -outdir=Thesis/output/chapters "$f"
-          done
+            cd "$(dirname $f)"
+            latexmk -pdf -interaction=nonstopmode -outdir=../../output/chapters main.tex
+            cd ../../../..
+            done
 
       # Generate index.html
       - name: Generate index.html
