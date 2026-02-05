@@ -14,11 +14,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Convert EOL to Unix
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dos2unix
+          find Thesis -type f -name "*.tex" -exec dos2unix {} \;
+
       # Install TeX Live + Biber + latexmk
       - name: Install TeX Live
         run: |
           sudo apt-get update
-          sudo apt-get install -y texlive-full biber latexmk
+          sudo apt-get install -y \
+            texlive-latex-recommended \
+            texlive-latex-extra \
+            texlive-fonts-recommended \
+            biber \
+            latexmk
+
 
       # Compile full thesis
       - name: Compile full thesis
