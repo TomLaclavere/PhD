@@ -15,12 +15,10 @@ else
   chapter_text="chapters"
 fi
 
-export REPO_NAME CURRENT_DATE chapter_count chapter_text
+export REPO_NAME CURRENT_DATE chapter_count chapter_text GITHUB_REPOSITORY
 
-# Base HTML
-envsubst < "$OUTPUT_DIR/index.html.in" > "$OUTPUT_DIR/index.html"
-
-# Append chapters
+# Generate chapters HTML
+CHAPTERS_HTML=""
 index=1
 for f in "$CHAPTER_DIR"/chapter*.pdf; do
   [ -f "$f" ] || continue
@@ -28,26 +26,29 @@ for f in "$CHAPTER_DIR"/chapter*.pdf; do
   fname="$(basename "$f")"
   filesize="$(ls -lh "$f" | awk '{print $5}')"
 
-  cat >> "$OUTPUT_DIR/index.html" <<EOF
-
-<!-- Chapter $index -->
-<div class="pdf-card">
-  <div class="pdf-card-header">
-    <div class="pdf-icon"><i class="fas fa-file-alt"></i></div>
-    <div class="pdf-title">$REPO_NAME – Chapter $index</div>
-    <div class="pdf-description">Individual chapter</div>
+  CHAPTERS_HTML+="<!-- Chapter $index -->
+<div class=\"pdf-card\">
+  <div class=\"pdf-card-header\">
+    <div class=\"pdf-icon\"><i class=\"fas fa-file-alt\"></i></div>
+    <div class=\"pdf-title\">$REPO_NAME – Chapter $index</div>
+    <div class=\"pdf-description\">Individual chapter</div>
   </div>
-  <div class="pdf-card-body">
-    <div class="pdf-meta">
+  <div class=\"pdf-card-body\">
+    <div class=\"pdf-meta\">
       <span>$filesize</span>
       <span>$fname</span>
     </div>
-    <a href="chapters/$fname" class="download-btn">
-      <i class="fas fa-download"></i> Download Chapter $index
+    <a href=\"chapters/$fname\" class=\"download-btn\">
+      <i class=\"fas fa-download\"></i> Download Chapter $index
     </a>
   </div>
 </div>
-EOF
+"
 
   index=$((index + 1))
 done
+
+export CHAPTERS_HTML
+
+# Generate final HTML with chapters embedded in the correct location
+envsubst < "$OUTPUT_DIR/index.html.in" | sed "s|<!-- Chapters will be inserted here -->|${CHAPTERS_HTML}|g" > "$OUTPUT_DIR/index.html"
