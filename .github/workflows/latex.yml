@@ -1,0 +1,34 @@
+name: LaTeX build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install TeX Live + Biber
+        uses: xu-cheng/latex-action@v3
+        with:
+          extra_system_packages: >
+            texlive-latex-extra
+            texlive-bibtex-extra
+            biber
+
+      - name: Build full thesis
+        working-directory: Thesis
+        run: |
+          latexmk -pdf -interaction=nonstopmode main.tex
+
+      - name: Build chapters independently
+        run: |
+          set -e
+          for f in Thesis/Chapters/*/main.tex; do
+            echo "▶ Building $f"
+            latexmk -pdf -interaction=nonstopmode "$f"
+          done
