@@ -51,7 +51,7 @@ jobs:
             ((index++))
           done
 
-            # Generate index.html
+        # Generate index.html
       - name: Generate index.html
         env:
           REPO_NAME: ${{ steps.get_repo_name.outputs.repo_name }}
@@ -61,14 +61,20 @@ jobs:
           
           # Count chapters
           chapter_count=0
-          index=1
           for f in Thesis/output/chapters/chapter*.pdf; do
             if [ -f "$f" ]; then
               chapter_count=$((chapter_count + 1))
             fi
           done
           
-          # Start HTML with modern design - using <<EOF (no quotes) for variable expansion
+          # Determine plural form in shell
+          if [ "$chapter_count" -eq 1 ]; then
+            chapter_text="Chapter"
+          else
+            chapter_text="Chapters"
+          fi
+          
+          # Start HTML with modern design
           cat > Thesis/output/index.html <<EOF
             <!DOCTYPE html>
             <html lang="en">
@@ -331,7 +337,7 @@ jobs:
                             <div class="stat-item">
                                 <i class="fas fa-layer-group stat-icon"></i>
                                 <div>
-                                    <div style="font-weight: 600;" id="chapter-count">${chapter_count} Chapter${chapter_count != 1 ? 's' : ''}</div>
+                                    <div style="font-weight: 600;" id="chapter-count">$chapter_count $chapter_text</div>
                                     <div style="font-size: 0.9rem;">Individual PDFs</div>
                                 </div>
                             </div>
@@ -427,8 +433,8 @@ jobs:
                         fi
                     done
 
-                    # Close HTML
-                    cat >> Thesis/output/index.html <<EOF
+                    # Close HTML - escaping $ signs in JavaScript
+                    cat >> Thesis/output/index.html <<'EOF'
                         </div>
                     </main>
                     
