@@ -25,31 +25,30 @@ jobs:
             biber \
             latexmk
 
-
       # Compile full thesis
       - name: Compile full thesis
         run: |
-            mkdir -p Thesis/output
-            cd Thesis
-            latexmk -pdf -interaction=nonstopmode -outdir=output main.tex
-
+          mkdir -p Thesis/output
+          cd Thesis
+          latexmk -pdf -interaction=nonstopmode -outdir=output main.tex
 
       # Compile each chapter
       - name: Compile chapters
         run: |
-            mkdir -p Thesis/output/chapters
-            for f in Thesis/Chapters/*/main.tex; do
+          mkdir -p Thesis/output/chapters
+          for f in Thesis/Chapters/*/main.tex; do
             chapter=$(basename $(dirname $f))
             echo "▶ Building $chapter"
             cd "$(dirname $f)"
             latexmk -pdf -interaction=nonstopmode -outdir=../../output/chapters main.tex
             cd ../../../..
-            done
+          done
 
       # Generate index.html
       - name: Generate index.html
         run: |
-            echo '<!DOCTYPE html>
+          cat > Thesis/output/index.html <<'EOF'
+            <!DOCTYPE html>
             <html lang="en">
             <head>
             <meta charset="UTF-8">
@@ -58,14 +57,15 @@ jobs:
             <body>
             <h1>Thesis PDFs</h1>
             <ul>
-                <li><a href="main.pdf">Full Thesis</a></li>' > Thesis/output/index.html
+                <li><a href="main.pdf">Full Thesis</a></li>
+            EOF
 
-            for f in Thesis/output/chapters/*.pdf; do
-            fname=$(basename "$f")
-            echo "        <li><a href=\"chapters/$fname\">$fname</a></li>" >> Thesis/output/index.html
-            done
+                    for f in Thesis/output/chapters/*.pdf; do
+                        fname=$(basename "$f")
+                        echo "    <li><a href=\"chapters/$fname\">$fname</a></li>" >> Thesis/output/index.html
+                    done
 
-            echo '      </ul>
+                    echo '  </ul>
             </body>
             </html>' >> Thesis/output/index.html
 
@@ -73,7 +73,7 @@ jobs:
       - name: Deploy PDFs to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
-            publish_dir: Thesis/output
-            publish_branch: gh-pages
-            force_orphan: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: Thesis/output
+          publish_branch: gh-pages
+          force_orphan: true
