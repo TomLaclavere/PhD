@@ -308,55 +308,6 @@
                         </a>
                     </div>
                 </div>
-EOF
-
-          # Add chapter cards
-          index=1
-          for f in Thesis/output/chapters/chapter*.pdf; do
-            if [ -f "$f" ]; then
-              fname=$(basename "$f")
-              
-              # Get file size in a readable format
-              filesize=$(ls -lh "$f" | awk '{print $5}')
-              
-              cat >> Thesis/output/index.html <<EOF
-                
-                <!-- Chapter $index Card -->
-                <div class="pdf-card">
-                    <div class="pdf-card-header">
-                        <div class="pdf-icon">
-                            <i class="fas fa-file-alt"></i>
-                        </div>
-                        <div class="pdf-title">$REPO_NAME - Chapter $index</div>
-                        <div class="pdf-description">Individual chapter document</div>
-                        <div style="margin-top: 10px;">
-                            <span class="badge">Chapter $index</span>
-                        </div>
-                    </div>
-                    <div class="pdf-card-body">
-                        <div class="pdf-meta">
-                            <div class="file-size">
-                                <i class="fas fa-hdd"></i>
-                                <span>$filesize</span>
-                            </div>
-                            <div>
-                                <i class="fas fa-file"></i>
-                                <span>$fname</span>
-                            </div>
-                        </div>
-                        <a href="chapters/$fname" class="download-btn">
-                            <i class="fas fa-download"></i>
-                            Download Chapter $index
-                        </a>
-                    </div>
-                </div>
-EOF
-              ((index++))
-            fi
-          done
-
-          # Close HTML - escaping $ signs in JavaScript
-          cat >> Thesis/output/index.html <<'EOF'
             </div>
         </main>
         
@@ -411,4 +362,3 @@ EOF
     </script>
 </body>
 </html>
-EOF
