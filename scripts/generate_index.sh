@@ -51,4 +51,9 @@ done
 export CHAPTERS_HTML
 
 # Generate final HTML with chapters embedded in the correct location
-envsubst < "$OUTPUT_DIR/index.html.in" | sed "s|<!-- Chapters will be inserted here -->|${CHAPTERS_HTML}|g" > "$OUTPUT_DIR/index.html"
+TEMP_CHAPTERS=$(mktemp)
+echo "$CHAPTERS_HTML" > "$TEMP_CHAPTERS"
+envsubst < "$OUTPUT_DIR/index.html.in" > "$OUTPUT_DIR/index.html"
+sed -i "/<!-- Chapters will be inserted here -->/r $TEMP_CHAPTERS" "$OUTPUT_DIR/index.html"
+sed -i "/<!-- Chapters will be inserted here -->/d" "$OUTPUT_DIR/index.html"
+rm "$TEMP_CHAPTERS"
