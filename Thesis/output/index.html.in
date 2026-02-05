@@ -308,6 +308,7 @@
                         </a>
                     </div>
                 </div>
+                <!-- Chapters will be inserted here -->
             </div>
         </main>
         
@@ -315,7 +316,7 @@
             <p>Generated automatically by GitHub Actions</p>
             <p>All documents are compiled from LaTeX source</p>
             <div class="footer-links">
-                <a href="https://github.com/${{ github.repository }}"><i class="fab fa-github"></i> View Source</a>
+                <a href="https://github.com/$GITHUB_REPOSITORY"><i class="fab fa-github"></i> View Source</a>
                 <a href="https://pages.github.com"><i class="fas fa-globe"></i> GitHub Pages</a>
                 <a href="https://www.latex-project.org"><i class="fas fa-code"></i> LaTeX Project</a>
             </div>
