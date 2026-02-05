@@ -17,20 +17,26 @@ fi
 
 export REPO_NAME CURRENT_DATE chapter_count chapter_text GITHUB_REPOSITORY
 
-# Generate chapters HTML
+# Generate chapters HTML using directory names from source
 CHAPTERS_HTML=""
 index=1
-for f in "$CHAPTER_DIR"/chapter*.pdf; do
-  [ -f "$f" ] || continue
+for src_dir in Thesis/Chapters/*/main.tex Thesis/chapters/*/main.tex; do
+  [ -f "$src_dir" ] || continue
 
-  fname="$(basename "$f")"
-  filesize="$(ls -lh "$f" | awk '{print $5}')"
+  chapter_dir=$(dirname "$src_dir")
+  chapter_name=$(basename "$chapter_dir" | sed 's/_/ /g')
+  pdf_file="$CHAPTER_DIR/chapter$index.pdf"
+  
+  [ -f "$pdf_file" ] || continue
 
-  CHAPTERS_HTML+="<!-- Chapter $index -->
+  fname="$(basename "$pdf_file")"
+  filesize="$(ls -lh "$pdf_file" | awk '{print $5}')"
+
+  CHAPTERS_HTML+="<!-- Chapter: $chapter_name -->
 <div class=\"pdf-card\">
   <div class=\"pdf-card-header\">
     <div class=\"pdf-icon\"><i class=\"fas fa-file-alt\"></i></div>
-    <div class=\"pdf-title\">$REPO_NAME – Chapter $index</div>
+    <div class=\"pdf-title\">$REPO_NAME – $chapter_name</div>
     <div class=\"pdf-description\">Individual chapter</div>
   </div>
   <div class=\"pdf-card-body\">
@@ -39,7 +45,7 @@ for f in "$CHAPTER_DIR"/chapter*.pdf; do
       <span>$fname</span>
     </div>
     <a href=\"chapters/$fname\" class=\"download-btn\">
-      <i class=\"fas fa-download\"></i> Download Chapter $index
+      <i class=\"fas fa-download\"></i> Download $chapter_name
     </a>
   </div>
 </div>
