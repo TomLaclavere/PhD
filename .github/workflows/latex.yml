@@ -69,11 +69,11 @@ jobs:
             </body>
             </html>' >> Thesis/output/index.html
 
-            # Deploy to GitHub Pages
-            - name: Deploy PDFs to GitHub Pages
-                uses: peaceiris/actions-gh-pages@v4
-                with:
-                    github_token: ${{ secrets.GITHUB_TOKEN }}
-                    publish_dir: Thesis/output
-                    publish_branch: gh-pages
-                    force_orphan: true
+      # Deploy to GitHub Pages
+      - name: Deploy PDFs to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            publish_dir: Thesis/output
+            publish_branch: gh-pages
+            force_orphan: true
