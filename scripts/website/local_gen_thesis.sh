@@ -14,14 +14,7 @@ export OUTPUT_DIR="Thesis/output"
 export CURRENT_DATE="$(date +"%Y-%m-%d")"
 
 # Compile Full Thesis 
-mkdir -p Thesis/output
-if [ -f Thesis/main.tex ]; then
-  pushd Thesis
-  latexmk -quiet -pdf -interaction=nonstopmode -outdir=output main.tex
-  popd
-else
-  echo "Thesis/main.tex not found — skipping full thesis build"
-fi
+./scripts/Thesis/compile_thesis.sh
 
 # Generate index.html from template
 ./scripts/website/gen_thesis.sh

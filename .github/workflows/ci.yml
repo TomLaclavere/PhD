@@ -25,60 +25,13 @@ jobs:
             gettext 
 
       - name: Compile full thesis
-        run: |
-          mkdir -p Thesis/output
-          if [ -f Thesis/main.tex ]; then
-            pushd Thesis
-            latexmk -pdf -interaction=nonstopmode -outdir=output main.tex
-            popd
-          else
-            echo "Thesis/main.tex not found — skipping full thesis build"
-          fi
+        run: scripts/Thesis/compile_thesis.sh
 
       - name: Compile chapters
-        run: |
-          mkdir -p Thesis/output/chapters
-          for f in Thesis/Chapters/*/main.tex Thesis/chapters/*/main.tex; do
-            [ -f "$f" ] || continue
-            chapter_dir=$(dirname "$f")
-            
-            chapter_folder_name=$(basename "$chapter_dir")
-            chapter_filename=$(echo "$chapter_folder_name" | sed 's/ /_/g' | sed 's/[^a-zA-Z0-9_-]//g')
-            
-            echo "▶ Building chapter in $chapter_dir → $chapter_filename.pdf"
-            
-            pushd "$chapter_dir"
-            latexmk -quiet -pdf -interaction=nonstopmode \
-              -outdir=../../output/chapters \
-              -jobname="$chapter_filename" main.tex
-            popd
-            
-          done
+        run: scripts/Thesis/compile_chapters.sh
 
       - name: Generate Thesis/index.html
         run: scripts/Thesis/gen_html.sh
-
-      # - name: Compile Publications
-      #   run: |
-      #     mkdir -p Publications/output
-      #     index=1
-      #     for pub in Publications/*/main.tex; do
-      #       [ -f "$pub" ] || continue
-      #       pub_dir=$(dirname "$pub")
-      #       echo "▶ Building publication in $pub_dir (index $index)"
-      #       pushd "$pub_dir"
-      #       latexmk -pdf -interaction=nonstopmode \
-      #         -outdir=../../output \
-      #         -jobname="publication$index" main.tex
-      #       popd
-      #       index=$((index + 1))
-      #     done
-
-      - name: Prepare files for GH Pages
-        run: |
-          mkdir -p website/Thesis/output
-          cp Thesis/output/main.pdf website/Thesis/output/
-          cp Thesis/Thesis.zip website/Thesis/
 
       # Deploy to GitHub Pages
       - name: Deploy PDFs to GitHub Pages
