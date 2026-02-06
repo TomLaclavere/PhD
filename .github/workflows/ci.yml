@@ -58,21 +58,21 @@ jobs:
       - name: Generate Thesis/index.html
         run: scripts/Thesis/gen_html.sh
 
-      - name: Compile Publications
-        run: |
-          mkdir -p Publications/output
-          index=1
-          for pub in Publications/*/main.tex; do
-            [ -f "$pub" ] || continue
-            pub_dir=$(dirname "$pub")
-            echo "▶ Building publication in $pub_dir (index $index)"
-            pushd "$pub_dir"
-            latexmk -pdf -interaction=nonstopmode \
-              -outdir=../../output \
-              -jobname="publication$index" main.tex
-            popd
-            index=$((index + 1))
-          done
+      # - name: Compile Publications
+      #   run: |
+      #     mkdir -p Publications/output
+      #     index=1
+      #     for pub in Publications/*/main.tex; do
+      #       [ -f "$pub" ] || continue
+      #       pub_dir=$(dirname "$pub")
+      #       echo "▶ Building publication in $pub_dir (index $index)"
+      #       pushd "$pub_dir"
+      #       latexmk -pdf -interaction=nonstopmode \
+      #         -outdir=../../output \
+      #         -jobname="publication$index" main.tex
+      #       popd
+      #       index=$((index + 1))
+      #     done
 
       # Deploy to GitHub Pages
       - name: Deploy PDFs to GitHub Pages
