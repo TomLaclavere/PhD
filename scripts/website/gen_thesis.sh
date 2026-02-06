@@ -29,12 +29,12 @@ cat <<EOF
         </div>
         
         <div class="btn-group">
-            <a href="$pdf_file" class="btn btn-block" download>
+            <a href="main.pdf" class="btn btn-block" download>
                 <i class="fas fa-download"></i>
                 Download Full Thesis
             </a>
 
-            <a href="$pdf_file" class="btn btn-block btn-secondary" target="_blank" rel="noopener">
+            <a href="main.pdf" class="btn btn-block btn-secondary" target="_blank" rel="noopener">
                 <i class="fas fa-eye"></i>
                 Preview Full Thesis
             </a>
