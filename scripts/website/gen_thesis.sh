@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-pdf_file="website/Thesis/main.pdf"
+pdf_file="Thesis/main.pdf"
 filesize="$(ls -lh "$pdf_file" | awk '{print $5}')"
 
 cat <<EOF

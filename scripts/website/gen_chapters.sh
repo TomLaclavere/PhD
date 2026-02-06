@@ -3,6 +3,7 @@ set -euo pipefail
 
 OUTPUT_DIR="website/Thesis"
 CHAPTER_DIR="$OUTPUT_DIR/chapters"
+WEB_DIR="Thesis/chapters/"
 
 REPO_NAME="${GITHUB_REPOSITORY#*/}"
 CURRENT_DATE="$(date +"%Y-%m-%d")"
@@ -55,12 +56,12 @@ for src_dir in Thesis/Chapters/*/main.tex Thesis/chapters/*/main.tex; do
         </div>
       </div>
       <div class="btn-group">
-            <a href=\"../$CHAPTER_DIR/$fname\" class=\"btn btn-block\" download>
+            <a href=\"../$WEB_DIR/$fname\" class=\"btn btn-block\" download>
                 <i class=\"fas fa-download\"></i>
                 Download $chapter_name
             </a>
 
-            <a href=\"../$CHAPTER_DIR/$fname\" class=\"btn btn-block btn-secondary\" target=\"_blank\" rel=\"noopener\">
+            <a href=\"../$WEB_DIR/$fname\" class=\"btn btn-block btn-secondary\" target=\"_blank\" rel=\"noopener\">
                 <i class=\"fas fa-eye\"></i>
                 Preview $chapter_name
             </a>
