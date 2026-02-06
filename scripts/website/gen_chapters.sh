@@ -3,7 +3,7 @@ set -euo pipefail
 
 OUTPUT_DIR="website/Thesis"
 CHAPTER_DIR="$OUTPUT_DIR/chapters"
-WEB_DIR="chapters"
+WEB_DIR="Thesis/chapters"
 
 REPO_NAME="${GITHUB_REPOSITORY#*/}"
 CURRENT_DATE="$(date +"%Y-%m-%d")"
