@@ -56,12 +56,12 @@ for src_dir in Thesis/Chapters/*/main.tex Thesis/chapters/*/main.tex; do
         </div>
       </div>
       <div class="btn-group">
-            <a href=\"../$WEB_DIR/$fname\" class=\"btn btn-block\" download>
+            <a href=\"$WEB_DIR/$fname\" class=\"btn btn-block\" download>
                 <i class=\"fas fa-download\"></i>
                 Download $chapter_name
             </a>
 
-            <a href=\"../$WEB_DIR/$fname\" class=\"btn btn-block btn-secondary\" target=\"_blank\" rel=\"noopener\">
+            <a href=\"$WEB_DIR/$fname\" class=\"btn btn-block btn-secondary\" target=\"_blank\" rel=\"noopener\">
                 <i class=\"fas fa-eye\"></i>
                 Preview $chapter_name
             </a>
