@@ -56,7 +56,7 @@ jobs:
           done
 
       - name: Generate Thesis/index.html
-        run: scripts/Thesis/generate_html.sh
+        run: scripts/Thesis/gen_html.sh
 
       - name: Compile Publications
         run: |
