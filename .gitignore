@@ -3,5 +3,8 @@
 *.vscode
 *.bbl
 **/output/*
+
+
 !**/output/.gitkeep
 !**/output/index.html.in
+!**/output/index.html
