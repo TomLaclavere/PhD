@@ -1,8 +1,8 @@
 # PhD
 
-[![Website](https://img.shields.io/badge/Website-bd93f9?style=for-the-badge&logo=google-chrome&logoColor=white)](https://tomlaclavere.github.io/PhD/website/website.html)
+[![Website](https://img.shields.io/badge/Website-bd93f9?style=for-the-badge&logo=google-chrome&logoColor=white)](https://tomlaclavere.github.io/PhD/website.html)
 
-[![PhD Thesis](https://img.shields.io/badge/PhD-Thesis-ff79c6?style=for-the-badge&logo=read-the-docs&logoColor=white)](https://tomlaclavere.github.io/PhD/website/Thesis/thesis.html)
+[![PhD Thesis](https://img.shields.io/badge/PhD-Thesis-ff79c6?style=for-the-badge&logo=read-the-docs&logoColor=white)](https://tomlaclavere.github.io/PhD/Thesis/thesis.html)
 
 [![License: CC-BY-4.0](https://img.shields.io/badge/License-50fa7b?style=for-the-badge&logo=creative-commons&logoColor=white)](https://creativecommons.org/licenses/by/4.0/legalcode)
 
