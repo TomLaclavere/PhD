@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-OUTPUT_DIR="Thesis/output"
+OUTPUT_DIR="website/Thesis/output"
 CHAPTER_DIR="$OUTPUT_DIR/chapters"
 
 REPO_NAME="${GITHUB_REPOSITORY#*/}"
