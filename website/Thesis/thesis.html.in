@@ -327,18 +327,6 @@
     </div>
     
     <script>
-        // Add file size for main thesis if available
-        fetch('main.pdf', { method: 'HEAD' })
-            .then(response => {
-                const size = response.headers.get('content-length');
-                if (size) {
-                    const sizeInMB = (size / (1024 * 1024)).toFixed(1);
-                    document.getElementById('full-thesis-size').textContent = sizeInMB + ' MB';
-                }
-            })
-            .catch(() => {
-                // If can't get size, keep default text
-            });
         
         // Add smooth hover effects
         document.querySelectorAll('.pdf-card').forEach(card => {

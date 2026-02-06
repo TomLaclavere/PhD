@@ -13,7 +13,7 @@ Repository to store my PhD work for QUBIC Instrument. It includes my Thesis, pub
 
 - **LaTeX** (TeX Live recommended)
 - **Biber** (modern bibliography processor)
-- `latexmk` for automated compilation
+- **latexmk** for automated compilation
 
 This ensures all required packages are installed, including:
 
@@ -40,4 +40,4 @@ From the thesis root folder:
 
 ```bash
 cd Thesis
-latexmk -pdf -interaction=nonstopmode main.tex
+latexmk -pdf -interaction=nonstopmode -outdir=output main.tex
