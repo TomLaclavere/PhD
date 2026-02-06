@@ -1,6 +1,7 @@
 # PhD
 
-[![PhD Thesis](https://img.shields.io/badge/PhD-Thesis-blue?style=flat)](https://tomlaclavere.github.io/PhD/index.html)
+[![Website](https://img.shields.io/badge/PhD-Thesis-blue?style=flat)](https://tomlaclavere.github.io/PhD/website/website.html)
+[![PhD Thesis](https://img.shields.io/badge/PhD-Thesis-blue?style=flat)](https://tomlaclavere.github.io/PhD/website/Thesis/thesis.html)
 [![License: CC-BY-4.0](https://img.shields.io/badge/License-CC--BY--4.0-lightgrey?style=flat)](https://creativecommons.org/licenses/by/4.0/legalcode)
 [![GitHub Repo Size](https://img.shields.io/github/repo-size/tomlaclavere/PhD?style=flat)](https://github.com/tomlaclavere/PhD)
 [![Last Commit](https://img.shields.io/github/last-commit/tomlaclavere/PhD?style=flat)](https://github.com/tomlaclavere/PhD/commits/main)
