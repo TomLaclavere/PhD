@@ -10,7 +10,7 @@ export REPO_NAME="PhD"
 export GITHUB_USERNAME="TomLaclavère"
 export GITHUB_REPOSITORY="$GITHUB_USERNAME/$REPO_NAME"
 
-export OUTPUT_DIR="Thesis/output"
+export OUTPUT_DIR="thesis/output"
 export CURRENT_DATE="$(date +"%Y-%m-%d")"
 
 # Compile Full Thesis 

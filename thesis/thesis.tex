@@ -1,0 +1,165 @@
+\documentclass[twoside, 12pt]{book}
+
+% Import packages and utils
+\input{packages.tex}
+\input{utils.tex}
+
+% Import Figures for each chapter
+\graphicspath{{Figures/}{chapters/gps_calsource/Figures/}}
+
+% Import Bibliography for each chapter
+\addbibresource{chapters/gps_calsource/gps_calsource.bib}
+
+\begin{document}
+
+\dominitoc
+
+\input{title.tex}
+\newpage
+
+\input{chapters/abstract.tex}
+\newpage
+
+\newpage
+\thispagestyle{empty}
+\mbox{}
+\newpage
+
+\input{chapters/remerciements.tex}
+\newpage
+
+\tableofcontents
+\addstarredchapter{Table of contents}
+
+% \addstarredchapter{List of figures}
+% \listoffigures
+
+% \addstarredchapter{List of tables}
+% \listoftables
+
+% \input{chapters/intro.tex}
+% \addstarredchapter{Introduction}
+
+
+\part{Cosmological Context}
+
+\chapter{Standard Model of Cosmology}
+From Dodelson
+
+\section{The expanding Universe}
+
+\section{The fundamental equations of Cosmology}
+
+\section{History of the Universe}
+
+\section{Problems of the Standard Model}
+
+\chapter{CMB, Inflation, and B-modes}
+
+\section{Inflation theory}
+
+\section{Cosmic Microwave Background}
+
+\section{CMB polarisation}
+
+\section{CMB contamination: astrophysical foregrounds}
+
+\section{CMB past and future observations}
+
+\part{QUBIC instrument: the first bolometric interferometer for cosmology}
+
+\chapter{Bolometric Interferometry and QUBIC}
+
+\section{Classical telescope for CMB physics: Imager}
+
+\section{Innovative approach: Bolometric Interferometer}
+
+\section{QUBIC Collaboration}
+
+\section{Instrumental Design}
+
+\chapter{Bolometric Interferometry to Spectral Imaging}
+
+\section{Synthesized Beam}
+
+\section{Spectral Imaging}
+
+\subfile{chapters/gps_calsource/gps_calsource.tex}
+
+\chapter{Qubicsoft development}
+
+\part{Map-Making}
+
+\chapter{Frequency Map-Making}
+% See FMM paper.
+
+\chapter{Component Map-Making}
+% See CMM paper.
+
+\chapter{Realistic TOD Simulation}
+% Chapter order to be reviewed.
+
+\section{How to define Realistic TOD}
+
+\section{Convolution approximation}
+
+\section{TOD convergence problem: Pixelisation vs Number of Frequency}
+
+\section{\texorpdfstring{Effect of $N_{\text{sub,TOD}} = N_{\text{sub,rec}}$}{Effect of Nsub\_TOD = Nsub\_rec}}
+
+\section{External data addition effect (Planck)}
+
+\section{Simulation hyperparameters optimisation: $N_{\text{sub}}$, $N_{\text{pointings}}$, $N_{\text{iter}}$, $N_{\text{loop}}$ (CMM), \dots}
+
+
+\chapter{Neural-Network approximation of the Inverse Map-Making}
+% Wait NNMM paper.
+
+\part{Components separation and Cosmological parameters' estimation.}
+
+\chapter{Atmospheric Mitigation}
+% Wait Atm paper.
+
+\chapter{QUBIC Forecasts}
+
+\section{Studied Cases}
+
+\subsection{CMB without foregrounds: QUBIC raw sensitivity}
+
+\subsection{CMB + Dust (d0, d1, d6, \dots): Simple forecasts}
+
+\subsection{CMB + Dust (d0, d1, d6) + Synchrotron (s0, s1): Realistic forecasts}
+
+\section{Results}
+
+\subsection{Compare QUBIC configurations}
+
+\subsection{Dual bands without spectral imaging: ``Imager case''}
+
+\subsection{Dual bands with spectral imaging: ``BI case''}
+
+\subsection{Ultra-wide band: ``Extreme BI case''}
+
+\subsection{Successive mono-band case: ``Conservative case''}
+
+\section{Compare QUBIC's map-making algorithms}
+
+\subsection{FMM: Cross-spectra Analysis}
+
+\subsection{NN-FMM: Cross-spectra Analysis}
+
+\subsection{CMM: Parametric Analysis}
+
+\subsection{NN-CMM: Parametric Analysis}
+
+\subsection{CMM: Blind Analysis}
+
+\subsection{Addition of external data for component separation}
+
+\subsection{Exploring exotic models}
+
+% Bibliography
+\addstarredpart{Bibliography}
+\printbibliography
+
+\end{document}
