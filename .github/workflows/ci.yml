@@ -74,10 +74,17 @@ jobs:
       #       index=$((index + 1))
       #     done
 
+      - name: Prepare files for GH Pages
+        run: |
+          mkdir -p website/Thesis/output
+          cp Thesis/output/main.pdf website/Thesis/output/
+          cp Thesis/Thesis.zip website/Thesis/
+
       # Deploy to GitHub Pages
       - name: Deploy PDFs to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: website
           publish_branch: gh-pages
           force_orphan: true
