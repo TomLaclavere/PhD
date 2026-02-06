@@ -33,6 +33,9 @@ jobs:
       - name: Generate Thesis/index.html
         run: scripts/Thesis/gen_html.sh
 
+      - name: Build website
+        run: scripts/website/build_website.sh
+
       # Deploy to GitHub Pages
       - name: Deploy PDFs to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
