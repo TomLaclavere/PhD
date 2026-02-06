@@ -5,8 +5,8 @@ set -euo pipefail
 # Compile thesis chapters
 # ========================================
 
-mkdir -p Thesis/output/chapters
-for f in Thesis/Chapters/*/main.tex Thesis/chapters/*/main.tex; do
+mkdir -p thesis/output/chapters
+for f in thesis/chapters/*/*.tex ; do
   [ -f "$f" ] || continue
   chapter_dir=$(dirname "$f")
   
@@ -16,13 +16,15 @@ for f in Thesis/Chapters/*/main.tex Thesis/chapters/*/main.tex; do
   echo "▶ Building chapter in $chapter_dir → $chapter_filename.pdf"
   
   pushd "$chapter_dir"
-  latexmk -quiet -pdf -interaction=nonstopmode \
-    -outdir=../../output/chapters \
-    -jobname="$chapter_filename" main.tex
+  mkdir -p output
+  latexmk -quiet -cd -pdf -interaction=nonstopmode \
+    -outdir=output \
+    -auxdir=output \
+    "$chapter_filename.tex"
   popd
-  
+  cp thesis/output/chapters/*.pdf thesis/chapters/$chapter_folder_name/
 done
 
 # Copy chapters to website
-mkdir -p website/Thesis/chapters
-cp Thesis/output/chapters/*.pdf website/Thesis/chapters/
+mkdir -p website/thesis/chapters
+cp thesis/output/chapters/*.pdf website/thesis/chapters/

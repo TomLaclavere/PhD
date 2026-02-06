@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-pdf_file="Thesis/main.pdf"
+pdf_file="thesis/thesis.pdf"
 filesize="$(ls -lh "$pdf_file" | awk '{print $5}')"
 
 cat <<EOF
-<div class="card thesis">
+<div class="card Thesis">
     <div class="card-header">
         <div class="card-icon">
             <i class="fas fa-book"></i>
@@ -15,7 +15,7 @@ cat <<EOF
     </div>
     <div class="card-body">
         <div class="card-description">
-            Complete PhD thesis document including all chapters, references, and appendices.
+            Complete PhD Thesis document including all chapters, references, and appendices.
         </div>
         <div class="card-meta">
             <div class="file-size">
@@ -68,12 +68,12 @@ cat <<EOF
     </div>
 
     <div class="btn-group">
-      <a href="Thesis/Thesis.zip" class="btn btn-block">
+      <a href="thesis/thesis.zip" class="btn btn-block">
         <i class="fas fa-download"></i>
         Download ZIP
       </a>
 
-      <a href="https://github.com/TomLaclavere/PhD/tree/main/Thesis" class="btn btn-block btn-secondary" target="_blank" rel="noopener">
+      <a href="https://github.com/TomLaclavere/PhD/tree/main/thesis" class="btn btn-block btn-secondary" target="_blank" rel="noopener">
         <i class="fas fa-eye"></i>
         Browse on GitHub
         </a>

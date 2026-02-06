@@ -18,7 +18,7 @@ export THESIS_HTML CHAPTERS_HTML
 # ========================================
 # Generate Archives
 # ========================================
-./scripts/archive.sh Thesis/ website/Thesis
+./scripts/archive.sh thesis/ website/thesis
 
 # ========================================
 # Generate Pages

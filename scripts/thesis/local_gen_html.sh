@@ -10,23 +10,23 @@ export REPO_NAME="PhD"
 export GITHUB_USERNAME="TomLaclavère"
 export GITHUB_REPOSITORY="$GITHUB_USERNAME/$REPO_NAME"
 
-export OUTPUT_DIR="Thesis/output"
+export OUTPUT_DIR="thesis/output"
 export CHAPTER_DIR="$OUTPUT_DIR/chapters"
 export CURRENT_DATE="$(date +"%Y-%m-%d")"
 
-# Compile Full Thesis 
-mkdir -p Thesis/output
-if [ -f Thesis/main.tex ]; then
-  pushd Thesis
-  latexmk -quiet -pdf -interaction=nonstopmode -outdir=output main.tex
+# Compile Full thesis 
+mkdir -p thesis/output
+if [ -f thesis/thesis.tex ]; then
+  pushd thesis
+  latexmk -quiet -pdf -interaction=nonstopmode -outdir=output thesis.tex
   popd
 else
-  echo "Thesis/main.tex not found — skipping full thesis build"
+  echo "thesis/thesis.tex not found — skipping full thesis build"
 fi
 
-# Compile Chapters
-mkdir -p Thesis/output/chapters
-for f in Thesis/Chapters/*/main.tex Thesis/chapters/*/main.tex; do
+# Compile chapters
+mkdir -p thesis/output/chapters
+for f in thesis/chapters/*/thesis.tex thesis/chapters/*/thesis.tex; do
   [ -f "$f" ] || continue
   chapter_dir=$(dirname "$f")
   
@@ -38,10 +38,10 @@ for f in Thesis/Chapters/*/main.tex Thesis/chapters/*/main.tex; do
   pushd "$chapter_dir"
   latexmk -quiet -pdf -interaction=nonstopmode \
     -outdir=../../output/chapters \
-    -jobname="$chapter_filename" main.tex
+    -jobname="$chapter_filename" thesis.tex
   popd
   
 done
 
 # Generate index.html from template
-./scripts/Thesis/gen_html.sh
+./scripts/thesis/gen_html.sh
