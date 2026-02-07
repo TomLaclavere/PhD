@@ -728,7 +728,7 @@
             <div class="section-header">
                 <i class="fas fa-book section-icon"></i>
                 <h2>
-                    <a href="Thesis/thesis.html" class="section-link" target="_blank" rel="noopener">
+                    <a href="thesis/thesis.html" class="section-link" target="_blank" rel="noopener">
                         Thesis Documentation
                     </a>
                 </h2>

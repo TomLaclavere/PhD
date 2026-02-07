@@ -5,10 +5,10 @@
 \input{utils.tex}
 
 % Import Figures for each chapter
-\graphicspath{{Figures/}{Chapters/GPS Calsource/Figures/}}
+\graphicspath{{Figures/}{chapters/gps_calsource/Figures/}}
 
 % Import Bibliography for each chapter
-\addbibresource{Chapters/GPS Calsource/biblio.bib}
+\addbibresource{\subfix{chapters/gps_calsource/gps_calsource.bib}}
 
 \begin{document}
 
@@ -17,7 +17,7 @@
 \input{title.tex}
 \newpage
 
-\input{Chapters/abstract.tex}
+\input{chapters/abstract.tex}
 \newpage
 
 \newpage
@@ -25,7 +25,7 @@
 \mbox{}
 \newpage
 
-\input{Chapters/remerciements.tex}
+\input{chapters/remerciements.tex}
 \newpage
 
 \tableofcontents
@@ -37,7 +37,7 @@
 % \addstarredchapter{List of tables}
 % \listoftables
 
-% \input{Chapters/intro.tex}
+% \input{chapters/intro.tex}
 % \addstarredchapter{Introduction}
 
 
@@ -84,7 +84,7 @@ From Dodelson
 
 \section{Spectral Imaging}
 
-\subfile{Chapters/GPS Calsource/main.tex}
+\subfile{chapters/gps_calsource/gps_calsource.tex}
 
 \chapter{Qubicsoft development}
 
@@ -159,7 +159,7 @@ From Dodelson
 \subsection{Exploring exotic models}
 
 % Bibliography
-\printbibliography
 \addstarredpart{Bibliography}
+\printbibliography
 
 \end{document}

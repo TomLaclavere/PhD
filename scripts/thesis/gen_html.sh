@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-OUTPUT_DIR="website/Thesis/output"
+OUTPUT_DIR="website/thesis/output"
 CHAPTER_DIR="$OUTPUT_DIR/chapters"
 
 REPO_NAME="${GITHUB_REPOSITORY#*/}"
@@ -17,9 +17,11 @@ fi
 
 export REPO_NAME CURRENT_DATE chapter_count chapter_text GITHUB_REPOSITORY
 
+echo "> Generate Website"
+
 # Generate chapters HTML using directory names from source
 CHAPTERS_HTML=""
-for src_dir in Thesis/Chapters/*/main.tex Thesis/chapters/*/main.tex; do
+for src_dir in thesis/Chapters/*/*.tex thesis/chapters/*/*.tex; do
   [ -f "$src_dir" ] || continue
 
   chapter_dir=$(dirname "$src_dir")
@@ -59,7 +61,7 @@ export CHAPTERS_HTML
 # Generate final HTML with chapters embedded in the correct location
 TEMP_CHAPTERS=$(mktemp)
 echo "$CHAPTERS_HTML" > "$TEMP_CHAPTERS"
-envsubst < "website/Thesis/thesis.html.in" > "website/Thesis/thesis.html"
-sed -i "/<!-- Chapters will be inserted here -->/r $TEMP_CHAPTERS" "website/Thesis/thesis.html"
-sed -i "/<!-- Chapters will be inserted here -->/d" "website/Thesis/thesis.html"
+envsubst < "website/thesis/thesis.html.in" > "website/thesis/thesis.html"
+sed -i "/<!-- Chapters will be inserted here -->/r $TEMP_CHAPTERS" "website/thesis/thesis.html"
+sed -i "/<!-- Chapters will be inserted here -->/d" "website/thesis/thesis.html"
 rm "$TEMP_CHAPTERS"

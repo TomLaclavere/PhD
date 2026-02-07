@@ -1,21 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
 # ========================================
 # Configuration File for Local Generation
 # ========================================
 
 # repository information
 export REPO_NAME="PhD"
-export GITHUB_USERNAME="TomLaclavere"
+export GITHUB_USERNAME="TomLaclavère"
 export GITHUB_REPOSITORY="$GITHUB_USERNAME/$REPO_NAME"
 
 export OUTPUT_DIR="thesis/output"
 export CHAPTER_DIR="$OUTPUT_DIR/chapters"
 export CURRENT_DATE="$(date +"%Y-%m-%d")"
 
-# Compile thesis
-./scripts/website/local_gen_thesis.sh
+# Compile Full thesis 
+./scripts/thesis/compile_thesis.sh
 
-# Compiles chapter
-./scripts/website/local_gen_chapters.sh
+# Compile chapters
+./scripts/thesis/compile_chapters.sh
 
-# Generate website
-./scripts/website/build_website.sh
+# Generate index.html from template
+./scripts/thesis/gen_html.sh

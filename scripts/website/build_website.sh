@@ -18,7 +18,7 @@ export THESIS_HTML CHAPTERS_HTML
 # ========================================
 # Generate Archives
 # ========================================
-./scripts/archive.sh Thesis/ website/Thesis
+./scripts/archive.sh thesis/ website/thesis
 
 # ========================================
 # Generate Pages
@@ -27,5 +27,6 @@ export THESIS_HTML CHAPTERS_HTML
 # ========================================
 # Build HTML
 # ========================================
+echo "> Generate Website"
 
 envsubst < website/website.html.in > website/website.html

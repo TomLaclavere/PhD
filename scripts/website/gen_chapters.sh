@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-OUTPUT_DIR="website/Thesis"
+OUTPUT_DIR="website/thesis"
 CHAPTER_DIR="$OUTPUT_DIR/chapters"
-WEB_DIR="Thesis/chapters"
+WEB_DIR="thesis/chapters"
 
 REPO_NAME="${GITHUB_REPOSITORY#*/}"
 CURRENT_DATE="$(date +"%Y-%m-%d")"
@@ -18,7 +18,7 @@ fi
 
 CHAPTERS_HTML=""
 
-for src_dir in Thesis/Chapters/*/main.tex Thesis/chapters/*/main.tex; do
+for src_dir in thesis/chapters/*/*.tex thesis/chapters/*/*.tex; do
   [ -f "$src_dir" ] || continue
 
   chapter_dir=$(dirname "$src_dir")
