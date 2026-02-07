@@ -18,7 +18,7 @@ fi
 
 CHAPTERS_HTML=""
 
-for src_dir in thesis/chapters/*/*.tex thesis/chapters/*/*.tex; do
+for src_dir in thesis/chapters/*/*.tex; do
   [ -f "$src_dir" ] || continue
 
   chapter_dir=$(dirname "$src_dir")
