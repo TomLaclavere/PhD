@@ -1,4 +1,4 @@
-name: Build Thesis
+name: Build thesis
 
 on:
   push:
@@ -25,13 +25,13 @@ jobs:
             gettext 
 
       - name: Compile full thesis
-        run: scripts/Thesis/compile_thesis.sh
+        run: scripts/thesis/compile_thesis.sh
 
       - name: Compile chapters
-        run: scripts/Thesis/compile_chapters.sh
+        run: scripts/thesis/compile_chapters.sh
 
-      - name: Generate Thesis/index.html
-        run: scripts/Thesis/gen_html.sh
+      - name: Generate thesis/index.html
+        run: scripts/thesis/gen_html.sh
 
       - name: Build website
         run: scripts/website/build_website.sh
