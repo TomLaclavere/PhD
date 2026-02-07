@@ -14,7 +14,7 @@ export OUTPUT_DIR="thesis/output"
 export CURRENT_DATE="$(date +"%Y-%m-%d")"
 
 # Compile Full Thesis 
-./scripts/Thesis/compile_thesis.sh
+./scripts/thesis/compile_thesis.sh
 
 # Generate index.html from template
 ./scripts/website/gen_thesis.sh

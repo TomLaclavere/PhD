@@ -17,6 +17,8 @@ fi
 
 export REPO_NAME CURRENT_DATE chapter_count chapter_text GITHUB_REPOSITORY
 
+echo "> Generate Website"
+
 # Generate chapters HTML using directory names from source
 CHAPTERS_HTML=""
 for src_dir in thesis/Chapters/*/*.tex thesis/chapters/*/*.tex; do
