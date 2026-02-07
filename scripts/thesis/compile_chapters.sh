@@ -18,17 +18,24 @@ for chapter_dir in "$CHAPTERS_DIR"/*/; do
 
   echo "▶ Compile Chapter: $chapter_name"
 
-  pushd "$chapter_dir" > /dev/null
+  output_dir="$chapter_dir/output"
+  mkdir -p "$output_dir"
 
-  mkdir -p output
+  pushd thesis > /dev/null
 
-  # Trap to catch compilation error
-  trap 'echo "Thesis compilation failed! Please refer to $chapter_dir output/$tex_basename.log for more details." >&2' ERR
+  # Trap for compilation errors
+  function on_error {
+      echo "Chapter compilation failed! Please check logs in $output_dir/$tex_basenamey"
+  }
+  trap on_error ERR
 
-  output=$(latexmk -quiet -pdf -interaction=nonstopmode \
+  output=$(latexmk -quiet -pdf -cd -interaction=nonstopmode \
                   -file-line-error -synctex=1 \
                   -outdir=output \
-                  "$tex_basename" 2>&1)
+                  "../$chapter_dir$tex_basename" 2>&1)
+
+  trap - ERR
+  popd > /dev/null
 
   if grep -q "Nothing to do" <<< "$output"; then
     echo "  Chapter already up to date."
@@ -36,17 +43,13 @@ for chapter_dir in "$CHAPTERS_DIR"/*/; do
     echo "  Chapter compiled!"
   fi
 
-  pdf_file="output/${tex_basename%.tex}.pdf"
+  pdf_file="$output_dir/${tex_basename%.tex}.pdf"
 
-  popd > /dev/null
+  if [[ -f "$pdf_file" ]]; then
+    # Copy PDF back to chapter folder
+    cp "$pdf_file" "$chapter_dir/"
 
-  if [[ -f "$chapter_dir$pdf_file" ]]; then
-    # Copy outside output
-    cp "$chapter_dir$pdf_file" "$chapter_dir/"
-
-    # Copy to website
-    cp "$chapter_dir$pdf_file" "$WEBSITE_DIR/"
+    # Copy PDF to website
+    cp "$pdf_file" "$WEBSITE_DIR/"
   fi
-
-  
 done
