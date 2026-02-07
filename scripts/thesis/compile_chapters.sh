@@ -1,30 +1,52 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# ========================================
-# Compile thesis chapters
-# ========================================
+CHAPTERS_DIR="thesis/chapters"
+WEBSITE_DIR="website/thesis/chapters"
 
-mkdir -p thesis/output/chapters
-for f in thesis/chapters/*/*.tex ; do
-  [ -f "$f" ] || continue
-  chapter_dir=$(dirname "$f")
-  
-  chapter_folder_name=$(basename "$chapter_dir")
-  chapter_filename=$(echo "$chapter_folder_name" | sed 's/ /_/g' | sed 's/[^a-zA-Z0-9_-]//g')
-  
-  echo "▶ Building chapter in $chapter_dir → $chapter_filename.pdf"
-  
-  pushd "$chapter_dir"
+mkdir -p "$WEBSITE_DIR"
+
+for chapter_dir in "$CHAPTERS_DIR"/*/; do
+  [[ -d "$chapter_dir" ]] || continue
+
+  # Taking the first .tex file as the main one
+  tex_file=$(find "$chapter_dir" -maxdepth 1 -name "*.tex" | head -n 1)
+  [[ -f "$tex_file" ]] || continue
+
+  chapter_name="$(basename "$chapter_dir")"
+  tex_basename="$(basename "$tex_file")"
+
+  echo "▶ Compile Chapter: $chapter_name"
+
+  pushd "$chapter_dir" > /dev/null
+
   mkdir -p output
-  latexmk -quiet -cd -pdf -interaction=nonstopmode \
-    -outdir=output \
-    -auxdir=output \
-    "$chapter_filename.tex"
-  popd
-  cp thesis/output/chapters/*.pdf thesis/chapters/$chapter_folder_name/
-done
 
-# Copy chapters to website
-mkdir -p website/thesis/chapters
-cp thesis/output/chapters/*.pdf website/thesis/chapters/
+  # Trap to catch compilation error
+  trap 'echo "Thesis compilation failed! Please refer to $chapter_dir output/$tex_basename.log for more details." >&2' ERR
+
+  output=$(latexmk -quiet -pdf -interaction=nonstopmode \
+                  -file-line-error -synctex=1 \
+                  -outdir=output \
+                  "$tex_basename" 2>&1)
+
+  if grep -q "Nothing to do" <<< "$output"; then
+    echo "  Chapter already up to date."
+  else
+    echo "  Chapter compiled!"
+  fi
+
+  pdf_file="output/${tex_basename%.tex}.pdf"
+
+  popd > /dev/null
+
+  if [[ -f "$chapter_dir$pdf_file" ]]; then
+    # Copy outside output
+    cp "$chapter_dir$pdf_file" "$chapter_dir/"
+
+    # Copy to website
+    cp "$chapter_dir$pdf_file" "$WEBSITE_DIR/"
+  fi
+
+  
+done
