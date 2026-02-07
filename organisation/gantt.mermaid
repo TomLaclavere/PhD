@@ -1,0 +1,50 @@
+%%{init:{
+  "theme":"base",
+  "themeVariables":{
+    "background":"#282a36",
+    "textColor":"#050505ff",
+    "titleColor":"#ff79c6",
+    "primaryColor":"#bd93f9",
+    "secondaryColor":"#44475a",
+    "lineColor":"#6272a4",
+    "noteBkgColor":"#21222c",
+    "noteTextColor":"#f8f8f2"
+  },
+  "themeCSS":".mermaid svg, .mermaid { background-color:#282a36; } .grid .tick text { fill:#f8f8f2; } .grid .domain, .grid line { stroke:#6272a4; }",
+  "gantt": { "barHeight": 24, "barGap": 8 }
+}}%%
+
+gantt
+  title Thesis Planning
+  dateFormat  YYYY-MM-DD
+  axisFormat  %b %Y
+  todayMarker on
+
+  section Qubicsoft
+  Fit mixing matrix (Leonora)         :mm,      2025-10-20, 20d
+  Plotting code                       :plot,    2025-10-20, 5d
+  Verify spectral plots               :spectra, after plot, 5d
+  Verify fit r                        :fit,     after spectra, 5d
+
+  section NN MM
+  Pyro noise propagation algorithm    :pyro,    2025-10-20, 15d
+  Build mixing matrix operator        :cmm,     after pyro, 15d
+  Write chapter (NN)                gantt.md  :chap,    after cmm, 20d
+
+  section Forecasts
+  Define all cases                    :case,     after chap, 3d
+  Define schedule                     :schedule, after case, 3d
+  Hyperparameter optimisation         :hyper,    after schedule, 15d
+  Run simulations                     :simul,    after hyper, 60d
+
+  section Atmosphere
+  Noise & convergence analysis        :nac,     after chap, 10d
+  Add wind / forcing                  :wind,    after nac, 5d
+  Fit mixing matrix (atmosphere)      :atmMM,   after wind, 10d
+  Add external data / ingestion       :ext,     after atmMM, 20d
+  Write paper (draft)                 :paper,   after ext, 45d
+
+  section Redaction
+  Define PhD plan                     :plan,        2026-04-01, 2d
+  Define final schedule               :schedulePhD, after plan, 3d
+  Redaction / writing                 :redac,       after schedulePhD, 90d
