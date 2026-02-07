@@ -49,13 +49,16 @@ fi
 echo "-> Removing output folders"
 find "$ROOT_DIR/thesis" -type d -name output -exec rm -rf {} +
 
-# Optionally remove generated PDFs (only in output folders, not Figures)
 if $REMOVE_PDF; then
   echo "-> Removing generated PDFs"
   # PDFs in chapter outputs
-  find "$CHAPTERS_DIR" -type d -exec find {} -maxdepth 1 -type f -name "*.pdf" -delete \;
+  if [[ -d "$CHAPTERS_DIR" ]]; then
+    find "$CHAPTERS_DIR" -type d -exec find {} -maxdepth 1 -type f -name "*.pdf" -delete \;
+  fi
   # PDF in thesis root
-  find "$ROOT_DIR/thesis" -maxdepth 1 -type f -name "*.pdf" -delete
+  if [[ -d "$ROOT_DIR/thesis" ]]; then
+    find "$ROOT_DIR/thesis" -maxdepth 1 -type f -name "*.pdf" -delete
+  fi
   # PDFs in website folders
   WEBSITE_DIR="$ROOT_DIR/website"
   if [[ -d "$WEBSITE_DIR" ]]; then
