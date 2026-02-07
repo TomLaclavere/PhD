@@ -39,10 +39,4 @@ This ensures all required packages are installed, including:
 
 ---
 
-## Compiling the Thesis
-
-From the thesis root folder:
-
-```bash
-cd Thesis
-latexmk -pdf -interaction=nonstopmode -outdir=output main.tex
+## Scripts description
