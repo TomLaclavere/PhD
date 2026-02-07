@@ -5,7 +5,7 @@ mkdir -p thesis/output
 
 pushd thesis > /dev/null
 
-echo "▶ Compile Thesis"
+echo "> Compile Thesis"
 
 # Trap to catch compilation error
 trap 'echo "Thesis compilation failed! Please refer to thesis/output/thesis.log for more details." >&2' ERR

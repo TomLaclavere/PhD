@@ -25,7 +25,7 @@ LATEX_EXTENSIONS=(
 )
 
 # Cleaning thesis root (excluding Figures)
-echo "➡ Thesis cleaning"
+echo "-> Thesis cleaning"
 for ext in "${LATEX_EXTENSIONS[@]}"; do
   find "$ROOT_DIR/thesis" -maxdepth 1 -type f -name "*.${ext}" -delete
 done
@@ -36,7 +36,7 @@ find "$ROOT_DIR/thesis" -maxdepth 1 -type f -name "*.mtc*" -delete
 # Recursive cleaning in chapters/
 CHAPTERS_DIR="$ROOT_DIR/thesis/chapters"
 if [[ -d "$CHAPTERS_DIR" ]]; then
-  echo "➡ Chapters cleaning recursively"
+  echo "-> Chapters cleaning recursively"
 
   for ext in "${LATEX_EXTENSIONS[@]}"; do
     find "$CHAPTERS_DIR" -type f -name "*.${ext}" -delete
@@ -46,12 +46,12 @@ if [[ -d "$CHAPTERS_DIR" ]]; then
 fi
 
 # Cleaning output folders (all output/ recursively)
-echo "➡ Removing output folders"
+echo "-> Removing output folders"
 find "$ROOT_DIR/thesis" -type d -name output -exec rm -rf {} +
 
 # Optionally remove generated PDFs (only in output folders, not Figures)
 if $REMOVE_PDF; then
-  echo "➡ Removing generated PDFs"
+  echo "-> Removing generated PDFs"
   # PDFs in chapter outputs
   find "$CHAPTERS_DIR" -type d -exec find {} -maxdepth 1 -type f -name "*.pdf" -delete \;
   # PDF in thesis root

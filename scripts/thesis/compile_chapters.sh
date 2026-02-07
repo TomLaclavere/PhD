@@ -16,7 +16,7 @@ for chapter_dir in "$CHAPTERS_DIR"/*/; do
   chapter_name="$(basename "$chapter_dir")"
   tex_basename="$(basename "$tex_file")"
 
-  echo "▶ Compile Chapter: $chapter_name"
+  echo "> Compile Chapter: $chapter_name"
 
   output_dir="$chapter_dir/output"
   mkdir -p "$output_dir"
@@ -38,9 +38,9 @@ for chapter_dir in "$CHAPTERS_DIR"/*/; do
   popd > /dev/null
 
   if grep -q "Nothing to do" <<< "$output"; then
-    echo "  Chapter already up to date."
+    echo "Chapter already up to date."
   else
-    echo "  Chapter compiled!"
+    echo "Chapter compiled!"
   fi
 
   pdf_file="$output_dir/${tex_basename%.tex}.pdf"
