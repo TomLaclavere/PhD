@@ -1,32 +1,48 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_NAME="${GITHUB_REPOSITORY#*/}"
-CURRENT_DATE="$(date +"%Y-%m-%d")"
+# ========================================
+# Compile LaTeX
+# ========================================
+echo "-> Compile LaTeX files"
+./scripts/thesis/compile_thesis.sh
+./scripts/thesis/compile_chapters.sh
 
-export REPO_NAME CURRENT_DATE GITHUB_REPOSITORY
+# ========================================
+# Generate Archives
+# ========================================
+echo "-> Generate archives"
+./scripts/archive.sh thesis/ website/thesis
+./scripts/thesis/archive_chapters.sh
 
 # ========================================
 # Generate Sections
 # ========================================
 
-THESIS_HTML="$(./scripts/website/gen_thesis.sh)"
-CHAPTERS_HTML="$(./scripts/website/gen_chapters.sh)"
-
-export THESIS_HTML CHAPTERS_HTML
-
-# ========================================
-# Generate Archives
-# ========================================
-./scripts/archive.sh thesis/ website/thesis
+echo "-> Generate HTML sections"
+./scripts/website/gen_publications.sh
+./scripts/website/gen_thesis.sh
+./scripts/website/gen_chapters.sh
+./scripts/website/gen_cv.sh
 
 # ========================================
 # Generate Pages
 # ========================================
+echo "-> Assemble website"
+
+export PUBLICATIONS_HTML="$(< website/partials/publications.html)"
+export THESIS_HTML="$(< website/partials/thesis.html)"
+export CHAPTERS_HTML="$(< website/partials/chapters.html)"
+export CV_HTML="$(< website/partials/cv.html)"
+
+rm -rf website/partials
 
 # ========================================
 # Build HTML
 # ========================================
-echo "> Generate Website"
+echo "-> Generate website"
 
 envsubst < website/website.html.in > website/website.html
+
+echo "Website generated: website/website.html"
+
