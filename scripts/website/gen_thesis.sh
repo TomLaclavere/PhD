@@ -7,6 +7,7 @@ mkdir -p "$(dirname "$OUT_FILE")"
 
 pdf_file="thesis/thesis.pdf"
 THESIS_SRC_DIR="thesis"
+CURRENT_DATE="$(date +"%Y-%m-%d")"
 
 filesize="$(stat -c %s "$pdf_file" | numfmt --to=iec)"
 src_size="$(du -sh "$THESIS_SRC_DIR" | awk '{print $1}')"

@@ -61,7 +61,7 @@ for src_tex in thesis/chapters/*/*.tex; do
         <time datetime="$last_update">Updated $last_update</time>
     </div>
   </div>
-  <div style="display: flex; gap: 10px; margin-bottom: 10px;"">
+  <div style="display: flex; gap: 10px; margin-bottom: 10px;">
     <a href="$WEB_DIR/$fname" class="btn" style="flex: 1;" download>
         <i class="fas fa-download"></i>
         Download PDF
