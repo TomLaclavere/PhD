@@ -24,15 +24,6 @@ jobs:
             latexmk \
             gettext 
 
-      - name: Compile full thesis
-        run: scripts/thesis/compile_thesis.sh
-
-      - name: Compile chapters
-        run: scripts/thesis/compile_chapters.sh
-
-      - name: Generate thesis/index.html
-        run: scripts/thesis/gen_html.sh
-
       - name: Build website
         run: scripts/website/build_website.sh
 
