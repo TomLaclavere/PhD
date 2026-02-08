@@ -8,7 +8,7 @@ ARCHIVER="./scripts/archive.sh"
 
 # Checks
 [[ -d "$CHAPTERS_DIR" ]] || { echo "$CHAPTERS_DIR not found"; exit 1; }
-[[ -x "$ARCHIVER" ]] || { echo "archive_dir.sh not executable"; exit 1; }
+[[ -x "$ARCHIVER" ]] || { echo "archive.sh not executable"; exit 1; }
 
 mkdir -p "$OUTPUT_DIR"
 

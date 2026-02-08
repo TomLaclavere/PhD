@@ -40,20 +40,20 @@ This ensures all required packages are installed, including:
 ---
 
 # Scripts
-This repository includes many bash scripts to perform LaTeX compilation, HTML generation or basic features. The scripts are all stored in scripts/ repository, and a detailed explanation for each of them can be found in scripts/README.md.
-If one of the bash script is not executable, run :
+This repository includes many Bash scripts to perform LaTeX compilation, HTML generation, or other basic tasks. The scripts are all stored in the scripts/ directory, and a detailed explanation for each of them can be found in scripts/README.md.
+If one of the Bash scripts is not executable, run :
 
 ```bash
 chmod +x scripts/*.sh
 ```
 
-Here, we give a short description for the main features. 
+Here, we give a short description of the main features. 
 
 ## Thesis
 
 ### Compile PhD Thesis
 
-To compile the thesis LaTeX files and generate PDF file, run :
+To compile the thesis LaTeX files and generate the PDF file, run :
 
 ```bash
 ./scripts/thesis/compile_thesis.sh
@@ -63,13 +63,13 @@ PDF will be stored in thesis/thesis.pdf
 
 ### Compile individual chapters
 
-Chapters TeX files are written to be compiled together to build the full thesis in thesis.tex, or to be compiled individually for easier reading. To compile all chapters in standalone version, run :
+The TeX files for each chapter are written to be compiled together to build the full thesis in thesis.tex, or to be compiled individually for easier reading. To compile all chapters in standalone versions, run :
 
 ```bash
 ./scripts/thesis/compile_chapters.sh
 ```
 
-PDF will be stored in thesis/chapters/CHAPTERS_NAME/CHAPTERS_NAME.pdf
+The PDF will be stored in thesis/chapters/CHAPTER_NAME/CHAPTER_NAME.pdf
 
 ### Cleaning LaTeX outputs
 
@@ -96,5 +96,3 @@ To generate the HTML files for the website, the scripts will use HTML templates 
 ```bash
 ./scripts/website/build_website.sh
 ```
-
-A specific version of this file exists only for CI purpose : ```./scripts/website/CI_build_website.sh```. This script can't run in local, because it requires GitHub variables defined. 

@@ -3,11 +3,12 @@ set -euo pipefail
 
 # Repository information
 OUT_FILE="website/partials/cv.html"
+CURRENT_DATE="$(date +"%Y-%m-%d")"
 mkdir -p "$(dirname "$OUT_FILE")"
 mkdir -p website/cv
 
 pdf_file="cv/cv_FR.pdf"
-cp $pdf_file website/$pdf_file
+cp "$pdf_file" "website/$pdf_file"
 filesize="$(stat -c %s "$pdf_file" | numfmt --to=iec)"
 last_update="$(git log -1 --format=%cs -- cv 2>/dev/null || echo "$CURRENT_DATE")"
 
@@ -32,7 +33,7 @@ cat > "$OUT_FILE" <<EOF
         </div>
       </div>
       <div style="display: flex; gap: 10px;">
-          <a href="$pdf_file" class="btn" style="flex: 1; download">
+          <a href="$pdf_file" class="btn" style="flex: 1"; download>
               <i class="fas fa-download"></i>
               Download
           </a>
