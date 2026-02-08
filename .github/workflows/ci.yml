@@ -31,10 +31,10 @@ jobs:
         run: scripts/thesis/compile_chapters.sh
 
       - name: Generate thesis/index.html
-        run: scripts/thesis/CI_gen_html.sh
+        run: scripts/thesis/gen_html.sh
 
       - name: Build website
-        run: scripts/website/CI_build_website.sh
+        run: scripts/website/build_website.sh
 
       # Deploy to GitHub Pages
       - name: Deploy PDFs to GitHub Pages
