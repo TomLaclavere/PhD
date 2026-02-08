@@ -172,7 +172,7 @@
         /* Card Grids */
         .card-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
             gap: 25px;
             margin-bottom: 40px;
         }
@@ -483,7 +483,7 @@
                 <i class="fas fa-book-open"></i>
             </div>
             <h1>Thesis Achievements</h1>
-            <p class="subtitle">A comprehensive showcase of academic work including conferences, publications, and research documentation</p>
+            <p class="subtitle">A showcase of academic work including conferences, publications, and research documentation</p>
             
             <div class="stats">
                 <div class="stat-item">
@@ -590,91 +590,77 @@
             
             <div class="card-grid">
                 <div class="card publication">
-                    <div class="card-header">
-                        <div class="card-icon">
-                            <i class="fas fa-file-signature"></i>
-                        </div>
-                        <div class="card-title">CMM Paper</div>
-                        <div class="card-subtitle">Computational Materials</div>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-description">
-                            Research paper on computational materials methodology and findings from thesis research.
-                        </div>
-                        <div class="card-meta">
-                            <div class="file-size">
-                                <i class="fas fa-hdd"></i>
-                                <span>PDF Document</span>
-                            </div>
-                            <div>
-                                <i class="fas fa-tag"></i>
-                                <span>Journal</span>
-                            </div>
-                        </div>
-                        <a href="Publications/CMM/" class="btn btn-block">
-                            <i class="fas fa-folder-open"></i>
-                            View Publication
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="card publication">
-                    <div class="card-header">
-                        <div class="card-icon">
-                            <i class="fas fa-atom"></i>
-                        </div>
-                        <div class="card-title">FMM Research</div>
-                        <div class="card-subtitle">Fast Multipole Methods</div>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-description">
-                            Paper on Fast Multipole Methods applications in computational physics and engineering.
-                        </div>
-                        <div class="card-meta">
-                            <div class="file-size">
-                                <i class="fas fa-hdd"></i>
-                                <span>PDF Document</span>
-                            </div>
-                            <div>
-                                <i class="fas fa-tag"></i>
-                                <span>Conference</span>
-                            </div>
-                        </div>
-                        <a href="Publications/FMM/" class="btn btn-block">
-                            <i class="fas fa-folder-open"></i>
-                            View Publication
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="card publication">
-                    <div class="card-header">
-                        <div class="card-icon">
-                            <i class="fas fa-mountain"></i>
-                        </div>
-                        <div class="card-title">Moriond 2024</div>
-                        <div class="card-subtitle">Physics Conference</div>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-description">
-                            Contribution to Moriond 2024 conference proceedings with focus on theoretical physics aspects.
-                        </div>
-                        <div class="card-meta">
-                            <div class="file-size">
-                                <i class="fas fa-hdd"></i>
-                                <span>PDF Document</span>
-                            </div>
-                            <div>
-                                <i class="fas fa-tag"></i>
-                                <span>Proceedings</span>
-                            </div>
-                        </div>
-                        <a href="Publications/Moriond_2024/" class="btn btn-block">
-                            <i class="fas fa-folder-open"></i>
-                            View Publication
-                        </a>
-                    </div>
-                </div>
+    <div class="card-header">
+        <div class="card-icon">
+            <i class="fas fa-file-signature"></i>
+        </div>
+        <div class="card-title">CMM</div>
+        <div class="card-subtitle">Author(s)</div>
+    </div>
+    <div class="card-body">
+        <div class="card-description">
+            Short abstract or description of the paper goes here.
+        </div>
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <a href="publications/CMM/CMM.pdf" class="btn" style="flex: 1;" download>
+                <i class="fas fa-download"></i>
+                Download PDF
+            </a>
+            <a href="publications/CMM/CMM.pdf" class="btn btn-secondary" style="flex: 1;">
+                <i class="fas fa-eye"></i>
+                Preview PDF
+            </a>
+        </div>
+    </div>
+</div>
+<div class="card publication">
+    <div class="card-header">
+        <div class="card-icon">
+            <i class="fas fa-file-signature"></i>
+        </div>
+        <div class="card-title">FMM</div>
+        <div class="card-subtitle">Author(s)</div>
+    </div>
+    <div class="card-body">
+        <div class="card-description">
+            Short abstract or description of the paper goes here.
+        </div>
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <a href="publications/FMM/FMM.pdf" class="btn" style="flex: 1;" download>
+                <i class="fas fa-download"></i>
+                Download PDF
+            </a>
+            <a href="publications/FMM/FMM.pdf" class="btn btn-secondary" style="flex: 1;">
+                <i class="fas fa-eye"></i>
+                Preview PDF
+            </a>
+        </div>
+    </div>
+</div>
+<div class="card publication">
+    <div class="card-header">
+        <div class="card-icon">
+            <i class="fas fa-file-signature"></i>
+        </div>
+        <div class="card-title">moriond2024</div>
+        <div class="card-subtitle">Author(s)</div>
+    </div>
+    <div class="card-body">
+        <div class="card-description">
+            Short abstract or description of the paper goes here.
+        </div>
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <a href="publications/moriond2024/main.pdf" class="btn" style="flex: 1;" download>
+                <i class="fas fa-download"></i>
+                Download PDF
+            </a>
+            <a href="publications/moriond2024/main.pdf" class="btn btn-secondary" style="flex: 1;">
+                <i class="fas fa-eye"></i>
+                Preview PDF
+            </a>
+        </div>
+    </div>
+</div>
             </div>
         </section>
 
@@ -691,33 +677,41 @@
                         <div class="card-icon">
                             <i class="fas fa-file-contract"></i>
                         </div>
-                        <div class="card-title">Academic CV</div>
+                        <div class="card-title">CV - Version Française</div>
                         <div class="card-subtitle">Complete Professional Profile</div>
                     </div>
                     <div class="card-body">
                         <div class="card-description">
                             Detailed curriculum vitae including education, research experience, publications, skills, and academic achievements.
                         </div>
-                        <div class="card-meta">
-                            <div class="file-size">
-                                <i class="fas fa-hdd"></i>
-                                <span>PDF Document</span>
-                            </div>
-                            <div>
-                                <i class="fas fa-sync-alt"></i>
-                                <span>Updated Regularly</span>
-                            </div>
-                        </div>
-                        <div style="display: flex; gap: 10px;">
-                            <a href="#" class="btn" style="flex: 1;">
-                                <i class="fas fa-download"></i>
-                                Download CV
-                            </a>
-                            <a href="#" class="btn btn-secondary" style="flex: 1;">
-                                <i class="fas fa-eye"></i>
-                                Preview
-                            </a>
-                        </div>
+                              <div class="card-meta">
+        <div class="file-size">
+            <i class="fas fa-file-pdf"></i>
+            <span>PDF</span>
+        </div>
+        <div class="file-size">
+            <i class="fas fa-hdd"></i>
+            <span>800K</span>
+        </div>
+        <div class="meta-item">
+            <i class="fas fa-language"></i>
+            <span>French</span>
+        </div>
+        <div>
+            <i class="fas fa-calendar"></i>
+            <time datetime="">Updated </time>
+        </div>
+      </div>
+      <div style="display: flex; gap: 10px;">
+          <a href="cv/cv_FR.pdf" class="btn" style="flex: 1; download">
+              <i class="fas fa-download"></i>
+              Download
+          </a>
+          <a href="cv/cv_FR.pdf" class="btn btn-secondary" style="flex: 1;">
+              <i class="fas fa-eye"></i>
+              Preview 
+          </a>
+      </div>
                     </div>
                 </div>
             </div>
@@ -727,128 +721,159 @@
         <section id="thesis" class="section animate-in">
             <div class="section-header">
                 <i class="fas fa-book section-icon"></i>
-                <h2>
-                    <a href="thesis/thesis.html" class="section-link" target="_blank" rel="noopener">
-                        Thesis Documentation
-                    </a>
-                </h2>
+                <h2>Thesis Documentation</h2>
             </div>
             
             <div class="card-grid">
                 <div class="card thesis">
-  <div class="card-header">
-      <div class="card-icon">
-          <i class="fas fa-book"></i>
-      </div>
-      <div class="card-title">Complete Thesis</div>
-      <div class="card-subtitle">PhD Thesis</div>
-  </div>
-  <div class="card-body">
-      <div class="card-description">
-          Complete PhD Thesis document including all chapters, references, and appendices.
-      </div>
-      <div class="card-meta">
-          <div class="file-size">
-              <i class="fas fa-hdd"></i>
-              <span>13M</span>
-          </div>
-          <div>
-              <i class="fas fa-calendar"></i>
-              <span>2026-02-08</span>
-          </div>
-      </div>
-      
-      <div class="btn-group">
-          <a href="thesis/thesis.pdf" class="btn btn-block" download>
-              <i class="fas fa-download"></i>
-              Download Full Thesis
-          </a>
-
-          <a href="thesis/thesis.pdf" class="btn btn-block btn-secondary" target="_blank" rel="noopener">
-              <i class="fas fa-eye"></i>
-              Preview Full Thesis
-          </a>
-      </div>
-  </div>
+    <div class="card-header">
+        <div class="card-icon">
+            <i class="fas fa-book"></i>
+        </div>
+        <div class="card-title">Complete Thesis</div>
+        <div class="card-subtitle">PhD Thesis</div>
+    </div>
+    <div class="card-body">
+        <div class="card-description">
+            Complete PhD Thesis document including all chapters, references, and appendices.
+        </div>
+        <div class="card-meta">
+            <div class="file-size">
+                <i class="fas fa-file-pdf"></i>
+                <span>PDF</span>
+            </div>
+            <div>
+                <i class="fas fa-hdd"></i>
+                <span>13M</span>
+            </div>
+            <div>
+                <i class="fas fa-book"></i>
+                <span>1 chapters</span>
+            </div>
+            <div>
+                <i class="fas fa-clock"></i>
+                <time datetime="2026-02-08">Updated 2026-02-08</time>
+            </div>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <a href="thesis/thesis.pdf" class="btn" style="flex: 1;" download>
+                <i class="fas fa-download"></i>
+                Download
+            </a>
+            <a href="thesis/thesis.pdf" class="btn btn-secondary" style="flex: 1;">
+                <i class="fas fa-eye"></i>
+                Preview 
+            </a>
+        </div>
+    </div>
 </div>
-
 <div class="card thesis">
-  <div class="card-header">
-    <div class="card-icon">
-      <i class="fas fa-folder-open"></i>
-    </div>
-    <div class="card-title">Thesis Source Files</div>
-    <div class="card-subtitle">LaTeX Source Code</div>
-  </div>
-
-  <div class="card-body">
-    <div class="card-description">
-      Complete LaTeX source files including chapters, figures, and custom packages used in the thesis.
+    <div class="card-header">
+        <div class="card-icon">
+        <i class="fas fa-folder-open"></i>
+        </div>
+        <div class="card-title">Thesis Source Files</div>
+        <div class="card-subtitle">LaTeX Source Code</div>
     </div>
 
-    <div class="card-meta">
-      <div class="file-size">
-        <i class="fas fa-code"></i>
-        <span>LaTeX Files</span>
-      </div>
-      <div>
-        <i class="fas fa-folder"></i>
-        <span>Multiple Files</span>
-      </div>
-    </div>
+    <div class="card-body">
+        <div class="card-description">
+        Complete LaTeX source files including chapters, figures, and custom packages used in the thesis.
+        </div>
 
-    <div class="btn-group">
-      <a href="thesis/thesis.zip" class="btn btn-block">
-        <i class="fas fa-download"></i>
-        Download ZIP
-      </a>
+        <div class="card-meta">
+            <div>
+                <i class="fas fa-hdd"></i>
+                <span>68M</span>
+            </div>
+            <div>
+                <i class="fas fa-layer-group"></i>
+                <span>99 files</span>
+            </div>
+            <div>
+                <i class="fas fa-images"></i>
+                <span>98 figures</span>
+            </div>
+            <div>
+                <i class="fas fa-clock"></i>
+                <time datetime="2026-02-08">Updated 2026-02-08</time>
+            </div>
+        </div>
 
-      <a href="https://github.com/TomLaclavere/PhD/tree/main/thesis" class="btn btn-block btn-secondary" target="_blank" rel="noopener">
-        <i class="fas fa-eye"></i>
-        Browse on GitHub
-        </a>
+        <div class="btn-group">
+        <div style="display: flex; gap: 10px;">
+            <a href="thesis/thesis.zip" class="btn" style="flex: 1;">
+                <i class="fas fa-download"></i>
+                Download ZIP
+            </a>
+            <a href="https://github.com/TomLaclavere/PhD/tree/main/thesis" class="btn btn-secondary" style="flex: 1;">
+                <i class="fas fa-eye"></i>
+                Preview on GitHub
+            </a>
+        </div>
     </div>
-  </div>
 </div>
             </div>
+        </section>
 
-            <!-- Thesis Chapters -->
-            <div style="margin-top: 40px;">
+        <!-- Individual Chapters -->
+        <section id="chapters" class="section animate-in">
+            <div style="margin-top: 40px; clear: both;">
                 <h3 style="margin-bottom: 20px; font-size: 1.5rem; color: var(--text-color);">
                     <i class="fas fa-layer-group" style="margin-right: 10px;"></i>Individual Chapters
                 </h3>
-                <!-- Chapter: gps calsource -->
-<div class="card-grid">
-  <div class="card thesis">
-    <div class="card-header">
-      <div class="card-icon"><i class="fas fa-file-alt"></i></div>
-      <div class="card-title">PhD – gps calsource</div>
+                <div class="card-grid">
+                    <div class="card thesis">
+                        <!-- Chapter: gps calsource -->
+<div class="card-header">
+  <div class="card-icon"><i class="fas fa-file-alt"></i></div>
+  <div class="card-title">PhD – gps calsource</div>
+</div>
+<div class="card-body">
+  <div class="card-description">
+    gps calsource individual chapter.
+  </div>
+  <div class="card-meta">
+    <div>
+        <i class="fas fa-file-pdf"></i>
+        <span>PDF · 12M</span>
     </div>
-    <div class="card-body">
-      <div class="card-description">
-        gps calsource individual chapter.
-      </div>
-      <div class="card-meta">
-        <div class="file-size">
-          <i class="fas fa-hdd"></i>
-          <span>12M</span>
-        </div>
-        <div>
-          <i class="fas fa-calendar"></i>
-          <span>2026-02-08</span>
-        </div>
-      </div>
-      <div class="btn-group">
-        <a href="thesis/chapters/gps_calsource.pdf" class="btn btn-block" download>
-          Download gps calsource
-        </a>
-        <a href="thesis/chapters/gps_calsource.pdf" class="btn btn-block btn-secondary" target="_blank" rel="noopener">
-          Preview gps calsource
-        </a>
-      </div>
+    <div>
+        <i class="fas fa-folder-open"></i>
+        <span>Sources · 42M</span>
+    </div>
+    <div>
+        <i class="fas fa-images"></i>
+        <span>43 figures</span>
+    </div>
+    <div>
+        <i class="fas fa-clock"></i>
+        <time datetime="2026-02-08">Updated 2026-02-08</time>
     </div>
   </div>
+  <div style="display: flex; gap: 10px; margin-bottom: 10px;"">
+    <a href="thesis/chapters/gps_calsource.pdf" class="btn" style="flex: 1;" download>
+        <i class="fas fa-download"></i>
+        Download PDF
+    </a>
+    <a href="thesis/chapters/gps_calsource.pdf" class="btn btn-secondary" style="flex: 1;">
+        <i class="fas fa-eye"></i>
+        Preview PDF
+    </a>
+    </div>
+    <div style="display: flex; gap: 10px;">
+    <a href="thesis/chapters/gps_calsource.zip" class="btn" style="flex: 1;">
+        <i class="fas fa-download"></i>
+        Download ZIP
+    </a>
+    <a href="https://github.com/TomLaclavere/PhD/tree/main/thesis/chapters/gps_calsource" class="btn btn-secondary" style="flex: 1;">
+        <i class="fas fa-eye"></i>
+        Preview on GitHub
+    </a>
+    </div>
 </div>
+                    </div>
+                </div>
             </div>
         </section>
     </main>
