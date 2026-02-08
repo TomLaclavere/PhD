@@ -1,32 +1,15 @@
-#!/usr/bin/env bash
-set -euo pipefail
-
-REPO_NAME="${GITHUB_REPOSITORY#*/}"
-CURRENT_DATE="$(date +"%Y-%m-%d")"
-
-export REPO_NAME CURRENT_DATE GITHUB_REPOSITORY
-
 # ========================================
-# Generate Sections
+# Configuration File for Local Generation
 # ========================================
 
-THESIS_HTML="$(./scripts/website/gen_thesis.sh)"
-CHAPTERS_HTML="$(./scripts/website/gen_chapters.sh)"
+# repository information
+export REPO_NAME="PhD"
+export GITHUB_USERNAME="TomLaclavere"
+export GITHUB_REPOSITORY="$GITHUB_USERNAME/$REPO_NAME"
 
-export THESIS_HTML CHAPTERS_HTML
+export OUTPUT_DIR="thesis/output"
+export CHAPTER_DIR="$OUTPUT_DIR/chapters"
+export CURRENT_DATE="$(date +"%Y-%m-%d")"
 
-# ========================================
-# Generate Archives
-# ========================================
-./scripts/archive.sh thesis/ website/thesis
-
-# ========================================
-# Generate Pages
-# ========================================
-
-# ========================================
-# Build HTML
-# ========================================
-echo "> Generate Website"
-
-envsubst < website/website.html.in > website/website.html
+# Generate website
+./scripts/website/CI_build_website.sh
