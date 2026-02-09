@@ -2,8 +2,6 @@
 
 [![Website](https://img.shields.io/badge/Website-bd93f9?style=for-the-badge&logo=google-chrome&logoColor=white)](https://tomlaclavere.github.io/PhD/website.html)
 
-[![PhD Thesis](https://img.shields.io/badge/PhD-thesis-ff79c6?style=for-the-badge&logo=read-the-docs&logoColor=white)](https://tomlaclavere.github.io/PhD/Thesis/thesis.html)
-
 [![Licence: CC-BY-4.0](https://img.shields.io/badge/Licence-50fa7b?style=for-the-badge&logo=creative-commons&logoColor=white)](https://creativecommons.org/licenses/by/4.0/legalcode)
 
 [![GitHub Repo Size](https://img.shields.io/github/repo-size/tomlaclavere/PhD?style=for-the-badge&logo=github&logoColor=white)](https://github.com/tomlaclavere/PhD)
