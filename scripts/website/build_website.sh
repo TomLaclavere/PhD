@@ -35,7 +35,7 @@ export THESIS_HTML="$(< website/partials/thesis.html)"
 export CHAPTERS_HTML="$(< website/partials/chapters.html)"
 export CV_HTML="$(< website/partials/cv.html)"
 
-rm -rf website/partials
+# rm -rf website/partials
 
 # ========================================
 # Build HTML
