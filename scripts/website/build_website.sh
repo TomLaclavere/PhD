@@ -20,22 +20,29 @@ echo "-> Generate archives"
 # ========================================
 
 echo "-> Generate HTML sections"
+./scripts/website/gen_stats.sh
 ./scripts/website/gen_publications.sh
 ./scripts/website/gen_thesis.sh
 ./scripts/website/gen_chapters.sh
 ./scripts/website/gen_cv.sh
+./scripts/website/gen_conferences.sh
+./scripts/website/gen_github.sh
 
 # ========================================
 # Generate Pages
 # ========================================
 echo "-> Assemble website"
 
+export STATS_HTML="$(< website/partials/stats.html)"
 export PUBLICATIONS_HTML="$(< website/partials/publications.html)"
 export THESIS_HTML="$(< website/partials/thesis.html)"
 export CHAPTERS_HTML="$(< website/partials/chapters.html)"
 export CV_HTML="$(< website/partials/cv.html)"
+export CONFERENCES_HTML="$(< website/partials/conferences.html)"
+export GITHUB_HTML="$(< website/partials/github/github.html)"
+export GITHUB_FILE_HTML="$(< website/partials/github_file.html)"
 
-# rm -rf website/partials
+rm -rf website/partials
 
 # ========================================
 # Build HTML
