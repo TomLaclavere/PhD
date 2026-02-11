@@ -82,7 +82,7 @@ cat >> "$OUT_FILE" <<EOF
                 <time datetime="$updated_fmt">Updated $updated_fmt</time>
             </div>
         </div>
-        <a href="https://github.com/TomLaclavere/PhD" class="btn" target="_blank">
+        <a href="$url" class="btn" target="_blank">
             View on GitHub <i class="fab fa-github"></i>
         </a>
     </div>

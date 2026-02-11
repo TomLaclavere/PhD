@@ -20,12 +20,12 @@ echo "-> Generate archives"
 # ========================================
 
 echo "-> Generate HTML sections"
-./scripts/website/gen_stats.sh
 ./scripts/website/gen_publications.sh
 ./scripts/website/gen_thesis.sh
 ./scripts/website/gen_chapters.sh
 ./scripts/website/gen_cv.sh
 ./scripts/website/gen_conferences.sh
+./scripts/website/gen_stats.sh
 ./scripts/website/gen_github.sh
 
 # ========================================
