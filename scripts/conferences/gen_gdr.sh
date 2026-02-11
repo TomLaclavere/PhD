@@ -34,10 +34,10 @@ if [[ ! -f "$odp_file" ]]; then
   echo "No ODP found in $PAPER_DIR"
   exit 1
 fi
-odpsize="$(ls -lh "$pdf_file" | awk '{print $5}')"
+odpsize="$(ls -lh "$odp_file" | awk '{print $5}')"
 
 # Copy ODP to website
-cp $PAPER_DIR/*.odp "website/$PAPER_DIR/"
+cp "$odp_file" "website/$PAPER_DIR/"
 
 # HTML generation
 cat >> "$OUT_FILE" <<EOF

@@ -8,7 +8,7 @@
 
 [![Last Commit](https://img.shields.io/github/last-commit/tomlaclavere/PhD?style=for-the-badge&logo=git&logoColor=white)](https://github.com/tomlaclavere/PhD/commits/main)
 
-Repository to store my PhD work for QUBIC Instrument. It includes my Thesis, publications, presentations and others.
+Repository to store my PhD work for the QUBIC instrument. It includes my thesis, publications, presentations, and other materials.  
 
 # LaTeX Thesis – Build Instructions
 

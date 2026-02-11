@@ -5,7 +5,7 @@ set -euo pipefail
 GITHUB_USER="qubicsoft"
 REPO_NAME="qubic"
 AUTHOR="TomLaclavere"
-OUT_FILE="website/partials/github/3dpe.html"
+OUT_FILE="website/partials/github/qubic.html"
 
 mkdir -p "$(dirname "$OUT_FILE")"
 : > "$OUT_FILE"
