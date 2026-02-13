@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Portfolio - Thesis Achievements</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container nav-container">
+            <a href="#" class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Academic Portfolio</span>
+            </a>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="nav-links" id="navLinks">
+                <a href="#conferences">Conferences</a>
+                <a href="#publications">Publications</a>
+                <a href="#cv">CV</a>
+                <a href="#thesis">Thesis</a>
+                <a href="#github">GitHub</a>
+                <a href="#contact">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-logo">
+                <i class="fas fa-book-open"></i>
+            </div>
+            <h1>Thesis Achievements</h1>
+            <p class="subtitle">A showcase of academic work including conferences, publications, and research documentation</p>
+            
+            <div class="stats">
+                $STATS_HTML
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- CV Section -->
+        <section id="cv" class="section animate-in">
+            <div class="section-header">
+                <i class="fas fa-user-tie section-icon"></i>
+                <h2>Curriculum Vitae</h2>
+            </div>
+            
+            <div class="card-grid">
+                <div class="card cv">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-file-contract"></i>
+                        </div>
+                        <div class="card-title">CV - Version Française</div>
+                        <div class="card-subtitle">Complete Professional Profile</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-description">
+                            Detailed curriculum vitae including education, research experience, publications, skills, and academic achievements.
+                        </div>
+                        $CV_HTML
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Publications Section -->
+        <section id="publications" class="section animate-in">
+            <div class="section-header">
+                <i class="fas fa-newspaper section-icon"></i>
+                <h2>Publications</h2>
+            </div>
+            
+            <div class="card-grid">
+                $PUBLICATIONS_HTML
+            </div>
+        </section>
+
+
+        <!-- Conferences Section -->
+        <section id="conferences" class="section animate-in">
+            <div class="section-header">
+                <i class="fas fa-microphone-alt section-icon"></i>
+                <h2>Conferences & Presentations</h2>
+            </div>
+            
+            <div class="card-grid">
+                $CONFERENCES_HTML
+            </div>
+        </section>
+
+        <!-- Thesis Section -->
+        <section id="thesis" class="section animate-in">
+            <div class="section-header">
+                <i class="fas fa-book section-icon"></i>
+                <h2>Thesis Documentation</h2>
+            </div>
+            
+            <div class="card-grid">
+                $THESIS_HTML
+            </div>
+        </section>
+
+        <!-- Individual Chapters -->
+        <section id="chapters" class="section animate-in">
+            <div style="margin-top: 40px; clear: both;">
+                <h3 style="margin-bottom: 20px; font-size: 1.5rem; color: var(--text-color);">
+                    <i class="fas fa-layer-group" style="margin-right: 10px;"></i>Individual Chapters
+                </h3>
+                <div class="card-grid">
+                    <div class="card thesis">
+                        $CHAPTERS_HTML
+                    </div>
+                </div>
+            </div>
+        </section>
+    
+
+        <!-- GitHub Section -->
+        <section id="github" class="section animate-in">
+            <div class="section-header">
+                <i class="fab fa-github section-icon"></i>
+                <h2>GitHub Repositories</h2>
+            </div>
+
+            <!-- Cards for each repository -->
+            <div class="card-grid">
+                $GITHUB_HTML
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>About This Portfolio</h3>
+                    <p style="color: var(--text-light); margin-bottom: 15px;">
+                        This website showcases the academic achievements and research outputs from my doctoral thesis.
+                    </p>
+                    <p style="color: var(--text-light);">
+                        All documents are compiled from LaTeX source and organized for easy access.
+                    </p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#conferences"><i class="fas fa-arrow-right"></i> Conferences</a></li>
+                        <li><a href="#publications"><i class="fas fa-arrow-right"></i> Publications</a></li>
+                        <li><a href="#cv"><i class="fas fa-arrow-right"></i> Curriculum Vitae</a></li>
+                        <li><a href="#thesis"><i class="fas fa-arrow-right"></i> Thesis</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Repository</h3>
+                    <ul class="footer-links">
+                        <li><a href="https://github.com/TomLaclavere/PhD/tree/main"><i class="fab fa-github"></i> GitHub Repository</a></li>
+                        <li><a href="README.md"><i class="fas fa-book"></i> README</a></li>
+                        <li><a href="LICENCE.md"><i class="fas fa-balance-scale"></i> License</a></li>
+                        <li><a href="CITATION.cff"><i class="fas fa-quote-right"></i> Citation File</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <ul class="footer-links">
+                        <li>
+                            <a href="https://github.com/TomLaclavere" target="_blank" rel="noopener">
+                                <i class="fab fa-github"></i> GitHub
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.linkedin.com/in/tom-laclav%C3%A8re-a94b9b2b0/" target="_blank" rel="noopener">
+                                <i class="fab fa-linkedin"></i> LinkedIn
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://arxiv.org/search/astro-ph?searchtype=author&query=Laclavere,+T" target="_blank" rel="noopener">
+                                <i class="fas fa-book-open"></i> arXiv
+                            </a>
+                        </li>
+                        <li>
+                            <a href="mailto:laclavere@apc.in2p3.fr">
+                                <i class="fas fa-envelope"></i> Academic mail
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>© <span id="current-year">2026</span> Academic Portfolio. All rights reserved.</p>
+                $GITHUB_FILE_HTML
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            document.getElementById('navLinks').classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const navLinks = document.getElementById('navLinks');
+            const mobileBtn = document.getElementById('mobileMenuBtn');
+            
+            if (!navLinks.contains(event.target) && !mobileBtn.contains(event.target)) {
+                navLinks.classList.remove('active');
+            }
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    // Close mobile menu if open
+                    document.getElementById('navLinks').classList.remove('active');
+                    
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Add animation to sections on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections
+        document.querySelectorAll('.section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Add hover effect to chapter items
+        document.querySelectorAll('.chapter-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+                this.style.boxShadow = 'var(--shadow)';
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
