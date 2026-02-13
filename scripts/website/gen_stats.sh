@@ -61,21 +61,4 @@ cat >> "$OUT_FILE" <<EOF
 </a>
 
 $thesis_block
-
-<div class="stats">
-    <div class="stat-item">
-        <i class="fab fa-github stat-icon"></i>
-        <div>
-            <div style="font-weight: 600;">5 Repositories</div>
-            <div style="font-size: 0.9rem;">Including Thesis & Analysis</div>
-        </div>
-    </div>
-    <div class="stat-item">
-        <i class="fas fa-code-branch stat-icon"></i>
-        <div>
-            <div style="font-weight: 600;">42 Commits</div>
-            <div style="font-size: 0.9rem;">In the last year</div>
-        </div>
-    </div>
-</div>
 EOF

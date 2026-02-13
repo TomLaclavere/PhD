@@ -21,7 +21,7 @@ fi
 # Extract information
 name=$(echo "$repo_json" | jq -r '.name')
 desc=$(echo "$repo_json" | jq -r '.description // "No description"')
-size=$(echo "$repo_json" | jq -r '.size')
+size=$(echo "$repo_json" | jq -r '.size / 1000')
 branch=$(echo "$repo_json" | jq -r '.default_branch')
 updated=$(echo "$repo_json" | jq -r '.updated_at')
 url=$(echo "$repo_json" | jq -r '.html_url')
@@ -29,30 +29,19 @@ language=$(echo "$repo_json" | jq -r '.language')
 updated_fmt=$(date -d "$updated" +"%d %b %Y")
 
 # commits count
-tmpfile=$(mktemp)
+commit_count=0
+page=1
 
-branches=$(curl -s \
-  "https://api.github.com/repos/$GITHUB_USER/$REPO_NAME/branches?per_page=100" \
-  | jq -r '.[].name')
+while :; do
+    count=$(curl -s \
+      "https://api.github.com/repos/$GITHUB_USER/$REPO_NAME/commits?per_page=100&page=$page&author=$AUTHOR" \
+      | jq 'length')
 
-for branch in $branches; do
-    page=1
-    while :; do
-        commits=$(curl -s \
-          "https://api.github.com/repos/$GITHUB_USER/$REPO_NAME/commits?sha=$branch&per_page=100&page=$page")
+    [[ "$count" -eq 0 ]] && break
 
-        count=$(echo "$commits" | jq 'length')
-        [[ "$count" -eq 0 ]] && break
-
-        echo "$commits" | jq -r '.[].sha' >> "$tmpfile"
-
-        page=$((page + 1))
-    done
+    commit_count=$((commit_count + count))
+    page=$((page + 1))
 done
-
-commit_count=$(sort -u "$tmpfile" | wc -l)
-
-rm "$tmpfile"
 
 # Generate HTML
 cat >> "$OUT_FILE" <<EOF
@@ -68,11 +57,11 @@ cat >> "$OUT_FILE" <<EOF
         <div class="card-meta">
             <div>
                 <i class="fas fa-hdd"></i>
-                <span>Size: ${size} KB</span>
+                <span>Size: ${size} MB</span>
             </div>
             <div>
                 <i class="fas fa-code"></i>
-                <span>${language}</span></div>
+                <span>Python</span></div>
             <div>
                  <i class="fas fa-clipboard-list"></i>
                 <span>${commit_count} commits</span>
