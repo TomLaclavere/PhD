@@ -52,11 +52,11 @@ cat > "$OUT_FILE" <<EOF
         <div style="display: flex; gap: 10px;">
             <a href="$pdf_file" class="btn" style="flex: 1;" download>
                 <i class="fas fa-download"></i>
-                Download
+                Download PDF
             </a>
             <a href="$pdf_file" class="btn btn-secondary" style="flex: 1;">
                 <i class="fas fa-eye"></i>
-                Preview 
+                Preview PDF
             </a>
         </div>
     </div>
