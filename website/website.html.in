@@ -53,23 +53,8 @@
                 <i class="fas fa-user-tie section-icon"></i>
                 <h2>Curriculum Vitae</h2>
             </div>
-            
             <div class="card-grid">
-                <div class="card cv">
-                    <div class="card-header">
-                        <div class="card-icon">
-                            <i class="fas fa-file-contract"></i>
-                        </div>
-                        <div class="card-title">CV - Version Française</div>
-                        <div class="card-subtitle">Complete Professional Profile</div>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-description">
-                            Detailed curriculum vitae including education, research experience, publications, skills, and academic achievements.
-                        </div>
-                        $CV_HTML
-                    </div>
-                </div>
+                $CV_HTML
             </div>
         </section>
 
