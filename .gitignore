@@ -3,6 +3,8 @@
 *.vscode
 *.bbl
 **/output/*
+*.zip
+*.tar.xz
 
 
 !**/output/.gitkeep

@@ -32,54 +32,56 @@ for src_tex in thesis/chapters/*/*.tex; do
   \( -name '*.png' -o -name '*.jpg' -o -name '*.pdf' \) \
   | wc -l | tr -d ' ')"
   last_update="$(git log -1 --format=%cs -- "$chapter_dir" 2>/dev/null || echo "$CURRENT_DATE")"
-
+  echo "$chapter_name"
   cat >> "$OUT_FILE" <<EOF
 <!-- Chapter: $chapter_name -->
-<div class="card-header">
-  <div class="card-icon"><i class="fas fa-file-alt"></i></div>
-  <div class="card-title">PhD – $chapter_name</div>
-</div>
-<div class="card-body">
-  <div class="card-description">
-    $chapter_name individual chapter.
-  </div>
-  <div class="card-meta">
-    <div>
-        <i class="fas fa-file-pdf"></i>
-        <span>PDF · $filesize</span>
+<div class="card thesis">
+    <div class="card-header">
+        <div class="card-icon"><i class="fas fa-file-alt"></i></div>
+        <div class="card-title">PhD – $chapter_name</div>
     </div>
-    <div>
-        <i class="fas fa-folder-open"></i>
-        <span>Sources · $src_size</span>
-    </div>
-    <div>
-        <i class="fas fa-images"></i>
-        <span>$fig_count figures</span>
-    </div>
-    <div>
-        <i class="fas fa-clock"></i>
-        <time datetime="$last_update">Updated $last_update</time>
-    </div>
-  </div>
-  <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-    <a href="$WEB_DIR/$fname" class="btn" style="flex: 1;" download>
-        <i class="fas fa-download"></i>
-        Download PDF
-    </a>
-    <a href="$WEB_DIR/$fname" class="btn btn-secondary" style="flex: 1;">
-        <i class="fas fa-eye"></i>
-        Preview PDF
-    </a>
-    </div>
-    <div style="display: flex; gap: 10px;">
-    <a href="$WEB_DIR/$chapter_slug.zip" class="btn" style="flex: 1;">
-        <i class="fas fa-download"></i>
-        Download ZIP
-    </a>
-    <a href="https://github.com/TomLaclavere/PhD/tree/main/thesis/chapters/$chapter_slug" class="btn btn-secondary" style="flex: 1;">
-        <i class="fas fa-eye"></i>
-        Preview on GitHub
-    </a>
+    <div class="card-body">
+        <div class="card-description">
+            $chapter_name individual chapter.
+        </div>
+        <div class="card-meta">
+            <div>
+                <i class="fas fa-file-pdf"></i>
+                <span>PDF · $filesize</span>
+            </div>
+            <div>
+                <i class="fas fa-folder-open"></i>
+                <span>Sources · $src_size</span>
+            </div>
+            <div>
+                <i class="fas fa-images"></i>
+                <span>$fig_count figures</span>
+            </div>
+            <div>
+                <i class="fas fa-clock"></i>
+                <time datetime="$last_update">Updated $last_update</time>
+            </div>
+        </div>
+    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+        <a href="$WEB_DIR/$fname" class="btn" style="flex: 1;" download>
+            <i class="fas fa-download"></i>
+            Download PDF
+        </a>
+        <a href="$WEB_DIR/$fname" class="btn btn-secondary" style="flex: 1;">
+            <i class="fas fa-eye"></i>
+            Preview PDF
+        </a>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <a href="$WEB_DIR/$chapter_slug.tar.xz" class="btn" style="flex: 1;">
+                <i class="fas fa-download"></i>
+                Download TAR
+            </a>
+            <a href="https://github.com/TomLaclavere/PhD/tree/main/thesis/chapters/$chapter_slug" class="btn btn-secondary" style="flex: 1;">
+                <i class="fas fa-eye"></i>
+                Preview on GitHub
+            </a>
+        </div>
     </div>
 </div>
 EOF
