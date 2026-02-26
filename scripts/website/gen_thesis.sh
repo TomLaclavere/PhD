@@ -96,9 +96,9 @@ cat > "$OUT_FILE" <<EOF
 
         <div class="btn-group">
         <div style="display: flex; gap: 10px;">
-            <a href="thesis/thesis.zip" class="btn" style="flex: 1;">
+            <a href="thesis/thesis.tar.xz" class="btn" style="flex: 1;">
                 <i class="fas fa-download"></i>
-                Download ZIP
+                Download TAR
             </a>
             <a href="https://github.com/TomLaclavere/PhD/tree/main/thesis" class="btn btn-secondary" style="flex: 1;">
                 <i class="fas fa-eye"></i>

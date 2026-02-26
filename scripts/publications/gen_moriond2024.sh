@@ -32,7 +32,7 @@ last_update="$(git log -1 --format=%cs -- "$PAPER_DIR" 2>/dev/null || echo "$CUR
 mkdir -p "website/$PAPER_DIR"
 cp "$pdf_file" "website/$PAPER_DIR/"
 
-# ZIP archive
+# TAR archive
 ./scripts/archive.sh "$PAPER_DIR" "website/$PAPER_DIR"
 
 # Compute optional metadata
@@ -87,9 +87,9 @@ cat >> "$OUT_FILE" <<EOF
     </div>
 
     <div class="btn-group" style="display: flex; gap: 10px; margin-top: 10px;">
-      <a href="$PAPER_DIR/$(basename "$PAPER_DIR").zip" class="btn" style="flex: 1;">
+      <a href="$PAPER_DIR/$(basename "$PAPER_DIR").tar.xz" class="btn" style="flex: 1;">
         <i class="fas fa-download" aria-hidden="true"></i>
-        Download ZIP
+        Download TAR
       </a>
       <a href="https://arxiv.org/abs/2406.15414" class="btn btn-secondary" style="flex: 1;" target="_blank" rel="noopener">
         <i class="fas fa-eye" aria-hidden="true"></i>
