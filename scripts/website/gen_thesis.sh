@@ -13,7 +13,7 @@ filesize="$(stat -c %s "$pdf_file" | numfmt --to=iec)"
 src_size="$(du -sh "$THESIS_SRC_DIR" | awk '{print $1}')"
 tex_count="$(find "$THESIS_SRC_DIR" -name '*.tex' | wc -l | tr -d ' ')"
 file_count="$(find "$THESIS_SRC_DIR" -type f | wc -l | tr -d ' ')"
-fig_count="$(find "$THESIS_SRC_DIR" -type f \( -name '*.png' -o -name '*.jpg' -o ! -path "$pdf_file" \) | wc -l | tr -d ' ')"
+fig_count="$(find "$chapter_dir/Figures" -type f | wc -l | tr -d ' ')"
 chapter_count="$(find "$THESIS_SRC_DIR/chapters" -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')"
 last_update="$(git log -1 --format=%cs -- thesis 2>/dev/null || echo "$CURRENT_DATE")"
 

@@ -28,9 +28,7 @@ for src_tex in thesis/chapters/*/*.tex; do
   fname="$(basename "$pdf_file")"
   filesize="$(ls -lh "$pdf_file" | awk '{print $5}')"
   src_size="$(du -sh "$chapter_dir" | awk '{print $1}')"
-  fig_count="$(find "$chapter_dir" -type f \
-  \( -name '*.png' -o -name '*.jpg' -o -name '*.pdf' \) \
-  | wc -l | tr -d ' ')"
+  fig_count="$(find "$chapter_dir/Figures" -type f | wc -l | tr -d ' ')"
   last_update="$(git log -1 --format=%cs -- "$chapter_dir" 2>/dev/null || echo "$CURRENT_DATE")"
   echo "$chapter_name"
   cat >> "$OUT_FILE" <<EOF
