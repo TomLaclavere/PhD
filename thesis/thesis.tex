@@ -28,18 +28,24 @@
 \input{chapters/remerciements.tex}
 \newpage
 
+\phantomsection
+\addcontentsline{toc}{chapter}{Tables of contents}
 \tableofcontents
-\addstarredchapter{Table of contents}
+\cleardoublepage
 
-% \addstarredchapter{List of figures}
-% \listoffigures
+\phantomsection
+\addcontentsline{toc}{chapter}{List of figures}
+\listoffigures
+\cleardoublepage
 
-% \addstarredchapter{List of tables}
-% \listoftables
+\phantomsection
+\addcontentsline{toc}{chapter}{List of tables}
+\listoftables
+\cleardoublepage
 
-% \input{chapters/intro.tex}
-% \addstarredchapter{Introduction}
-
+\phantomsection
+\addcontentsline{toc}{chapter}{Introduction}
+\subfile{chapters/introduction/intro.tex}
 
 \part{Cosmological Context}
 
@@ -75,6 +81,7 @@ From Dodelson
 \section{Innovative approach: Bolometric Interferometer}
 
 \section{QUBIC Collaboration}
+\rmk{Inverser chapitres Spectral Imaging et GPS ??}
 
 \section{Instrumental Design}
 
@@ -87,6 +94,11 @@ From Dodelson
 \subfile{chapters/gps_calsource/gps_calsource.tex}
 
 \chapter{Qubicsoft development}
+% Need to find what and how to write.
+
+\section{Refactoring}
+
+\section{Pixelisation Effect}
 
 \part{Map-Making}
 
@@ -101,21 +113,21 @@ From Dodelson
 
 \section{How to define Realistic TOD}
 
-\section{Convolution approximation}
-
 \section{TOD convergence problem: Pixelisation vs Number of Frequency}
 
 \section{\texorpdfstring{Effect of $N_{\text{sub,TOD}} = N_{\text{sub,rec}}$}{Effect of Nsub\_TOD = Nsub\_rec}}
+
+\section{Correct convolution implementation}
 
 \section{External data addition effect (Planck)}
 
 \section{Simulation hyperparameters optimisation: $N_{\text{sub}}$, $N_{\text{pointings}}$, $N_{\text{iter}}$, $N_{\text{loop}}$ (CMM), \dots}
 
-
 \chapter{Neural-Network approximation of the Inverse Map-Making}
 % Wait NNMM paper.
 
 \part{Components separation and Cosmological parameters' estimation.}
+\rmk{Ajouter chapitre Cross-spectre + Cross-componant, pour expliquer comment on fait pour estimer r une fois qu'on a les cartes ? }
 
 \chapter{Atmospheric Mitigation}
 % Wait Atm paper.
