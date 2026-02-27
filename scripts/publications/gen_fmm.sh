@@ -37,7 +37,7 @@ cp "$pdf_file" "website/$PAPER_DIR/"
 
 # Compute optional metadata
 src_size=$(du -sh "$PAPER_DIR" 2>/dev/null | awk '{print $1}')
-fig_count="$(find "$chapter_dir/figure" -type f | wc -l | tr -d ' ')"
+fig_count="$(find "$PAPER_DIR/figure" -type f | wc -l | tr -d ' ')"
 
 # HTML generation
 cat >> "$OUT_FILE" <<EOF
