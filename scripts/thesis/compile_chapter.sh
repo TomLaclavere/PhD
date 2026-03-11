@@ -36,7 +36,7 @@ mkdir -p "$output_dir"
 pushd thesis > /dev/null
 
 on_error() {
-    echo "Chapter compilation failed! Please check logs in $output_dir/$tex_basename"
+    echo "Chapter compilation failed! Please check logs in $output_dir"
 }
 
 trap on_error ERR
