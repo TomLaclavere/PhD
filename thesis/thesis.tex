@@ -7,16 +7,16 @@
 % Import Figures for each chapter
 \graphicspath{
 {Figures/}
-{chapters/1_introduction/Figures/}
+{chapters/0_introduction/Figures/}
+{chapters/1_cosmology/Figures/}
 {chapters/5_gps_calsource/Figures/}
 }
 
 % Import Bibliography for each chapter
+\addbibresource{\subfix{chapters/1_cosmology/1_cosmology.bib}}
 \addbibresource{\subfix{chapters/5_gps_calsource/5_gps_calsource.bib}}
 
 \begin{document}
-
-\dominitoc
 
 \input{title.tex}
 \newpage
@@ -36,141 +36,49 @@
 \cleardoublepage
 
 \phantomsection
-\addcontentsline{toc}{chapter}{List of figures}
 \listoffigures
 \cleardoublepage
 
 \phantomsection
-\addcontentsline{toc}{chapter}{List of tables}
 \listoftables
 \cleardoublepage
 
 \phantomsection
-\addcontentsline{toc}{chapter}{Introduction}
-\subfile{chapters/1_introduction/1_introduction.tex}
+\subfile{chapters/0_introduction/0_introduction.tex}
 
 \part{Cosmological Context}
 
-\chapter{Standard Model of Cosmology}
-From Dodelson
+\subfile{chapters/1_cosmology/1_cosmology.tex}
 
-\section{The expanding Universe}
-
-\section{The fundamental equations of Cosmology}
-
-\section{History of the Universe}
-
-\section{Problems of the Standard Model}
-
-\chapter{CMB, Inflation, and B-modes}
-
-\section{Inflation theory}
-
-\section{Cosmic Microwave Background}
-
-\section{CMB polarisation}
-
-\section{CMB contamination: astrophysical foregrounds}
-
-\section{CMB past and future observations}
+\subfile{chapters/2_inflation/2_inflation.tex}
 
 \part{QUBIC instrument: the first bolometric interferometer for cosmology}
 
-\chapter{Bolometric Interferometry and QUBIC}
+\subfile{chapters/3_BI/3_BI.tex}
 
-\section{Classical telescope for CMB physics: Imager}
-
-\section{Innovative approach: Bolometric Interferometer}
-
-\section{QUBIC Collaboration}
-\rmk{Inverser chapitres Spectral Imaging et GPS ??}
-
-\section{Instrumental Design}
-
-\chapter{Bolometric Interferometry to Spectral Imaging}
-
-\section{Synthesized Beam}
-
-\section{Spectral Imaging}
+\subfile{chapters/4_spectral_imaging/4_spectral_imaging.tex}
 
 \subfile{chapters/5_gps_calsource/5_gps_calsource.tex}
 
-\chapter{Qubicsoft development}
-% Need to find what and how to write.
-
-\section{Refactoring}
-
-\section{Pixelisation Effect}
+\subfile{chapters/6_qubicsoft/6_qubicsoft.tex}
 
 \part{Map-Making}
 
-\chapter{Frequency Map-Making}
-% See FMM paper.
+\subfile{chapters/7_FMM/7_FMM.tex}
 
-\chapter{Component Map-Making}
-% See CMM paper.
+\subfile{chapters/8_CMM/8_CMM.tex}
 
-\chapter{Realistic TOD Simulation}
-% Chapter order to be reviewed.
+\subfile{chapters/9_tod/9_tod.tex}
 
-\section{How to define Realistic TOD}
-
-\section{TOD convergence problem: Pixelisation vs Number of Frequency}
-
-\section{\texorpdfstring{Effect of $N_{\text{sub,TOD}} = N_{\text{sub,rec}}$}{Effect of Nsub\_TOD = Nsub\_rec}}
-
-\section{Correct convolution implementation}
-
-\section{External data addition effect (Planck)}
-
-\section{Simulation hyperparameters optimisation: $N_{\text{sub}}$, $N_{\text{pointings}}$, $N_{\text{iter}}$, $N_{\text{loop}}$ (CMM), \dots}
-
-\chapter{Neural-Network approximation of the Inverse Map-Making}
-% Wait NNMM paper.
+\subfile{chapters/10_NNMM/10_NNMM.tex}
 
 \part{Components separation and Cosmological parameters' estimation.}
-\rmk{Ajouter chapitre Cross-spectre + Cross-componant, pour expliquer comment on fait pour estimer r une fois qu'on a les cartes ? }
 
-\chapter{Atmospheric Mitigation}
-% Wait Atm paper.
+\subfile{chapters/11_xspectrum/11_xspectrum.tex}
 
-\chapter{QUBIC Forecasts}
+\subfile{chapters/12_atm/12_atm.tex}
 
-\section{Studied Cases}
-
-\subsection{CMB without foregrounds: QUBIC raw sensitivity}
-
-\subsection{CMB + Dust (d0, d1, d6, \dots): Simple forecasts}
-
-\subsection{CMB + Dust (d0, d1, d6) + Synchrotron (s0, s1): Realistic forecasts}
-
-\section{Results}
-
-\subsection{Compare QUBIC configurations}
-
-\subsection{Dual bands without spectral imaging: ``Imager case''}
-
-\subsection{Dual bands with spectral imaging: ``BI case''}
-
-\subsection{Ultra-wide band: ``Extreme BI case''}
-
-\subsection{Successive mono-band case: ``Conservative case''}
-
-\section{Compare QUBIC's map-making algorithms}
-
-\subsection{FMM: Cross-spectra Analysis}
-
-\subsection{NN-FMM: Cross-spectra Analysis}
-
-\subsection{CMM: Parametric Analysis}
-
-\subsection{NN-CMM: Parametric Analysis}
-
-\subsection{CMM: Blind Analysis}
-
-\subsection{Addition of external data for component separation}
-
-\subsection{Exploring exotic models}
+\subfile{chapters/13_forecasts/13_forecasts.tex}
 
 % Bibliography
 \addstarredpart{Bibliography}
