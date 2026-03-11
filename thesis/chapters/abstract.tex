@@ -2,27 +2,10 @@
 
 \vspace{1cm}
 
-\rmk{Version longue : }
+La théorie de l’Inflation constitue le socle du modèle standard de la cosmologie, bien qu’aucune évidence observationnelle directe n’en ait encore été apportée. Démontrer l’existence de cette phase d’expansion demeure l’un des défis majeurs de la cosmologie observationnelle moderne. Les expériences actuelles et futures visent à détecter les modes B primordiaux de polarisation du fond diffus cosmologique, prédits par l’Inflation, afin d’en contraindre les paramètres.
+L’une de ces expériences, QUBIC, relève ce défi en adoptant une architecture instrumentale originale fondée sur l’interférométrie bolométrique. Cette approche permet un contrôle des effets systématiques grâce à la technique de self-calibration, tout en améliorant la résolution fréquentielle par l’imagerie spectrale, essentielle pour séparer le signal primordial des sources de contamination, notamment les avant-plans astrophysiques et les émissions atmosphériques.
 
-La théorie de l’Inflation constitue aujourd’hui le socle du Modèle Standard de la cosmologie. Toutefois, aucune preuve observationnelle directe n’en a encore été apportée, et démontrer l’existence de cette phase d’expansion demeure l’un des défis majeurs de la cosmologie observationnelle moderne. Les expériences actuelles et futures visent à détecter les modes B primordiaux de polarisation du Fond Diffus Cosmologique, prédits par l’Inflation, afin d’en établir l’existence et d’en contraindre les paramètres.
-
-L’une de ces expériences, QUBIC, relève ce défi en adoptant une architecture instrumentale originale fondée sur l’interférométrie bolométrique. Cette approche permet un contrôle particulièrement fin des effets systématiques grâce à la technique de self-calibration, tout en offrant une amélioration de la résolution fréquentielle via l’imagerie spectrale. Cette dernière propriété est essentielle pour séparer le signal primordial des différentes sources de contamination, notamment les avant-plans astrophysiques et les émissions atmosphérique.
-
-Les travaux présentés dans cette thèse portent principalement sur le développement du code de simulation instrumentale, ainsi que sur la conception d’algorithmes de reconstruction de cartes et de séparation de composantes astrophysiques. Je présente d’abord mes contributions à la source de calibration de QUBIC et à son système GPS associé, en vue de préparer les opérations de self-calibration. Je détaille ensuite les développements réalisés sur le code de simulation de l’instrument.
-
-La majeure partie de cette thèse est consacrée aux algorithmes de reconstruction de cartes et de séparation de composantes. J’y décris en particulier mon implication dans le développement des méthodes de Frequency Map-Making et de Component Map-Making. Je présente également les améliorations apportées au pipeline de simulation afin d’en accroître le réalisme, ainsi que le développement d’une approche innovante fondée sur les réseaux de neurones pour résoudre le problème inverse du map-making. Ces différentes méthodes sont ensuite appliquées à l’atténuation de la contamination atmosphérique.
-
-Enfin, je conclus en présentant des prévisions comparatives des différents algorithmes, sous diverses hypothèses d’avant-plans astrophysiques et de configurations instrumentales, afin d’évaluer la sensibilité de QUBIC à la détection des modes B primordiaux.
-
-\rmk{Version courte : }
-
-La théorie de l’Inflation constitue le socle du Modèle Standard de la cosmologie. Toutefois, aucune preuve observationnelle directe n’a encore été établie, et la détection des modes B primordiaux de polarisation du Fond Diffus Cosmologique demeure un enjeu central pour en confirmer l’existence et en contraindre les paramètres.
-
-L’expérience QUBIC propose une approche originale fondée sur l’interférométrie bolométrique, permettant un contrôle fin des effets systématiques grâce à la self-calibration et une meilleure résolution fréquentielle via l’imagerie spectrale. Cette dernière est essentielle pour séparer le signal primordial des contaminations astrophysiques et atmosphériques.
-
-Cette thèse porte principalement sur le développement du code de simulation instrumentale et sur la conception d’algorithmes de reconstruction de cartes et de séparation de composantes. Après une contribution à la source de calibration et à son système GPS, je détaille les améliorations apportées à la simulation. La majeure partie du travail concerne le développement des méthodes de Frequency Map-Making et de Component Map-Making, l’amélioration du réalisme des simulations, ainsi qu’une approche innovante du problème inverse du map-making fondée sur les réseaux de neurones. Ces outils sont appliqués à l’atténuation de la contamination atmosphérique.
-
-Enfin, je présente des prévisions comparatives, sous différentes hypothèses d’avant-plans et de configurations instrumentales, afin d’évaluer la sensibilité de QUBIC à la détection des modes B primordiaux.
+Les travaux présentés portent principalement sur le développement de la simulation instrumentale ainsi que sur la conception d’algorithmes de reconstruction de cartes et de séparation de composantes astrophysiques. Je présente d’abord mes contributions au GPS associé à la source de calibration de QUBIC, en vue de préparer les opérations de self-calibration, puis le développement du code de simulation de l’instrument. La majeure partie de cette thèse est consacrée aux algorithmes de reconstruction de cartes et de séparation de composantes. J’y décris le développement des méthodes de Frequency Map-Making et de Component Map-Making. Je présente également les améliorations apportées au pipeline de simulation afin d’en accroître le réalisme, ainsi que le développement d’une approche basée sur les réseaux de neurones pour résoudre le problème inverse du map-making. Ces méthodes sont ensuite appliquées à l’atténuation de la contamination atmosphérique. Enfin, je conclus en présentant des prévisions comparatives des différents algorithmes, sous diverses hypothèses d’avant-plans astrophysiques et de configurations instrumentales, afin d’évaluer la sensibilité de QUBIC à la détection des modes B primordiaux.
 
 \vspace{0.5cm}
 
@@ -34,6 +17,16 @@ Enfin, je présente des prévisions comparatives, sous différentes hypothèses 
 
 \vspace{1cm}
 
+The theory of inflation forms the foundation of the standard cosmological model, although no direct observational evidence has yet been obtained. Demonstrating the existence of this expansion phase remains one of the major challenges of modern observational cosmology. Current and future experiments aim at detecting the primordial B-mode polarisation of the cosmic microwave background, predicted by inflation, in order to constrain its parameters.
+
+One such experiment, QUBIC, addresses this challenge by adopting an original instrumental architecture based on bolometric interferometry. This approach allows a fine control of systematic effects through the self-calibration technique while improving the spectral resolution using spectral imaging, which is essential for separating the primordial signal from various contamination sources, including astrophysical foregrounds and atmospheric emissions.
+
+The work presented mainly focuses on the development of instrumental simulations as well as on the design of map reconstruction and component separation algorithms. I first present my contributions to the GPS associated with QUBIC’s calibration source, in preparation for self-calibration operations, followed by the development of the instrument simulation code.
+
+The main part of this thesis is devoted to map reconstruction and component separation algorithms. I describe the development of the Frequency Map-Making and Component Map-Making methods. I also present improvements made to the simulation pipeline to increase its realism, as well as the development of a neural network-based approach to solve the inverse map-making problem. These methods are then applied to mitigate atmospheric contamination.
+
+Finally, I conclude by presenting comparative predictions of the different algorithms under various assumptions regarding astrophysical foregrounds and instrumental configurations, in order to evaluate QUBIC’s sensitivity to primordial B-mode detection.
+
 \vspace{0.5cm}
 
-\textbf{Keywords :} Cosmic Microwave Background - Inflation - Bolometric Interferometry - Spectral-Imaging - Component Separation - Map-Making
+\textbf{Keywords :} Cosmic Microwave Background – Inflation – Bolometric Interferometry – Spectral Imaging – Component Separation – Map-Making
