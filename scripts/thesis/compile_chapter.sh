@@ -6,7 +6,12 @@ WEBSITE_DIR="website/thesis/chapters"
 
 mkdir -p "$WEBSITE_DIR"
 
-chapter_dir=$CHAPTERS_DIR/"${1:?Missing input directory}"
+prefix="${1:?Missing chapter number}"
+
+# Find the chapter directory starting with the given number
+chapter_dir=$(find "$CHAPTERS_DIR" -maxdepth 1 -type d -name "${prefix}*" | sort | head -n 1)
+
+[[ -n "$chapter_dir" ]] || { echo "No chapter starting with '$prefix'"; exit 1; }
 [[ -d "$chapter_dir" ]] || exit 1
 
 # Taking the first .tex file as the main one
