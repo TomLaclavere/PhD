@@ -25,7 +25,7 @@ for chapter_dir in "$CHAPTERS_DIR"/*/; do
 
   # Trap for compilation errors
   function on_error {
-      echo "Chapter compilation failed! Please check logs in $output_dir/$tex_basename"
+      echo "Chapter compilation failed! Please check logs in $chapter_dir/$tex_basename"
   }
   trap on_error ERR
 
