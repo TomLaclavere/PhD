@@ -14,130 +14,103 @@
 
 \section*{Introduction}
 
-Cosmology can be described as the science of the Universe, dedicated to understanding its formation and evolution. Within the history of science and physics, cosmology holds a unique position: it is one of the few fields where we cannot replicate phenomena to directly test our theories. We have access to only one Universe, cannot reproduce its mechanisms, and cannot observe all of its information.
-This thesis aims to contribute to our understanding of the Universe’s earliest moments. The first chapter provides a structured overview of the Standard Model of Cosmology, called \(\Lambda\)CDM, guiding the reader from its foundational concepts to its current limitations. The chapter is organized into five sections. The first introduces the essential elements of the model, while the second presents the fundamental tools and methods of cosmology. The third section develops the mathematical framework that underpins the model, followed by a discussion of the Universe’s history in the fourth section. Finally, the fifth section highlights the open questions and challenges that continue to drive modern cosmological research.
+Cosmology is the study of the Universe, aiming to understand its origin and evolution. Within the broader landscape of science and physics, it occupies a unique position: it is one of the few fields where phenomena cannot be reproduced to directly test theoretical predictions. We have access to a single realization of the Universe, cannot replicate its underlying mechanisms, and can only observe a limited portion of its information.
 
+This thesis aims to contribute to our understanding of the earliest moments of the Universe. This first chapter provides a structured overview of the standard cosmological model, known as \(\Lambda\)CDM, guiding the reader from its fundamental principles to its current limitations. The chapter is organized into five sections. The first introduces the key components of the model, including its foundations, assumptions, and limitations, while the second presents a qualitative overview of the thermal history of the Universe. The third focuses on the Cosmic Microwave Background (CMB), one of the most powerful probes of the early Universe. The fourth section presents the main sources of contamination affecting CMB observations. Finally, the fifth section reviews past CMB experiments and their major results, before discussing upcoming missions.
 
-\rmk{ajouter que je me suis beaucoup inspiré de Dodelson-Schmidt ?}
+\section{The Standard Model of Cosmology}
 
-\section{Evolution of \texorpdfstring{$\Lambda$CDM}{LambdaCDM} Universe}
+Modern cosmology is built upon a set of simple but powerful principles that allow us to describe the large-scale behaviour of the Universe. Observations reveal that the Universe is expanding and appears remarkably homogeneous and isotropic on large scales. These properties provide the foundation for the standard cosmological model, known as \(\Lambda\)CDM.
 
-\rmk{Pas sûr sur ce chapitre... Je voulais faire une sorte d'introduction vulgarisée mais c'est relativement difficile + peut-être pas utile...}
+In this section, we introduce the key elements of this framework. We begin with the observational evidence for the expansion of the Universe, then present the assumptions underlying its large-scale description. We subsequently describe the main components of the Universe, before discussing the limitations of this model and the role of inflation as a possible resolution.
 
-\subsection{Overview - History of the Universe}
+\subsection{Expanding universe} \label{subsection:expansion}
 
-\subsection{Hubble Diagram}
+A major milestone in modern cosmology was the discovery that the Universe is expanding, independently established by Lema\^itre in 1927~\cite{lemaitre1927} and Hubble in 1929~\cite{hubble1929}. Their observations showed that distant galaxies recede from each other, with a velocity proportional to their distance. This relation, now known as Hubble-Lema\^itre law, provided the first evidence that the Universe is not static but evolving.
 
-\subsection{Big Bang Nucleosynthesis}  
-
-\subsection{Cosmic Microwave Background}
-
-\subsection{Structure of the late Universe}
-
-\subsection{\(\Lambda\)CDM model}
-
-\section{The expanding Universe}
-
-The fundamental milestone of Modern Cosmology was the discovery of its expansion, observed independently by Lema\^itre in 1927~\cite{lemaitre1927} and Hubble in 1929~\cite{hubble1929}. These results changed fundamentally the understanding of the Universe at that time, which was seen as immutable and eternal. This section focuses on the mathematical description of this expansion, and its implication on the Universe.
-
-\subsection{Expansion} \label{subsection:expansion}
-
-The expansion of the Universe was proven by observing the velocity of galaxies around us. Lema\^itre and Hubble measured that the farther the galaxies were from us, the faster they moved away, involving an acceleration of the expansion of the universe. This expansion is characterised by the \emph{scale factor a}. This factor is changing with expansion speed, but is fixed to 1 today by convention. As the expansion is accelerating, this factor was smaller in the past than it is today. It means that the physical distance between two immovable objects will increase proportionally to the scale factor with time, as shown in Figure~\ref{fig:illustration_comoving_distances}. 
+This expansion is described by the \emph{scale factor} \(a(t)\), which quantifies how distances between comoving points evolve with time. By convention, the scale factor is normalized to \(a(t_0) = 1\) today. As the Universe expands, the scale factor increases, implying that physical distances between distant, gravitationally unbound objects grow proportionally with time, as illustrated in Figure~\ref{fig:illustration_comoving_distances}.
 
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=1\linewidth]{illustration_comoving_distances.pdf}
-    \caption{Illustration showing the difference between comoving and physical distances. At a time $t_1$, two points $x_1$ and $y_1$ are separated by a distance 1. After some time, at $t_2$, the Universes expanded: the scale factor increased and the physical distance between x and y is larger proportionally to the scale factor. But, the in comoving coordinates, the distance between $x_2$ and $y_2$ is still 1.}
+    \caption{Illustration showing the difference between comoving and physical distances. At a time $t_1$, two points $x_1$ and $y_1$ are separated by a distance 1. After some time, at $t_2$, the Universe has expanded: the scale factor increased and the physical distance between $x$ and $y$ is larger proportionally to the scale factor. In comoving coordinates, however, the distance between $x_2$ and $y_2$ remains unchanged.}
     \label{fig:illustration_comoving_distances}
 \end{figure}
 
-A practical example of this phenomenon is the \emph{redshift z}: because the Universe is expanding, the wavelength of a photon is broadened during is travel according to the Doppler effect~\cite{doppler1842}, meaning that this photon is seen as more red. This stretch is proportional to the scale factor, and can be defined as : 
+An observable consequence of this expansion is the \emph{cosmological redshift} \(z\). As light propagates through an expanding Universe, its wavelength is stretched along with space. This effect is not a simple Doppler redshift~\cite{doppler1842}, but rather a consequence of the expansion of spacetime, hence the name of cosmological redshift, illustrated in Figure~\ref{fig:cosmological_redshift}. 
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{Two_redshifts.jpeg}
+    \caption{Illustration, from \cite{Cosmological_redshift_illustration}, showing the difference between Doppler redshift and cosmological redshift. Doppler's redshift~\cite{doppler1842}, on top, is the decrease in wavelength of an object approaching us, and the broadening of an object moving away from us. Cosmological's redshift~\cite{hubble1929} is the broadening of the wavelength in all directions due to the expansion of the universe.}
+    \label{fig:cosmological_redshift}
+\end{figure}
+
+The redshift is defined as:
 
 \begin{equation}
-    1 + z \equiv \frac{\lambda_{obs}}{\lambda_{emit}} \equiv \frac{a_{obs}}{a_{emit}} = \frac{1}{a_{emit}}
+    1 + z \equiv \frac{\lambda_{\text{obs}}}{\lambda_{\text{emit}}} \equiv \frac{a_{\text{obs}}}{a_{\text{emit}}} = \frac{1}{a_{\text{emit}}}
 \end{equation}
 
-This property is used to compute velocity of astrophysical objects from us, by measuring the shift of known photon's wavelength like the emission lines from Hydrogen spectrum. If they move away from us, we will see a redshift in the emission lines, and if they come closer to us, we will see a blueshift. In 1929, Edwin Hubble measured velocities for various objects and plotted them with respect to their distance to us~\cite{hubble1929}, as shown in Figure~\ref{fig:hubble_diagram}. In this diagram, we can see that all objects is moving away from us, meaning that the universe is indeed expanding. Furthermore, because the velocity increases with the distance of the objects, it means that the expansion is also accelerating.
+This relation allows us to infer distances and the expansion history of the Universe from observations of spectral lines. In his original work, Hubble measured the redshift of galaxies and compared it to their distances, establishing the linear relation between velocity and distance shown in Figure~\ref{fig:hubble_diagram}. This observation demonstrates that the expansion of the Universe is uniform on large scales: every observer sees distant galaxies receding, without implying a special position in space.
 
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=1\linewidth]{hubble_diagram.jpeg}
-    \caption{Historical velocity-distance diagram from Edwin Hubble~\cite{hubble1929}. It shows the relative velocity of objects from us against their distance. It shows that furthest the objects are, the quicker they move away from us.}
+    \caption{Historical velocity-distance diagram from Edwin Hubble~\cite{hubble1929}. It shows the recession velocity of galaxies as a function of their distance, illustrating the linear relation now known as Hubble's law.}
     \label{fig:hubble_diagram}
 \end{figure}
 
+\subsection{Cosmological principle} \label{subsection:cosmological_principle}
 
-\subsection{Space-time metric}
+The fundamental concept of the cosmological principle states that the universe is homogeneous and isotropic at large scales. This idea was introduced as a simplification to solve the general relativity equations~\cite{einstein1916_general_relativity}. It was done by Einstein in 1917 in the case of a static universe~\cite{einstein1917_homogeneous_universe}, but as we saw in previous subsection~\ref{subsection:expansion}, it was not relevant any more to assume a static universe after Lema\^itre and Hubble's works. In 1922, Friedmann showed that a non-static solution for a homogeneous universe is possible~\cite{friedmann1922}, quickly followed by evidences of universe expansion in 1927 by Lema\^itre~\cite{lemaitre1927}. Building on these results, Robertson~\cite{robertson1935} and Walker~\cite{walker1936} formulated the general relativistic metric for a homogeneous and isotropic expanding universe. This metric forms the cornerstone of the \(\Lambda\)CDM model.
+The veracity of this principle is much debated, but latest result from Planck Satellite suggest that the universe is homogeneous and isotropic at $10^{-5}$ (= 0.001\%) at scale above $6^\circ$ on the sky~\cite{planck2018VII}. 
 
-Additionally to its expansion, the universe is characterised by its geometry. Indeed, it can be Euclidean (flat universe), positively curved (close universe) or negatively curved (open universe). As formulated by General Relativity\cite{generalrelativity1915}, geometry and energy are linked. Therefore, we can extract the universe's geometry from its energy density by comparing it with the energy density needed by the universe to be flat, called \emph{critical density}. If the measured density is smaller than the critical density, the universe is open, if higher, the universe is closed, if equal, the universe if flat. The last situation seems very unlikely, but latest measurement~\cite{planck2018VI} shows that it is indeed the case. This result will be further discussed in the Chapter~\ref{chap:inflation}.
+\subsection{Content of the Universe}
 
-As formulated in Einstein's Special Relativity~\cite{einstein1905}, the metric of an Euclidean space is the Minkowski metric : $g_{\mu\nu} = \eta_{\mu\nu}$, where : 
+In the two previous subsections~\ref{subsection:expansion} and \ref{subsection:cosmological_principle}, we introduced the standard assumptions about the universe : it is homogeneous, isotropic and expanding. Now, we now provide a brief overview of its contents. 
+These contents can be classified into three categories: radiation, matter, and the cosmological constant. Each of these components evolves differently with the scale factor and, consequently, with the expansion of the universe. Moreover, each component dominated the universe at different epochs in its history. The evolution of each density is shown in Figure~\ref{fig:evolution_density}.
 
-\begin{equation}
-    \eta_{\mu\nu} =
-    \begin{pmatrix}
-        -1                & 0                 & 0                 & 0     \\
-        0                 & 1                 & 0                 & 0     \\
-        0                 & 0                 & 1                 & 0     \\
-        0                 & 0                 & 0                 & 1     \\
-    \end{pmatrix}
-\end{equation}
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{energy_density.pdf}
+    \caption{Energy density of the Universe's components as a function of the scale factor, highlighting the epochs when matter equals radiation and when matter equals the cosmological constant.}
+    \label{fig:evolution_density}
+\end{figure}
 
-Then, space-time intervals in a flat space are given by : $ds^2 = -c^2dt^2 + dx^2$. 
+At early times of the universe, the radiation was dominating. This radiation consisted of the relativistic particles : photons and neutrinos, the main contribution being the Cosmic Microwave Background (detailed in Section~\ref{section: cmb}). The density of radiation and matter were equal at z $\approx$ 3408 according to DESI~\cite{desi2024} and z $\approx$ 3387 according to Planck~\cite{planck2018VI}, which correspond to approximatively 80000 years after first times of the universe. 
 
-Hence, we introduce the \emph{scale factor} $a$, which serves as the proportionality factor describing the growth of distances between two points at different times in the expanding Universe. It affects only the spatial part and is time-dependent. The natural metric for a flat expanding universe is then : 
+Today, radiation contributes about 0.008\% of the total energy density, as inferred from Planck 2018 data~\cite{planck2018VI}.
 
-\begin{equation}
-    \eta_{\mu\nu} =
-    \begin{pmatrix}
-        -1                & 0                 & 0                 & 0       \\
-        0                 & a^2               & 0                 & 0       \\
-        0                 & 0                 & a^2               & 0       \\
-        0                 & 0                 & 0                 & a^2     \\
-    \end{pmatrix}
-\end{equation}
+As the Universe expanded, non-relativistic matter came to dominate the energy density. This matter is composed of baryonic matter and dark matter. The term "baryonic matter" is misleading, as it designates all non-relativistic particles of the Standard Model; however, its energy density is overwhelmingly dominated by protons and neutrons, hence the terminology. On the other hand, dark matter is a hypothetical form of matter, which only (or mostly) interact through gravitational force, and thus, which does not emit light. It was first suggested by comparing "seen mass" computed from galaxies light and "unseen mass" computed from galaxies velocity in the Coma Galaxies Cluster by Zwicky in 1933~\cite{zwicky1933}. The mass computed from galaxies velocity was much higher than the luminous mass, suggesting the presence of massive matter that does not emit light. 
 
-This metric is called the Friedmann-Lema\^itre-Robertson-Walker (FLRW) metric~\cite{friedmann1922}~\cite{lemaitre1927}~\cite{robertson1935}~\cite{walker1936}. This metric can be used to compute space-time distances in a flat expanding universe. One can see that today (at $t = t_0$), the metric becomes the one from Minkowski, as $a(t_0) = 1$.
-It is important to notice that this metric is only true for a homogeneous universe. A more general metric would need to account for the local density, meaning the universe inhomogeneities. This will be discussed in the Chapter~\ref{chap:inflation}.
+Since then, multiple independent observations have provided strong evidence for dark matter : galaxy rotation curves~\cite{rubin1980}, the Bullet Cluster through gravitational lensing~\cite{bullet_cluster}, Baryon Acoustic Oscillations pics observed in CMB~\cite{planck2018VI}, formation rate of Large Scale Structures~\cite{lls_formation_rate_cdm}, and many others. While we still don't know its nature from the particle point of view, its cosmological properties are well constrained. It is commonly divided into three categories : cold, warm and hot dark matters, which refer to their velocity(or equivalently, whether it was relativistic in the early Universe). This classification determines how far dark matter can propagate (free-stream) and thus influences the formation of structures at different scales. Observations strongly favor the Cold Dark Matter (CDM) scenario~\cite{cold_dark_matter}, in which dark matter is non-relativistic. 
 
-\subsection{Geodesic equation}
+Today, Cold Dark Matter (CDM) represents about 26.5\%~\cite{planck2018VI} of total energy density, and plays a central role in Standard Model of Cosmology, \(\Lambda\)CDM. The ordinary matter is responsible for 4.5\%~\cite{planck2018VI} of the energy density budget, meaning that the energy density of matter occupies 31\% of the energy density of the universe, and that 85\% of matter in the universe is composes of dark matter.
 
-\rmk{Je ne pense pas que ça soit nécessaire}
+At z $\approx$ 0.3, corresponding to an age of about 10 Gyr, the Universe transitions from matter domination to dark energy domination, as the cosmological constant becomes the dominant component. The concept of dark energy was first introduced to explain the acceleration of the expansion in the late universe from distant Type Ia supernovae in 1999~\cite{accelerated_expansion}. To account for this acceleration, the introduction of a cosmological constant \(\Lambda\), corresponding to an energy density which does not depend on the scale factor, was needed. Today, dark energy remains one of the greatest unkown in cosmology and in fundamental physics in general.
 
-\subsection{Cosmological distances} 
+Dark energy is responsible for 69\% of the total energy dansity today, and is by far the main constituent of our universe.
 
-\rmk{Je ne pense pas que ça soit nécessaire}
+\subsection{Problems of the Standard Model}
 
+From the previous subsection, the Standard Model of cosmology describe the universe as homogeneous, isotropic, expanding, and composed of radiation, matter and dark energy. It is enough to describe the evolution of the universe, and match remarkably well with observations. However, fundamental questions remain unanswered, and three problems cannot be solved by this model : horizon, flatness and monopoles problems. 
 
-\section{The fundamental equations of Cosmology}
+\textbf{Horizon problem :} 
 
-\subsection{General Relativity}
+\textbf{Flatness problem :}
 
-\subsection{Einstein equation}
+\textbf{Monopole problem :}
 
-\subsection{Friedmann equations}
+\subsection{Inflation theory}  
 
-\subsection{Boltzmann equations}
+\section{Thermal history of the universe}
 
-\section{History of the Universe}
+\section{Cosmic Microwave Background} \label{section: cmb}
 
-\subsection{Big Bang Nucleosynthesis}
+\section{CMB contaminations}
 
-\subsection{Baryons Acoustic Oscillations}
-
-\subsection{Recombination}
-
-\subsection{Reionisation}
-
-\subsection{Large Scale Structure}
-
-\section{Problems of the Standard Model}
-
-\subsection{Horizon Problem}
-
-\subsection{Flatness Problem}
-
-\subsection{Monopole Problem}
+\section{Past \& Future Experiment}
 
 \ifSubfilesClassLoaded{
     \addstarredchapter{Bibliography}
