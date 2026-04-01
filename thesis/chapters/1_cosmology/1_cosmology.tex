@@ -66,7 +66,7 @@ This relation allows us to infer distances and the expansion history of the Univ
 The fundamental concept of the cosmological principle states that the universe is homogeneous and isotropic at large scales. This idea was introduced as a simplification to solve the general relativity equations~\cite{einstein1916_general_relativity}. It was done by Einstein in 1917 in the case of a static universe~\cite{einstein1917_homogeneous_universe}, but as we saw in previous subsection~\ref{subsection:expansion}, it was not relevant any more to assume a static universe after Lema\^itre and Hubble's works. In 1922, Friedmann showed that a non-static solution for a homogeneous universe is possible~\cite{friedmann1922}, quickly followed by evidences of universe expansion in 1927 by Lema\^itre~\cite{lemaitre1927}. Building on these results, Robertson~\cite{robertson1935} and Walker~\cite{walker1936} formulated the general relativistic metric for a homogeneous and isotropic expanding universe. This metric forms the cornerstone of the \(\Lambda\)CDM model.
 The veracity of this principle is much debated, but latest result from Planck Satellite suggest that the universe is homogeneous and isotropic at $10^{-5}$ (= 0.001\%) at scale above $6^\circ$ on the sky~\cite{planck2018VII}. 
 
-\subsection{Content of the Universe}
+\subsection{Content of the Universe} \label{subsection:content_universe}
 
 In the two previous subsections~\ref{subsection:expansion} and \ref{subsection:cosmological_principle}, we introduced the standard assumptions about the universe : it is homogeneous, isotropic and expanding. Now, we now provide a brief overview of its contents. 
 These contents can be classified into three categories: radiation, matter, and the cosmological constant. Each of these components evolves differently with the scale factor and, consequently, with the expansion of the universe. Moreover, each component dominated the universe at different epochs in its history. The evolution of each density is shown in Figure~\ref{fig:evolution_density}.
@@ -92,17 +92,40 @@ At z $\approx$ 0.3, corresponding to an age of about 10 Gyr, the Universe transi
 
 Dark energy is responsible for 69\% of the total energy dansity today, and is by far the main constituent of our universe.
 
-\subsection{Problems of the Standard Model}
+\subsection{Problems of the Standard Model} \label{subsection:cosmo_pb}
 
-From the previous subsection, the Standard Model of cosmology describe the universe as homogeneous, isotropic, expanding, and composed of radiation, matter and dark energy. It is enough to describe the evolution of the universe, and match remarkably well with observations. However, fundamental questions remain unanswered, and three problems cannot be solved by this model : horizon, flatness and monopoles problems. 
+From the previous subsection, the Standard Model of cosmology describes the universe as homogeneous, isotropic, expanding, and composed of radiation, matter and dark energy. It is enough to describe the evolution of the universe, and match remarkably well with observations. However, fundamental questions remain unanswered, and in particular three issues cannot be explained within this framework: the horizon problem, the flatness problem, and the monopole problem.
 
-\textbf{Horizon problem :} 
+\textbf{Horizon problem : Why is the CMB temperature so uniform ?} As discussed previously, at the time of recombination the Universe was extremely homogeneous, with density fluctuations of order $10^{-5}$, and consequently the cosmic microwave background (CMB) exhibits an almost perfectly uniform temperature. This uniformity is naturally explained if the early Universe was in thermal equilibrium, consistent with the fact that the CMB spectrum is an almost perfect blackbody~\cite{COBE1994}.
+However, within the standard cosmological model, regions of the CMB that are widely separated on the sky were never in causal contact: light signals would not have had enough time to travel between them since the beginning of the expansion. These regions therefore lie outside each other’s particle horizon and cannot have exchanged information or thermalised.
+This raises a fundamental question: why do causally disconnected regions have the same temperature?
 
-\textbf{Flatness problem :}
+\textbf{Flatness problem : Why is the universe flat ?} In general relativity~\cite{einstein1916_general_relativity}, the geometry of spacetime is determined by its energy content. In a homogeneous and isotropic Universe, this relation is encoded in the Friedmann equations~\cite{friedmann1922}, which relate the expansion rate to the total energy density and spatial curvature. From these equations, one defines the critical density, $\rho_c$, which corresponds to a spatially flat Universe. Depending on the ratio $\Omega = \rho / \rho_c$, the Universe can be:
 
-\textbf{Monopole problem :}
+\begin{align*}
+\Omega = 1 &\quad \text{flat (Euclidean geometry)}, \\
+\Omega > 1 &\quad \text{closed (positive curvature)}, \\
+\Omega < 1 &\quad \text{open (negative curvature)}.
+\end{align*}
+
+Current measurements, notably from the Planck mission~\cite{planck2018VI}, indicate that $\Omega$ differs from unity by less than about one percent, implying that the Universe is extremely close to spatial flatness. However, within the standard Friedmann evolution, flatness is not a stable state: any small deviation from $\Omega = 1$ grows with time. Consequently, evolving backward in time implies an extreme fine-tuning of the initial condition. For example, a deviation of order $|\Omega_0 - 1| \sim 10^{-3}$ today corresponds to an initial deviation of order $10^{-60}$ near the Planck epoch. This extraordinary sensitivity suggests an apparent fine-tuning problem: why was the early Universe so precisely close to flatness? \\
+
+\textbf{Monopole problem : Why are magnetic monopoles not observed ?} Grand unified theories (GUTs), which attempt to unify the electromagnetic, weak, and strong interactions at high energy scales, generically predict the existence of topological defects formed during phase transitions in the early Universe. Among these relics are magnetic monopoles, hypothetical particles carrying an isolated magnetic charge, whose existence was first proposed by Dirac in 1931~\cite{dirac1931}. In standard cosmology, such monopoles should be efficiently produced during the spontaneous symmetry breaking associated with the GUT phase transition. Causally disconnected regions of space choose different vacuum states, leading to the formation of stable topological defects. As a consequence, one expects a large relic abundance of monopoles. However, monopoles are not observed in the present Universe, despite extensive experimental searches. This discrepancy constitutes the monopole problem: standard cosmology predicts a relic density of monopoles that is many orders of magnitude larger than observational bounds.
+\rmk{should I talk about higher order topological defects ? Like cosmic cords, walls, ...}
+
+
+Finally, an additional issue remains throughout the Standard Model of Cosmology's equations. As with any set of equations describing the evolution of a physical system, the dynamics are only fully specified once appropriate initial conditions are given. This naturally raises the question: how can the initial conditions of our Universe be determined or constrained observationally?
+An answer to the three problems and to this issue was proposed by Alan Guth in 1981, through the idea of an exponential expansion phase at the very beginning of the Universe~\cite{guth1981}. The model was then developed by Andrei Linde in 1983~\cite{linde1983}, and has since given rise to a wide variety of models. We will explain in the following subsection the idea behind this theory and how it can solve the issues discussed previously.
 
 \subsection{Inflation theory}  
+\rmk{I have the feeling that I should talk about the Inflation scale ($\exp{-N}$, with $N \sim 60$), to make more understandable that it solves all the problems}
+
+The theory of Inflation postulates that in the very early universe, all regions were causally connected. These regions were then disconnected due to an exponentially expanded phase. This theory was developed to solve the various problems presented previously~\ref{subsection:cosmo_pb}. 
+\textbf{Horizon Problem.} Indeed, if all regions were connected in the very early universe, they could have thermalised, explaining why the CMB temperature is uniform at a very large scale. 
+\textbf{Flatness Problem.} As we said, a nearly flat universe is an unstable solution, meaning that it is very unlikely to happen. But, Inflation suggests that they do not care about the curvature before it occurs, as an exponential expansion will make all local curvatures negligible. We can understand this argument with the analogy of a sphere: if we zoom enough on a sphere, its surface will be flat. This mechanism explains why the universe is flat today, independently of its initial conditions.
+\textbf{Monopole Problem.} The GUT theories predict the formation of monopoles, but the exponential expansion dilutes their density to the point where they become unobservable today. 
+
+Additionally, we talked about all the properties of the universe for the $\Lambda$-CDM model: homogeneity, isotropy, and flat geometry. These initial conditions seem too "fine-tuned."  Inflation also solves this issue by making any specific initial condition negligible due to the exponential expansion. To go even further, Inflation would have expanded quantum fluctuations to a macroscopic scale, responsible for the inhomogeneity of density observed in the temperature fluctuations in the CMB, which led to the large-scale structures under gravitational effects today.
 
 \section{Thermal history of the universe}
 
