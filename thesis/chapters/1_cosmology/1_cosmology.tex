@@ -103,9 +103,9 @@ This raises a fundamental question: why do causally disconnected regions have th
 \textbf{Flatness problem : Why is the universe flat ?} In general relativity~\cite{einstein1916_general_relativity}, the geometry of spacetime is determined by its energy content. In a homogeneous and isotropic Universe, this relation is encoded in the Friedmann equations~\cite{friedmann1922}, which relate the expansion rate to the total energy density and spatial curvature. From these equations, one defines the critical density, $\rho_c$, which corresponds to a spatially flat Universe. Depending on the ratio $\Omega = \rho / \rho_c$, the Universe can be:
 
 \begin{align*}
-\Omega = 1 &\quad \text{flat (Euclidean geometry)}, \\
-\Omega > 1 &\quad \text{closed (positive curvature)}, \\
-\Omega < 1 &\quad \text{open (negative curvature)}.
+\Omega = 1 &\quad \text{: flat (Euclidean geometry)}, \\
+\Omega > 1 &\quad \text{: closed (positive curvature)}, \\
+\Omega < 1 &\quad \text{: open (negative curvature)}.
 \end{align*}
 
 Current measurements, notably from the Planck mission~\cite{planck2018VI}, indicate that $\Omega$ differs from unity by less than about one percent, implying that the Universe is extremely close to spatial flatness. However, within the standard Friedmann evolution, flatness is not a stable state: any small deviation from $\Omega = 1$ grows with time. Consequently, evolving backward in time implies an extreme fine-tuning of the initial condition. For example, a deviation of order $|\Omega_0 - 1| \sim 10^{-3}$ today corresponds to an initial deviation of order $10^{-60}$ near the Planck epoch. This extraordinary sensitivity suggests an apparent fine-tuning problem: why was the early Universe so precisely close to flatness? \\
@@ -117,29 +117,93 @@ Current measurements, notably from the Planck mission~\cite{planck2018VI}, indic
 Finally, an additional issue remains throughout the Standard Model of Cosmology's equations. As with any set of equations describing the evolution of a physical system, the dynamics are only fully specified once appropriate initial conditions are given. This naturally raises the question: how can the initial conditions of our Universe be determined or constrained observationally?
 An answer to the three problems and to this issue was proposed by Alan Guth in 1981, through the idea of an exponential expansion phase at the very beginning of the Universe~\cite{guth1981}. The model was then developed by Andrei Linde in 1983~\cite{linde1983}, and has since given rise to a wide variety of models. We will explain in the following subsection the idea behind this theory and how it can solve the issues discussed previously.
 
-\subsection{Inflation theory}  
-\rmk{I have the feeling that I should talk about the Inflation scale ($\exp{-N}$, with $N \sim 60$), to make more understandable that it solves all the problems}
+\subsection{Inflation theory}  \label{subsection:inflation}
+\rmk{Should I talk about the Inflation scale ($\exp{-N}$, with $N \sim 60$), to make more understandable that it solves all the problems}
 
 The theory of Inflation postulates that in the very early universe, all regions were causally connected. These regions were then disconnected due to an exponentially expanded phase. This theory was developed to solve the various problems presented previously~\ref{subsection:cosmo_pb}. 
 \textbf{Horizon Problem.} Indeed, if all regions were connected in the very early universe, they could have thermalised, explaining why the CMB temperature is uniform at a very large scale. 
 \textbf{Flatness Problem.} As we said, a nearly flat universe is an unstable solution, meaning that it is very unlikely to happen. But, Inflation suggests that they do not care about the curvature before it occurs, as an exponential expansion will make all local curvatures negligible. We can understand this argument with the analogy of a sphere: if we zoom enough on a sphere, its surface will be flat. This mechanism explains why the universe is flat today, independently of its initial conditions.
 \textbf{Monopole Problem.} The GUT theories predict the formation of monopoles, but the exponential expansion dilutes their density to the point where they become unobservable today. 
 
-Additionally, we talked about all the properties of the universe for the $\Lambda$-CDM model: homogeneity, isotropy, and flat geometry. These initial conditions seem too "fine-tuned."  Inflation also solves this issue by making any specific initial condition negligible due to the exponential expansion. To go even further, Inflation would have expanded quantum fluctuations to a macroscopic scale, responsible for the inhomogeneity of density observed in the temperature fluctuations in the CMB, which led to the large-scale structures under gravitational effects today.
+Additionally, we talked about all the properties of the universe for the $\Lambda$-CDM model: homogeneity, isotropy, and flat geometry. These initial conditions seem too "fine-tuned".  Inflation also solves this issue by making any specific initial condition negligible due to the exponential expansion. To go even further, Inflation would have expanded quantum fluctuations to a macroscopic scale, responsible for the inhomogeneity of density observed in the temperature fluctuations in the CMB, which led to the large-scale structures' formation under gravitational effects today.
+
+The most widely studied inflationary scenario involves a scalar field that slowly evolves toward its true ground state~\cite{linde1982}~\cite{albrecht_steinhardt1982}. In this framework, the field’s potential energy remains nearly constant and therefore rapidly comes to dominate over both its kinetic energy and the energy density of other components. Inflation comes to an end when the field reaches the minimum of its potential, after which it undergoes oscillations and decays into lighter particles, eventually producing those of the Standard Model of Particles. A wide variety of potential shapes have been proposed in the literature (see \cite{inflation_overview2014} for an overview of the different models), and many of these can be adjusted to fit current observations. This highlights the importance of observational constraints in discriminating between competing inflationary models.
+
+\rmk{Is it enough on Inflation ? Or should I talk more about the mechanism, slow-roll approximation, ...? }
 
 \section{Thermal history of the universe}
 
-\rmk{2~5 pages}
+In this section, we aim to produce a quick overview of the history of the universe, discussing the key milestones of its evolution and their implication.
 
-\subsection{Big Bang Nucleosynthesis}
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{Planck_history_of_Universe_zoom.jpg}
+    \caption{Illustration of the history of the universe from the early beginning to today, highlighting the key events discuss in this section. Credit: ESA – C. Carreau.}
+    \label{fig:universe_evolution}
+\end{figure}
 
-\subsection{Baryonic Accoustic Oscillations / CMB}
+\subsection{Inflation and First particles}
+\rmk{Is it useful ? Should I add temporal and/or energetic scale(s) ?}
 
-\subsection{Recombination}
+As discussed in Section~\ref{subsection:inflation}, the standard cosmological model predicts an early phase of accelerated, quasi-exponential expansion known as Inflation. This paradigm addresses several major issues in cosmology and provides a mechanism for setting the initial conditions of the observable Universe. 
+At the end of inflation, the scalar field driving this expansion reached its minimum potential and decays into lighter particles as the universe cool down. This process, known as reheating, initiates the production of the particle content of the Standard Model through a cascade of interactions and decays. Subsequently, matter and antimatter are generated during baryogenesis, with a small asymmetry in favor of matter. Their annihilation produces numerous photons, leaving behind a residual matter component due to this asymmetry. As the temperature continues to decrease, the fundamental interactions—strong, weak, and electromagnetic—become distinct through a sequence of symmetry-breaking transitions. This leads to the formation of hadrons, primarily protons and neutrons. Neutrinos eventually decouple from the primordial plasma, forming a relic background known as the \emph{cosmic neutrino background}. Finally, universe's temperature becomes too low for electron/position pairs production. The remainings electron and positron annihilate to produce photons. The result is a homogeneous universe dominated by radiation (photons, neutrinos)~\cite{dodelson}.
 
-\subsection{Reionisation}
+\rmk{Is citation OK ? I just want to cite a general reference for this but don't know how to do}
 
-\subsection{Large Scale Structures}
+\subsection{Big Bang Nucleosynthesis} \label{subsection:bbn}
+
+At early times, the temperature of the Universe was too high for nuclei to form, as any bound state was immediately broken by high-energy photons. As the Universe expanded and cooled, this process became inefficient, allowing nuclear reactions to proceed.
+
+Weak interactions froze out at a temperature of $T \sim 0.8\,\mathrm{MeV}$ ($t \sim 1\,\mathrm{s}$), fixing the neutron-to-proton ratio at $n/p \sim 1/6$, which subsequently decreased due to free neutron decay. Big Bang Nucleosynthesis (BBN), first introduced in \cite{alpha_beta_gamma}, effectively began when the temperature dropped below $T \sim 0.1\,\mathrm{MeV}$ ($t \sim 200\,\mathrm{s}$), enabling the formation of deuterium through
+\begin{align}
+    p + n \rightarrow {}^{2}\mathrm{H} + \gamma \, .
+\end{align}
+
+This marked the end of the so-called \emph{deuterium bottleneck}. Rapid nuclear reactions then led to the synthesis of light elements, primarily $^{3}\mathrm{He}$, $^{4}\mathrm{He}$, and trace amounts of $^{7}\mathrm{Li}$. Due to its large binding energy, $^{4}\mathrm{He}$ is the most stable and abundant product after hydrogen, with a final mass fraction of about $25\%$, while the remaining baryonic matter consists mostly of hydrogen.
+
+The predicted primordial abundances are in good agreement with observations, making BBN one of the key pillars of the standard cosmological model~\cite{bbn_review}. The Figure~\ref{fig:bbn} shows the evolution of abundances of the lighter elements with time and energy. \begin{figure}[!htbp] \centering \includegraphics[width=1\linewidth]{bbn.png} \caption{Illustration of the Big Bang Nucleosynthesis process, showing the abundances of elements with time (top-axis) and energy (bottom-axis). Taken from \cite{Pospelov_2010}.} \label{fig:bbn} \end{figure}
+
+\subsection{Baryon Acoustic Oscillations} \label{subsection:bao}
+
+During the radiation-dominated era, photons were tightly coupled to baryons through Thomson scattering of free electrons~\cite{Dodelson}, forming a single photon-baryon fluid. Due to the primordial density fluctuations generated during inflation (see Section~\ref{subsection:inflation}), overdense regions acted as gravitational potential wells, attracting baryonic matter.
+However, photon pressure counteracted gravitational fall. The competition between gravity and radiation pressure led to acoustic oscillations in the coupled photon-baryon fluid, generating spherical sound waves propagating outward from initial overdensities.
+These oscillations ceased at recombination (see Section~\ref{subsection:recombination}), when photons decoupled from baryons and began to free-stream. The maximum distance traveled by these sound waves defines a characteristic scale, known as the sound horizon.
+This scale is imprinted in the late-time matter distribution as a preferred clustering scale. Baryon Acoustic Oscillations (BAO) were first detected in the large-scale distribution of galaxies by the Sloan Digital Sky Survey~\cite{Eisenstein2005} and independently confirmed by the 2dF Galaxy Redshift Survey~\cite{Cole2005}. They appear as a distinct peak in the two-point correlation function at a scale of approximately $150\,\mathrm{Mpc}$, corresponding to the sound horizon at recombination (see Fig.~\ref{fig:bao_peak}).
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{bao_peak.jpg}
+    \caption{Matter two-point correlation function over comoving distance of the SDSS LRG sample. The BAO peak is visible at 150 Mpc, corresponding to an overdensity of matter at this distance. From \cite{Eisenstein_2005}.}
+    \label{fig:bao_peak}
+\end{figure}
+
+Additionally, dark matter was behaving differently, as it does not interfer with photons. Then, dark matter is only affecting by gravity, creating over-mass density which will be the foundation of Large Scale Structures~\ref{subsection:lss}.
+
+\subsection{Recombination} \label{subsection:recombination}
+
+\emph{Recombination} refers to the epoch when the Universe became sufficiently cool and dilute that photons could no longer efficiently maintain the coupling between matter and radiation, leading to the decoupling of the primordial plasma and the transparency of the universe. From this moment on, photons propagate freely through space, forming a relic radiation known as the \emph{Cosmic Microwave Background} (CMB), discussed in detail in Section~\ref{section:cmb}. During this transition, nuclei were no longer kept ionised by high-energy photons, allowing the formation of the first neutral atoms, mainly hydrogen and helium (see Section~\ref{subsection:bbn}).
+
+Prior to recombination, matter and radiation were tightly coupled, and the primordial plasma was in thermal equilibrium. As a consequence, the CMB is expected to exhibit an almost perfect blackbody spectrum, described by Planck’s law~\cite{planck1901}:
+
+\begin{equation}
+    B_{\nu}(T) = \frac{2 h \nu^3}{c^2} \frac{1}{e^{h\nu/kT} - 1}.
+\end{equation}
+
+This prediction has been confirmed by the COBE satellite, which provided the most precise measurement of a blackbody spectrum to date, as shown in Figure~\ref{fig:blackbody}.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{blackbody_spectrum.jpg}
+    \caption{CMB spectrum measured by FIRAS instrument on COBE satellite. Plain line is the theoretical spectrum for a blackbody at 2.725 K, points are data from FIRAS with errorbars multiplied by 400 to be visible.}
+    \label{fig:blackbody}
+\end{figure}
+
+\subsection{Large Scale Structures} \label{subsection:lss}
+
+After matter–radiation decoupling, baryonic matter evolves primarily under the influence of gravity. The small primordial density perturbations grow through gravitational instability. In the linear regime, their growth is proportional to the scale factor during matter domination.
+Dark matter, having decoupled earlier, forms gravitational potential wells into which baryons subsequently fall, leading to the formation of structures. This hierarchical process results in the emergence of the large-scale structure of the Universe, including halos, galaxies, clusters, and filaments.
+On large scales, the statistical properties of matter fluctuations are described by the matter power spectrum $P(k)$, which encodes both the primordial fluctuations and their subsequent evolution through cosmic expansion and gravitational collapse. 
+A key observable imprint of these processes is given by Baryon Acoustic Oscillations (BAO), which provide a standard ruler in the distribution of matter (see Section~\ref{subsection:bao}).
 
 \section{Cosmic Microwave Background} \label{section: cmb}
 
