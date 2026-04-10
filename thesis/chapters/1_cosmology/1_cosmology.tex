@@ -78,7 +78,7 @@ These contents can be classified into three categories: radiation, matter, and t
     \label{fig:evolution_density}
 \end{figure}
 
-At early times of the universe, the radiation was dominating. This radiation consisted of the relativistic particles : photons and neutrinos, the main contribution being the Cosmic Microwave Background (detailed in Section~\ref{section: cmb}). The density of radiation and matter were equal at z $\approx$ 3408 according to DESI~\cite{desi2024} and z $\approx$ 3387 according to Planck~\cite{planck2018VI}, which correspond to approximatively 80000 years after first times of the universe. 
+At early times of the universe, the radiation was dominating. This radiation consisted of the relativistic particles : photons and neutrinos, the main contribution being the Cosmic Microwave Background (detailed in Section~\ref{section: cmb}). The density of radiation and matter were equal at z $\sim$ 3408 according to DESI~\cite{desi2024} and z $\sim$ 3387 according to Planck~\cite{planck2018VI}, which correspond to approximatively 80000 years after first times of the universe. 
 
 Today, radiation contributes about 0.008\% of the total energy density, as inferred from Planck 2018 data~\cite{planck2018VI}.
 
@@ -88,7 +88,7 @@ Since then, multiple independent observations have provided strong evidence for 
 
 Today, Cold Dark Matter (CDM) represents about 26.5\%~\cite{planck2018VI} of total energy density, and plays a central role in Standard Model of Cosmology, \(\Lambda\)CDM. The ordinary matter is responsible for 4.5\%~\cite{planck2018VI} of the energy density budget, meaning that the energy density of matter occupies 31\% of the energy density of the universe, and that 85\% of matter in the universe is composes of dark matter.
 
-At z $\approx$ 0.3, corresponding to an age of about 10 Gyr, the Universe transitions from matter domination to dark energy domination, as the cosmological constant becomes the dominant component. The concept of dark energy was first introduced to explain the acceleration of the expansion in the late universe from distant Type Ia supernovae in 1999~\cite{accelerated_expansion}. To account for this acceleration, the introduction of a cosmological constant \(\Lambda\), corresponding to an energy density which does not depend on the scale factor, was needed. Today, dark energy remains one of the greatest unkown in cosmology and in fundamental physics in general.
+At z $\sim$ 0.3, corresponding to an age of about 10 Gyr, the Universe transitions from matter domination to dark energy domination, as the cosmological constant becomes the dominant component. The concept of dark energy was first introduced to explain the acceleration of the expansion in the late universe from distant Type Ia supernovae in 1999~\cite{accelerated_expansion}. To account for this acceleration, the introduction of a cosmological constant \(\Lambda\), corresponding to an energy density which does not depend on the scale factor, was needed. Today, dark energy remains one of the greatest unkown in cosmology and in fundamental physics in general.
 
 Dark energy is responsible for 69\% of the total energy dansity today, and is by far the main constituent of our universe.
 
@@ -207,13 +207,60 @@ A key observable imprint of these processes is given by Baryon Acoustic Oscillat
 
 \section{Cosmic Microwave Background} \label{section:cmb}
 
+So far, we have repeatedly referred to the Cosmic Microwave Background (see \ref{subsection:recombination}). However, as the CMB constitutes our primary observational probe of the primordial Universe and lies at the core of this thesis, we now present a more detailed discussion of its physical origin, its specific properties, and its connection to cosmological parameters, both through its intensity and polarization signals.
+
 \subsection{CMB Temperature}
+
+As discussed above (see \ref{subsection:recombination}), the CMB follows a nearly perfect blackbody spectrum. Its emission is therefore entirely determined by a single parameter: its temperature. Since the temperature of the photon–baryon plasma at recombination depends on local physical conditions, the observed CMB temperature anisotropies directly trace spatial fluctuations in this plasma. For this reason, CMB intensity anisotropies are conventionally expressed in terms of an effective temperature, which encodes information about the density fluctuations of the primordial plasma and, more generally, about its underlying physics.
 
 \paragraph{Temperature Monopole and Dipole}
 
+The temperature monopole of the CMB is its mean temperature across the sky. It has been first measured by FIRAS instrument of COBE satellite at $T_0 = 2.7255 \pm 0.0006 K$~\cite{COBE1994}. This measurement remains the most precise determination of the CMB monopole, as subsequent experiments have primarily focused on measuring anisotropies around this mean temperature. From particle physcis considerations, photon–baryon decoupling occurs when the primordial plasma reaches a temperature $T_{rec} \sim 3000 K$. As discussed in \ref{subsection:expansion}, cosmic expansion induces a redshift of photon wavelengths. For a blackbody spectrum, this implies that the temperature scales with redshift as :
+
+\begin{equation}
+    T(z) = T_0 (1 + z),
+\end{equation}
+
+where $T_0$ is the present CMB temperature and $z$ its redshift. Using the measured value of $T_0$ and the computed recombination temperature $T_{\mathrm{rec}}$, one can infer that the CMB was emitted at a redshift $z_{\mathrm{rec}} \sim 1100$.
+
+A first level of anisotropy is induced by the Earth's motion with respect to the CMB rest frame. Indeed, because the Earth has a peculiar velocity relative to the CMB rest frame, arising from the motion of the Solar System and of the Milky Way, the CMB photon wavelengths (and thus the observed temperature) are Doppler shifted due to the electromagnetic Doppler effect~\cite{doppler1842}. The CMB solar dipole was first observed by the DMR instrument aboard the COBE satellite~\cite{COBE_DMR_1992}, and later measured more accurately by WMAP~\cite{WMAP_5years_2009} and Planck~\cite{Planck2018III}. The solar dipole, simulated using Python Sky Model~\footnote{\url{https://github.com/galsci/pysm}} (PySM) is shown in Figure~\ref{fig:cmb_dipole}.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=\linewidth]{cmb_dipole_pysm.pdf}
+    \caption{CMB solar dipole simulated using the PySM software~\cite{PySM} and calibrated using Planck 2018 measurements~\cite{Planck2018III}.}
+    \label{fig:cmb_dipole}
+\end{figure}
+
 \paragraph{CMB Anisotropies}
 
-\paragraph{CMB Power Spectrum}
+As the primordial plasma exhibits small density inhomogeneities at the level of $\sim 10^{-5}$, these are expected to manifest as temperature anisotropies in the Cosmic Microwave Background (CMB). The first detection of these anisotropies was made by the COBE satellite using its DMR instrument~\cite{COBE_DMR_1992}. The full-sky maps obtained after four years of observation are shown in Figure~\ref{fig:dmr_anisotropies}.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=\linewidth]{DMR_sky_maps.pdf}
+    \caption{Full-sky maps from the DMR instrument aboard the COBE satellite after four years of observation at 31.5, 53 and 90 GHz. The monopole and dipole components have been removed. The bright band along the Galactic plane is due to Galactic emission, while cosmological temperature anisotropies are visible at high latitudes. Maps taken from \cite{DMR_4years}.}
+    \label{fig:dmr_anisotropies}
+\end{figure}
+
+These measurements were significantly improved by later experiments, in particular the Planck satellite, which achieved higher sensitivity and angular resolution in CMB temperature maps. The 150 GHz full-sky map is shown in Figure~\ref{fig:planck_anisotropies}, taken from the Planck Legacy Archive\footnote{\url{https://pla.esac.esa.int/}}.
+
+The Planck satellite reached a regime in which the measurement of the temperature power spectrum is cosmic-variance limited over a wide range of angular scales. In this regime, the dominant source of uncertainty is no longer instrumental noise, but the fundamental statistical variance associated with observing a single realisation of the Universe. However, this limitation does not apply uniformly: at high multipoles, instrumental noise and foreground contamination become significant, while in polarization—especially B-modes—cosmic-variance-limited performance has not been reached.
+
+The new generation of ground-based CMB experiments aims to improve measurements at small angular scales (high multipoles), as discussed in Section~\ref{section:cmb_exp}.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=\linewidth]{Planck_150GHz_map.pdf}
+    \caption{Full-sky CMB temperature map from the Planck satellite at 150 GHz. The monopole and dipole components have been removed. Compared to COBE, the improvement in angular resolution is clearly visible.}
+    \label{fig:planck_anisotropies}
+\end{figure}
+
+CMB anisotropy measurements are a key probe to understand the physics of the primordial plasma and, more generally, the mechanisms of the early Universe.
+
+\paragraph{Angular Power Spectrum}
+
+To study the statistical properties of anisotropies distribution across the sky, we are using the angular power spectrum. To be continued...
 
 \paragraph{Cosmological Parameters}
 
@@ -239,7 +286,7 @@ A key observable imprint of these processes is given by Baryon Acoustic Oscillat
 
 \subsection{Atmosphere}
 
-\section{Past \& Future Experiments}
+\section{Past \& Future Experiments} \label{cmb_exp}
 
 \subsection{Past Experiements}
 
