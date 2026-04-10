@@ -50,19 +50,26 @@ echo "-> Removing output folders"
 find "$ROOT_DIR/thesis" -type d -name output -exec rm -rf {} +
 
 if $REMOVE_PDF; then
-  echo "-> Removing generated PDFs"
-  # PDFs in chapter outputs
+  echo "-> Removing generated PDFs (excluding Figures/)"
+
+  # Chapters PDFs (excluding Figures directories)
   if [[ -d "$CHAPTERS_DIR" ]]; then
-    find "$CHAPTERS_DIR" -type d -exec find {} -maxdepth 1 -type f -name "*.pdf" -delete \;
+    find "$CHAPTERS_DIR" \
+      -path "*/Figures/*" -prune -o \
+      -type f -name "*.pdf" -delete
   fi
-  # PDF in thesis root
-  if [[ -d "$ROOT_DIR/thesis" ]]; then
-    find "$ROOT_DIR/thesis" -maxdepth 1 -type f -name "*.pdf" -delete
-  fi
-  # PDFs in website folders
+
+  # Thesis root PDFs (excluding Figures)
+  find "$ROOT_DIR/thesis" -maxdepth 1 \
+    -path "$ROOT_DIR/thesis/Figures/*" -prune -o \
+    -type f -name "*.pdf" -delete
+
+  # Website PDFs (also safe exclude)
   WEBSITE_DIR="$ROOT_DIR/website"
   if [[ -d "$WEBSITE_DIR" ]]; then
-    find "$WEBSITE_DIR/thesis" -maxdepth 2 -type f -name "*.pdf" -delete
+    find "$WEBSITE_DIR" \
+      -path "*/Figures/*" -prune -o \
+      -type f -name "*.pdf" -delete
   fi
 fi
 
