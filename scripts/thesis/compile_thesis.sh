@@ -22,8 +22,9 @@ fi
 
 popd > /dev/null
 
-# Copy outside output
-cp thesis/output/thesis.pdf thesis/thesis.pdf
-
 # Copy to website
 cp thesis/output/thesis.pdf website/thesis/thesis.pdf
+
+# Move outside output
+mv thesis/output/thesis.pdf thesis/thesis.pdf
+

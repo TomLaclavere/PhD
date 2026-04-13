@@ -209,11 +209,95 @@ A key observable imprint of these processes is given by Baryon Acoustic Oscillat
 
 So far, we have repeatedly referred to the Cosmic Microwave Background (see \ref{subsection:recombination}). However, as the CMB constitutes our primary observational probe of the primordial Universe and lies at the core of this thesis, we now present a more detailed discussion of its physical origin, its specific properties, and its connection to cosmological parameters, both through its intensity and polarization signals.
 
+\subsection{Angular Power Spectrum}
+
+Before discussing the physical details of the CMB, it might be relevant to intriduce introduce the mathematical tool to study the statistical properties of anisotropies distribution across the sky, namely the angular power spectrum. The angular power spectrum is a decomposition of a sky map into spherical harmonics, which describes the variance of the anisotropies as a function of the angular scale on the surface of a sphere. It is equivalent to a two-points correlation function in real space, but can apply only on a random Gaussian field.
+
+\subsubsection{Spherical Harmonics}
+
+Spherical harmonics are the eigenfunctions of the angular part of the Laplace operator on the sphere:
+
+\begin{equation} \label{eq:laplace}
+    [\frac{1}{\sin\theta}\frac{\partial}{\partial\theta}(\sin\theta\frac{\partial}{\partial\theta}) + \frac{1}{\sin^2\theta}\frac{\partial^2}{\partial\phi^2}] Y_{\ell m}(\theta,\phi) = -\ell(\ell + 1) Y_{\ell m}(\theta,\phi).
+\end{equation}
+
+They form a complete orthonormal basis on the sphere, which makes them particularly well suited to decompose any signal defined on the sky, such as CMB temperature anisotropies.
+The spherical harmonic functions $Y_{\ell m}(\theta,\phi)$ depend on the angular coordinates $\theta$ and $\phi$, as well as on two integers: the multipole $\ell \in \mathbb{N}$, which characterises the angular scale on the sphere, and the azimuthal number $m$, such that $-\ell \leq m \leq \ell$. For each multipole $\ell$, there are $2\ell + 1$ independent modes. The angular scale associated with a given multipole is roughly given by $\theta \sim \pi / \ell$.
+The spherical harmonics can be written explicitly as:
+
+\begin{equation}
+    Y_{\ell m}(\theta,\phi) = \sqrt{\frac{2\ell+1}{4\pi}\frac{(\ell-m)!}{(\ell+m)!}} P^m_{\ell}(\cos\theta)\exp^{i m \phi},
+\end{equation}
+
+where $P^m_{\ell}$ are the associated Legendre polynomials (see e.g.~\cite{maths_handbook} for more details).
+
+\subsubsection{Angular Power Spectrum} 
+
+After introducing spherical harmonics, the temperature anisotropies (or any scalar field on the sphere) can be expanded as :
+
+\begin{equation}
+    \Delta T(\vec{n}) = \sum_{\ell=0}^{+\infty}\sum_{m=-\ell}^{\ell}a_{\ell m}Y_{\ell m}(\vec{n}).
+\end{equation}
+
+Using the orthogonality of spherical harmonics, the coefficients $a_{\ell m}$ are given by :
+
+\begin{align}
+    a_{\ell m} &= \int_{4\pi} \Delta T(\vec{n})Y_{\ell m}^{*}(\vec{n})d\Omega \\
+    &\approx \Omega_{pix} \sum_{p=1}^{N_{pix}}\Delta T(p)Y_{\ell m}^{*}(p),
+\end{align}
+where the second line corresponds to a discretized sky map.
+
+The statistical properties of the field are fully described by the two-point correlation function. In harmonic space, this implies :
+
+\begin{equation}
+    \langle a_{\ell m}^{*}a_{\ell\prime m\prime} \rangle = \delta_{\ell\ell\prime}\delta_{m m\prime}C_{ell},
+\end{equation}
+
+with $\langle\rangle$ designating average over many sky realisations, and $C_{\ell}$ is the angular power spectrum.
+
+If the anisotropies are Gaussian, the coefficients $a_{\ell m}$ are independent random variables with zero mean and variance $C_{\ell}$. An unbiased estimator of the angular power spectrum is then given by:
+\begin{equation}
+    \hat{C}_{\ell} = \frac{1}{2\ell+1} \sum_{m=-\ell}^{\ell} |a_{\ell m}|^2,
+\end{equation}
+which satisfies :
+\begin{equation}
+    \langle \hat{C}_{\ell} \rangle = C_{\ell}.
+\end{equation}
+
+\subsubsection{Cosmic variance} 
+
+Unfortunately, we only have access to one realisation of the sky, and independent modes for each multipole $\ell$. Meaning that there is an intrinsic statistical uncertainty on the estimator $\hat{C}_{\ell}$, which cannot be reduced by improving instrumental sensitivity. This fundamental limitation is known as \emph{cosmic variance}. The variance of the estimator $\hat{C}_{\ell}$ can be computed as :
+
+\begin{align}
+    \frac{\mathrm{Var}(\hat{C}_{\ell})}{C_{\ell}^2} 
+    &= \frac{\langle (\hat{C}_{\ell} - C_{\ell})^2 \rangle}{C_{\ell}^2} \\
+    &= \frac{1}{(2\ell+1)^2 C_{\ell}^2}
+    \left\langle \sum_{m m'} a_{\ell m}^* a_{\ell m} \, a_{\ell m'}^* a_{\ell m'} \right\rangle - 1 \\
+    &= \frac{2}{2\ell+1}.
+\end{align}
+
+\subsubsection{Sky pixellisation}
+
+In real observations, sky maps must be pixelized to allow for numerical treatment; consequently, the angular coordinates $\theta$ and $\phi$ are discretized. The most widely used pixelization scheme in CMB experiments (and cosmology in general) is the HEALPix method~\cite{healpix2005}, which is accessible in the Python package Healpy~\footnote{\url{https://github.com/healpy/healpy}}. In HEALPix, the number of pixels, and thus the angular resolution, is controlled by the parameter $N_{\mathrm{side}}$, with : $N_{\mathrm{pix}} = 12 N_{\mathrm{side}}^2.$
+In principle, the maximum multipole that can be reliably probed depends on the pixel size. In practice, HEALPix relies on numerical approximations to accelerate spherical harmonic transforms, which become computationally expensive at high multipoles. To ensure accuracy, the maximum multipole is typically limited to $\ell_{\max} = 3 N_{\mathrm{side}}$.
+
+This framework is based on three key properties:
+
+\begin{enumerate}
+\item \textbf{Hierarchical structure.} Pixels are organized in a tree structure: increasing the resolution corresponds to subdividing each pixel into four sub-pixels. This allows for efficient multi-resolution analysis and facilitates fast local operations such as convolutions. Moreover, the indexing scheme preserves locality, meaning that nearby points on the sphere have nearby indices, which enables efficient neighbour searches.
+
+\item \textbf{Equal area.} All pixels have exactly the same area, $\Omega_{\mathrm{pix}} = \frac{4\pi}{N_{\mathrm{pix}}},$ which ensures that white noise remains white in pixel space and avoids introducing spatial biases in the estimation of $C_{\ell}$. It also simplifies numerical integrations on the sphere: $\int f(\hat{n})\, d\Omega \approx \Omega_{\mathrm{pix}} \sum_{p} f_{p}.$
+
+\item \textbf{Iso-latitude.} The centers of the pixels are arranged on rings of constant latitude, each containing pixels uniformly distributed in $\phi$. This property significantly accelerates the computation of the spherical harmonic coefficients $a_{\ell m}$, since the associated Legendre polynomials $P_\ell^m(\cos\theta)$ only need to be evaluated once per ring. As a result, the computational complexity of spherical harmonic transforms is reduced from $\mathcal{O}(N_{\mathrm{pix}}\ell_{\max}^2)$ to $\mathcal{O}(N_{\mathrm{pix}}^{1/2}\ell_{\max}^2)$.
+\end{enumerate}
+
+Beyond pixelization, HEALPix provides a comprehensive set of tools for spherical data analysis, including efficient algorithms for spherical harmonic transforms and angular power spectrum estimation, which are widely used in CMB studies and throughout this thesis.
+
 \subsection{CMB Temperature}
 
 As discussed above (see \ref{subsection:recombination}), the CMB follows a nearly perfect blackbody spectrum. Its emission is therefore entirely determined by a single parameter: its temperature. Since the temperature of the photon–baryon plasma at recombination depends on local physical conditions, the observed CMB temperature anisotropies directly trace spatial fluctuations in this plasma. For this reason, CMB intensity anisotropies are conventionally expressed in terms of an effective temperature, which encodes information about the density fluctuations of the primordial plasma and, more generally, about its underlying physics.
 
-\paragraph{Temperature Monopole and Dipole}
+\subsubsection{Temperature Monopole and Dipole} 
 
 The temperature monopole of the CMB is its mean temperature across the sky. It has been first measured by FIRAS instrument of COBE satellite at $T_0 = 2.7255 \pm 0.0006 K$~\cite{COBE1994}. This measurement remains the most precise determination of the CMB monopole, as subsequent experiments have primarily focused on measuring anisotropies around this mean temperature. From particle physcis considerations, photon–baryon decoupling occurs when the primordial plasma reaches a temperature $T_{rec} \sim 3000 K$. As discussed in \ref{subsection:expansion}, cosmic expansion induces a redshift of photon wavelengths. For a blackbody spectrum, this implies that the temperature scales with redshift as :
 
@@ -232,7 +316,7 @@ A first level of anisotropy is induced by the Earth's motion with respect to the
     \label{fig:cmb_dipole}
 \end{figure}
 
-\paragraph{CMB Anisotropies}
+\subsubsection{CMB Anisotropies} 
 
 As the primordial plasma exhibits small density inhomogeneities at the level of $\sim 10^{-5}$, these are expected to manifest as temperature anisotropies in the Cosmic Microwave Background (CMB). The first detection of these anisotropies was made by the COBE satellite using its DMR instrument~\cite{COBE_DMR_1992}. The full-sky maps obtained after four years of observation are shown in Figure~\ref{fig:dmr_anisotropies}.
 
@@ -258,23 +342,42 @@ The new generation of ground-based CMB experiments aims to improve measurements 
 
 CMB anisotropy measurements are a key probe to understand the physics of the primordial plasma and, more generally, the mechanisms of the early Universe.
 
-\paragraph{Angular Power Spectrum}
+\subsubsection{CMB power spectrum} 
+\rmk{Should I do only one section on the details of the power spectrum and the cosmological parameters, or should I keep one for Temperature and one for Polarisation ?}
 
-To study the statistical properties of anisotropies distribution across the sky, we are using the angular power spectrum. To be continued...
+The CMB anisotropies are expected to follow nearly Gaussian statistics, as expected by Inflation~\cite{cmb_gaussian}. Observations by the Planck satellite have found no significant evidence for primordial non-Gaussianity in the temperature fluctuations. This justifies the use of the angular power spectrum as a complete statistical descriptor of the CMB anisotropies. From the Planck maps, the angular power spectrum shown in Figure~\ref{fig:planck_TT_dl} can be reconstructed. The large uncertainties at low multipoles ($\ell$), corresponding to large angular scales, arise primarily from cosmic variance, as discussed previously. They are further exacerbated by observational limitations: emission from the Milky Way obscures part of the sky, preventing full-sky measurements and limiting access to the lowest multipoles of the CMB power spectrum. 
+One can note that y-axis is showing $D_{\ell}$ instead of $C_{\ell}$, $D_{\ell}$ only being a re-scaling of the angular power spectrum, as it represents the contribution to the variance per logarithmic interval in multipole $\ell$. In particular, a scale-invariant primordial spectrum corresponds to a nearly constant $D_\ell$ at large angular scales, which is given by : 
 
-\paragraph{Cosmological Parameters}
+\begin{equation}
+    D_{\ell} = \frac{\ell(\ell+1)}{2\pi}C_{\ell}.
+\end{equation}
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=\linewidth]{planck_TT_Dl.jpg}
+    \caption{Angular power spectrum from Planck Temperature maps. Taken from \cite{Planck2018I}.}
+    \label{fig:planck_TT_dl}
+\end{figure}
+
+The CMB angular power spectrum exhibits three main regimes, which we describe below.
+
+\paragraph{Sachs-Wolfe effect :} $\ell \lesssim 30.$ At large angular scales, temperature anisotropies are dominated by gravitational redshift effects: photons climbing out of potential wells lose energy. This produces a nearly flat plateau in $D_{\ell}$ at low multipoles. The measurements in this regime are limited by cosmic variance and partial sky coverage~\cite{SachsWolfe1967}.
+
+\paragraph{Baryion Acoustic Oscillations :} $30 \lesssim \ell \lesssim 2000.$ The peaks in the CMB power spectrum arise from acoustic oscillations (see \ref{subsection:bao}) in the tightly coupled photon-baryon plasma prior to recombination. The first peak, at $\ell \sim 220$, corresponds to the mode that has undergone half an oscillation at the time of last scattering. Subsequent peaks correspond to higher-order oscillations: odd peaks correspond to compressions in gravitational potentials, while even peaks correspond to rarefactions driven by photon pressure.
+
+\paragraph{Silk Damping :} $\ell \gtrsim 1000-2000.$ At small angular scales, anisotropies are suppressed due to photon diffusion (Silk damping) and the finite thickness of the last scattering surface. Photons undergo a random walk before decoupling, which erases small-scale temperature fluctuations. This leads to an exponential suppression of power at high multipoles~\cite{Silk1968}.
+
+\subsubsection{Cosmological parameters}
 
 \subsection{CMB Polarisation}
 
-\paragraph{Reminder on polarisation}
+\subsubsection{Reminder on polarisation} 
 
-\paragraph{Compton Scattering}
+\subsubsection{Compton Scattering} 
 
-\paragraph{Gravitational Waves}
+\subsubsection{Gravitational Waves} 
 
-\paragraph{Power Spectrum}
-
-\paragraph{Cosmological parameters}
+\subsubsection{Cosmological parameters} 
 
 \section{CMB contaminations}
 

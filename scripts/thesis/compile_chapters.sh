@@ -46,10 +46,10 @@ for chapter_dir in "$CHAPTERS_DIR"/*/; do
   pdf_file="$output_dir/${tex_basename%.tex}.pdf"
 
   if [[ -f "$pdf_file" ]]; then
-    # Copy PDF back to chapter folder
-    cp "$pdf_file" "$chapter_dir/"
-
     # Copy PDF to website
     cp "$pdf_file" "$WEBSITE_DIR/"
+
+    # Move PDF back to chapter folder
+    mv "$pdf_file" "$chapter_dir/"
   fi
 done
