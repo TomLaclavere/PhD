@@ -468,6 +468,10 @@ A visual representation of the E- and B-mode patterns is shown in Figure~\ref{fi
 
 \subsubsection{Gravitational Waves} 
 
+
+
+Primordial CMB B-modes provide a direct probe of inflationary physics. In particular, the key observable is the tensor-to-scalar ratio r, which quantifies the relative amplitude of tensor perturbations (sourcing B-modes) to scalar perturbations (sourcing E-modes). This parameter is directly linked to the energy scale of inflation, or equivalently to its expansion rate, and thus offers a powerful means of discriminating between competing inflationary models.
+
 \subsection{Cosmological parameters}
 
 The minimal $\Lambda$CDM model is described by six free cosmological parameters. Although the model can be extended to include additional parameters, such extensions often introduce degeneracies and are not required to provide a significantly better fit to CMB observations~\cite{planck2018VI}. The six parameters of the $\Lambda$CDM model are:
@@ -489,12 +493,66 @@ The resulting constraints on these parameters from the Planck 2018 data, combini
 
 \section{CMB contaminations}
 
+Several physical mechanisms generate B-mode polarisation on the sky. In the context of CMB observations, these additional signals act as contaminants that must be separated from the cosmological signal of interest. This process is known as \emph{component separation}. The development of component separation algorithms constitutes a central part of this thesis. Before introducing these methods, it is necessary to describe the main sources of contamination and to understand their physical origin and statistical properties.
+
+
 \subsection{Lensing}
 \rmk{Should I add lensing in the previous section ? As it is an additional source of polarisation... But, as it is a non-primordial source of polarisation, I believe that it might be in CMB contamination.}
 
+As described by General Relativity~\cite{generalrelativity1915}, mass curves space-time, and this curvature acts as a gravitational lens that deflects the propagation of light. In particular, \emph{gravitational lensing} alters the polarisation of photons. In the context of the CMB, photons traveling toward us are deflected by large-scale structures, inducing a mixing between E- and B-mode polarisation.
+Given the relative amplitudes of these two components, the conversion of B-modes into E-modes is negligible. In contrast, the leakage of E-modes into B-modes constitutes a major obstacle for the detection of primordial B-modes. Figure \ref{fig:cmb_lensing} compares the B-mode power spectrum (in blue) for different values of the tensor-to-scalar ratio $r$ (e.g. $r = 0.01$ and $r = 0.001$)with the lensing-induced B-mode spectrum (in green). It shows that if $r \lesssim 10e^{-2}$—as suggested by current constraints~\cite{Tristram_2022}—lensing contamination obscures a significant fraction of the primordial B-mode signal. 
+To overcome this limitation, the lensing contribution must be removed using a technique known as delensing. This approach consists in reconstructing a template of the lensing signal from measurements of E-modes and of the projected gravitational potential, and subtracting this template from the observed B-mode map.
+
+\begin{figure}[!htbp] 
+    \centering 
+    \includegraphics[width=\linewidth]{cmb_lensing.pdf} 
+    \caption{Blue curves are the power spectrum of B-modes for different value of the tensor-to-scalar ratio(0.01 and 0.001). The green curve is the power spectrum of lens-induced E-to-B mixing. Delensing can reduce the amplitude of this effect by large factors (green dashed curve) yielding lower effective noise in B-mode maps. Taken from \cite{CMBS4_ScienceBook}.} 
+    \label{fig:cmb_lensing} 
+\end{figure}
+
 \subsection{Astrophysical Dust}
 
+\rmk{Add Dust I, Q & U maps.}
+
+Thermal dust emission constitutes one of the main astrophysical sources of B-mode polarization, in addition to gravitational lensing of the CMB. In the interstellar medium, aspherical dust grains form large-scale structures and tend to align partially with the Galactic magnetic field through radiative torque mechanisms. As a result, their thermal emission is linearly polarised. Heated by stellar radiation to typical temperatures of $T_d \sim 20 K$, these grains emit in the microwave and far-infrared following a modified blackbody (greybody) law~\cite{Planck2013XI}. This emission can be modeled as :
+
+\begin{equation}
+    I_{\nu} \propto \nu^{\beta_d}B_{\nu}(T_d),
+\end{equation}
+
+where $\beta_d$ is the dust spectral index and $B_{\beta_d}(T_d)$ is the Planck function, describing the blackbody emission.
+At frequencies above $\sim 100 GHz$, thermal dust emission dominates over CMB polarisation. Its spectral energy distribution (SED) is often parameterised as :
+
+\begin{equation}
+    f_d(\nu, T_d) = A_d (\frac{\nu}{\nu_{0,d}})^{\beta_d} \frac{e^{\frac{h\nu}{kT_d}} - 1}{e^{\frac{h_{\nu_0,d}}{kT_d}} - 1},
+\end{equation}
+
+with $A_d$ is the amplitude at reference frequency $\nu_{0, d}$ and $\beta_d$ is the spectral index. In practice, the dust temperature is often fixed to $T_d \approx 20 K$, due to degeneracies with $A_d$ and $\beta_d$ while fitting dust SED.
+
 \subsection{Synchrotron}
+\rmk{Add Sync I, Q & U maps.}
+
+\begin{figure}[!htbp] 
+    \centering 
+    \includegraphics[width=\linewidth]{foregrounds_SED.pdf} 
+    \caption{Planck's measurements of polarization amplitude rms as a function of frequency for polarised synchrotron emission (green), polarised thermal dust emission (red) and CMB polarisation (cyan). The dashed black lines indicate the sum of foregrounds evaluated over three different masks with fsky = 0.83, 0.52, and 0.27. The widths of the synchrotron and thermal dust bands are defined by the largest and smallest sky coverages. Taken from \cite{Planck2018IV}.} 
+    \label{fig:foreground_SED} 
+\end{figure}
+
+\begin{figure}[!htbp]
+    \begin{minipage}{0.5\linewidth}
+        \centerline{\includegraphics[width=1\linewidth]{foregrounds_power_summary_EE_v2.pdf}}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.5\linewidth}
+        \centerline{\includegraphics[width=1\linewidth]{foregrounds_power_summary_BB_v2.pdf}}
+    \end{minipage}
+    \hfill
+    \caption[]{(left) Dust (95 and 150 GHz) and synchrotron (95 GHz) E-modes power versus CMB. (right) Dust (95 and 150 GHz) and synchrotron (95 GHz) B-modes power versus CMB ($r = 0.1, 0.01, 0.001$). The coloured bands show the range of power measured from the smallest to the largest sky regions in Planck analysis. Taken from \cite{Planck2013XI}.}
+    \label{fig:foreground_PS}
+\end{figure}
+
+\rmk{I saw Mathias discussing CO emission line. Currently, CO will not work in the code, it is on my to-do list since long-time, but never corrected. I don't believe that it is complicated, and as d1 reconstruction and some stuff in blind mixing matrix are not working now. I believe these two things are more important for me and my thesis than CO line, so I won't include it for now. It could be a good task for someone that want to learn CMM, I can explain stuff but certainly not contributing...}
 
 \subsection{Atmosphere}
 
