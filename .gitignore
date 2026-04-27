@@ -5,8 +5,10 @@
 **/output/*
 *.zip
 *.tar.xz
-
+*.fits
 
 !**/output/.gitkeep
 !**/output/index.html.in
 !**/output/index.html
+
+CLAUDE.md
