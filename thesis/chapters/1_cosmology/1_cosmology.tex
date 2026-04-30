@@ -469,11 +469,38 @@ A visual representation of the E- and B-mode patterns is shown in Figure~\ref{fi
 
 \subsubsection{Compton Scattering} 
 
+Compton scattering, discovered in 1923 by Arthur H. Compton~\cite{Compton1923}, describes the interaction between a photon and a charged particle, typically an electron. In the context of the CMB, the relevant regime is the low-energy limit of this interaction, known as Thomson scattering, in which photons scatter elastically off free electrons.
+
+In this regime, the scattering cross-section depends on the angle between the incoming and outgoing photon directions, and on the polarization state of the radiation. In particular, the differential cross-section follows
+\begin{equation}
+    \frac{d\sigma}{d\Omega} \propto |\boldsymbol{\epsilon'} \cdot \boldsymbol{\epsilon}|^2,
+\end{equation}
+where $\boldsymbol{\epsilon}$ and $\boldsymbol{\epsilon'}$ are the incoming and outgoing polarization vectors. This angular dependence implies that radiation scattered at $90^\circ$ is linearly polarised.
+
+In the early Universe, prior to recombination, photons and baryons form a tightly coupled plasma, with photons scattering frequently off free electrons. Each electron receives radiation from all directions. If the incoming radiation field is perfectly isotropic (monopole), or possesses only a dipole anisotropy, the symmetry of the configuration ensures that no net polarisation is produced after scattering.
+
+However, if the radiation field exhibits a quadrupole anisotropy, corresponding to a four-lobed angular pattern, this symmetry is broken. In this case, the scattered radiation has different intensities along orthogonal directions, leading to a net linear polarisation. Therefore, Thomson scattering generates polarisation only in the presence of a non-zero quadrupole moment in the radiation field.
+
+At the surface of last scattering, local temperature anisotropies naturally generate such quadrupole patterns, resulting in the production of CMB polarisation. This mechanism produces exclusively E-mode polarisation; B-modes are not generated directly by Thomson scattering, but arise from secondary effects such as gravitational lensing or primordial tensor perturbations.
+
+Compton scattering, along with monopole, dipole, and quadrupole configurations, are illustrated in Figure~\ref{fig:compton}.
+\begin{figure}[!htbp]
+    \begin{minipage}{0.5\linewidth}
+        \centerline{\includegraphics[width=1\linewidth]{Compton_Monopole.png}}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.5\linewidth}
+        \centerline{\includegraphics[width=1\linewidth]{Compton_Dipole_Quadrupole.png}}
+    \end{minipage}
+    \caption{(left) Compton scattering of photon coming from x-axis, scattered by an electron in z direction. Only y component remains, leading to linear polarisation. (left center) Monopole configuration. Isotropic radiation produces no polarisation. (right center) Dipole configuration. Blue emphetise hotter photon and red colder photon. The resulting radiation after scattering traveling along z-axis (black) is the average of x-axis radiations. (right) Quadrupole configuration. Scattered radiation has higher intensity along x-axis than along y-axis, leading to linear polarisation. Taken from \cite{dodelson}.}
+    \label{fig:compton}
+\end{figure}
+
 \subsubsection{Gravitational Waves} 
 
-
-
-Primordial CMB B-modes provide a direct probe of inflationary physics. In particular, the key observable is the tensor-to-scalar ratio r, which quantifies the relative amplitude of tensor perturbations (sourcing B-modes) to scalar perturbations (sourcing E-modes). This parameter is directly linked to the energy scale of inflation, or equivalently to its expansion rate, and thus offers a powerful means of discriminating between competing inflationary models.
+Primordial gravitational waves, predicted in the context of inflationary cosmology, provide an additional source of anisotropy in the radiation field at the time of last scattering. These tensor perturbations correspond to transverse, traceless distortions of spacetime that propagate as waves, periodically stretching and compressing space along orthogonal directions.
+As gravitational waves propagate through the primordial plasma, they induce a time-dependent quadrupole anisotropy in the photon distribution seen by free electrons. Through Thomson scattering, this quadrupole pattern generates linear polarisation in the same way as for scalar perturbations. However, unlike density (scalar) perturbations, tensor perturbations possess a handedness associated with their two polarization states, which introduces a curl component in the resulting polarisation field.
+As a consequence, primordial gravitational waves generate both E-mode and B-mode polarisation. In particular, they are the only known mechanism capable of producing primordial B-modes at large angular scales. The amplitude of this signal is directly related to the energy scale of inflation and is commonly parametrised by the tensor-to-scalar ratio $r$. Detecting this B-mode component is therefore a major objective of modern CMB experiments, as it would provide direct evidence for inflation and insight into physics at very high energies.
 
 \subsection{Cosmological parameters}
 
@@ -655,13 +682,127 @@ Atmospheric emission and fluctuations constitute one of the main limitations for
 
 \section{Past \& Future Experiments} \label{cmb_exp}
 
-\rmk{I plained to only discuss CMB experiments. Should I talk about the others ? If yes, maybe only the future experiments (like LSST or Euclid ?)}
+\rmk{We focus here on CMB-dedicated experiments. Other cosmological probes (e.g. galaxy surveys such as Euclid or LSST) provide complementary constraints and will be briefly discussed at the end of this section.}
 
-\subsection{Past Experiements}
+This section introduces landmark experiments that have shaped our current understanding of CMB physics. While not exhaustive, it highlights the most influential missions and observatories across different generations.
+
+\subsection{Past Experiments}
+
+\subsubsection{COBE}
+
+The Cosmic Background Explorer (COBE, 1989–1993)~\cite{COBE1996} was the first satellite dedicated to precise measurements of the CMB. It carried three instruments: FIRAS, DMR, and DIRBE.
+
+Its main contributions are:
+\begin{itemize}
+    \item Measurement of the CMB spectrum as an almost perfect blackbody, confirming its thermal origin.
+    \item First detection of large-scale temperature anisotropies at the level of $\Delta T/T \sim 10^{-5}$.
+\end{itemize}
+
+COBE established the observational foundation of modern cosmology and demonstrated that primordial fluctuations exist.
+
+\subsubsection{WMAP}
+
+The Wilkinson Microwave Anisotropy Probe (WMAP, 2001–2010)~\cite{WMAP_9Years} provided the first high-resolution full-sky maps of CMB temperature anisotropies.
+
+Its main contributions include:
+\begin{itemize}
+    \item Precise determination of the standard cosmological parameters.
+    \item Strong evidence for a flat Universe dominated by dark energy and dark matter.
+    \item First significant measurements of large-scale polarization.
+\end{itemize}
+
+WMAP transformed cosmology into a precision science by constraining the $\Lambda$CDM model.
+
+\subsubsection{Planck}
+
+The Planck satellite (2009–2013)~\cite{Planck2018I,planck2018VI} represents the most precise full-sky CMB experiment to date.
+
+Its main contributions are:
+\begin{itemize}
+    \item Highest precision measurements of temperature (at sample variance precision) and polarization anisotropies.
+    \item Tight constraints on $\Lambda$CDM parameters and extensions.
+    \item Improved measurements of the spectral index $n_s$, optical depth $\tau$, and lensing signal.
+\end{itemize}
+
+Planck provides the current reference dataset for CMB cosmology.
 
 \subsection{Current Experiments}
 
+\subsubsection{ACT}
+
+The Atacama Cosmology Telescope (ACT)~\cite{ACTDR6} is a ground-based experiment located in Chile, optimized for high angular resolution observations.
+
+Its main contributions include:
+\begin{itemize}
+    \item Measurements of small-scale anisotropies.
+    \item High-significance detection of CMB lensing.
+    \item Constraints on structure formation and neutrino properties.
+\end{itemize}
+
+\subsubsection{SPT}
+
+The South Pole Telescope (SPT)~\cite{SPT2026} is a complementary ground-based experiment operating at the South Pole.
+
+Its main contributions are:
+\begin{itemize}
+    \item Detection of galaxy clusters via the Sunyaev–Zel'dovich effect.
+    \item Measurements of small-scale power spectrum and lensing.
+    \item Constraints on dark energy and neutrino mass.
+\end{itemize}
+
+\subsubsection{BICEP/Keck Array}
+
+The BICEP/Keck Array experiments~\cite{BICEPKECKXIII} focus on large-scale CMB polarization, particularly B-modes.
+
+Their main contributions include:
+\begin{itemize}
+    \item Leading constraints on the tensor-to-scalar ratio $r$.
+    \item Development of advanced foreground (dust) separation techniques.
+\end{itemize}
+
+They play a central role in the search for primordial gravitational waves.
+
+\subsubsection{Simons Observatory}
+
+The Simons Observatory~\cite{SO2019_Overview} is a new generation ground-based experiment in Chile, currently entering operation.
+
+Its scientific goals include:
+\begin{itemize}
+    \item Improved measurements of temperature and polarization over a wide range of scales.
+    \item Constraints on inflation through $r$.
+    \item Improved bounds on neutrino mass and relativistic species.
+\end{itemize}
+
 \subsection{Future Experiments}
+
+\subsubsection{LiteBIRD}
+
+LiteBIRD~\cite{LiteBIRD2022} is a planned space mission led by JAXA, dedicated to large-scale CMB polarization.
+
+Its primary objective is:
+\begin{itemize}
+    \item Detection (or stringent constraint) of primordial B-modes.
+\end{itemize}
+
+By observing from space, LiteBIRD will minimize atmospheric contamination and systematics.
+
+\subsubsection{CMB-S4 ?}
+
+\subsubsection{PICO ?}
+
+PICO (Probe of Inflation and Cosmic Origins)~\cite{PICO2018} is a proposed NASA satellite concept.
+
+Its main objectives are:
+\begin{itemize}
+    \item Full-sky, multi-frequency measurements with sensitivity beyond Planck.
+    \item Precise characterization of primordial fluctuations and foregrounds.
+    \item Broad constraints on early-Universe physics, including inflation.
+\end{itemize}
+
+\bigskip
+
+\noindent
+\textbf{Remark.} While CMB experiments provide some of the strongest constraints on cosmology, future progress will rely on their combination with large-scale structure surveys (e.g. Euclid, LSST), enabling joint analyses of geometry, growth of structure, and fundamental physics.
 
 \ifSubfilesClassLoaded{
     \addstarredchapter{Bibliography}
