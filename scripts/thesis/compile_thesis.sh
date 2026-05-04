@@ -10,7 +10,7 @@ echo "> Compile Thesis"
 # Trap to catch compilation error
 trap 'echo "Thesis compilation failed! Please refer to thesis/output/thesis.log for more details." >&2' ERR
 
-output=$(latexmk -quiet -pdf -interaction=nonstopmode \
+output=$(latexmk -quiet -pdf -bibtex -interaction=nonstopmode \
                 -file-line-error -synctex=1 -outdir=output \
                 thesis.tex 2>&1)
 

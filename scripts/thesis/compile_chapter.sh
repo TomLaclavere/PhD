@@ -41,7 +41,7 @@ on_error() {
 
 trap on_error ERR
 
-output=$(latexmk -quiet -pdf -cd -interaction=nonstopmode \
+output=$(latexmk -quiet -pdf -cd -bibtex -interaction=nonstopmode \
         -file-line-error -synctex=1 \
         -outdir=output \
         "../$tex_file" 2>&1)
