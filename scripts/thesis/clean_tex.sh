@@ -55,20 +55,20 @@ if $REMOVE_PDF; then
   # Chapters PDFs (excluding Figures directories)
   if [[ -d "$CHAPTERS_DIR" ]]; then
     find "$CHAPTERS_DIR" \
-      -path "*/Figures/*" -prune -o \
+      -path "*/Figures/*"  -o \
       -type f -name "*.pdf" -delete
   fi
 
   # Thesis root PDFs (excluding Figures)
   find "$ROOT_DIR/thesis" -maxdepth 1 \
-    -path "$ROOT_DIR/thesis/Figures/*" -prune -o \
+    -path "$ROOT_DIR/thesis/Figures/*"  -o \
     -type f -name "*.pdf" -delete
 
   # Website PDFs (also safe exclude)
   WEBSITE_DIR="$ROOT_DIR/website"
   if [[ -d "$WEBSITE_DIR" ]]; then
     find "$WEBSITE_DIR" \
-      -path "*/Figures/*" -prune -o \
+      -path "*/Figures/*"  -o \
       -type f -name "*.pdf" -delete
   fi
 fi

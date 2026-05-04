@@ -50,6 +50,6 @@ for chapter_dir in "$CHAPTERS_DIR"/*/; do
     cp "$pdf_file" "$WEBSITE_DIR/"
 
     # Move PDF back to chapter folder
-    mv "$pdf_file" "$chapter_dir/"
+    cp "$pdf_file" "$chapter_dir/"
   fi
 done

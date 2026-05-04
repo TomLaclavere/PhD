@@ -59,5 +59,5 @@ pdf_file="$output_dir/${tex_basename%.tex}.pdf"
 
 if [[ -f "$pdf_file" ]]; then
     cp "$pdf_file" "$WEBSITE_DIR/"
-    mv "$pdf_file" "$chapter_dir/"
+    cp "$pdf_file" "$chapter_dir/"
 fi
