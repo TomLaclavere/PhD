@@ -26,11 +26,44 @@ Modern cosmology is built upon a set of simple but powerful principles that allo
 
 In this section, we introduce the key elements of this framework. We begin with the observational evidence for the expansion of the Universe, then present the assumptions underlying its large-scale description. We subsequently describe the main components of the Universe, before discussing the limitations of this model and the role of inflation as a possible resolution.
 
+\rmk{Modify order of these subsections ? }
+
+\jc{\subsection{Basics of General Relativity}}
+
+General Relativity (GR), developed by \citeauthor{einstein1916_general_relativity} in 1915~\cite{einstein1916_general_relativity}, extends the principles of Special Relativity to non-inertial frames and gravitation. In Special Relativity, the laws of physics are invariant in all inertial reference frames, and the speed of light in vacuum, noted $c$, is constant for all observers. This implies a fundamental causal structure of spacetime, in which no information or physical object can propagate faster than light:
+\[v < c.\]
+This principle ensures causality, meaning that cause always precedes effect in every physical process.
+
+In Special Relativity, spacetime is described by the Minkowski metric:
+\begin{equation}
+    \eta_{\mu\nu} = 
+    \begin{pmatrix}
+    1 & 0 & 0 & 0 \\
+    0 & -1 & 0 & 0 \\
+    0 & 0 & -1 & 0 \\
+    0 & 0 & 0 & -1
+    \end{pmatrix},
+\end{equation}
+
+which defines the invariant spacetime interval:
+\[ds^2 = \eta_{\mu\nu} dx^\mu dx^\nu.\]
+This metric describes a flat spacetime in the absence of gravitation.
+
+General Relativity generalizes this framework by introducing a curved spacetime described by a metric tensor $g_{\mu\nu}$:
+\[ds^2 = g_{\mu\nu} dx^\mu dx^\nu.\]
+In this theory, gravity is no longer interpreted as a force but as a manifestation of spacetime curvature produced by matter and energy. The dynamics of spacetime are governed by the Einstein field equations:
+\[G_{\mu\nu} + \Lambda g_{\mu\nu}=
+\frac{8\pi G}{c^4} T_{\mu\nu},
+\]
+where $G_{\mu\nu}$ describes the geometry of spacetime, $T_{\mu\nu}$ the matter and energy content, $G$ the gravitational constant, and $\Lambda$ the cosmological constant.
+
+Particles and light propagate along trajectories determined by the geometry of spacetime. In particular, light follows null geodesics satisfying:
+\[ds^2 = 0,\]
+which preserves the universal causal structure inherited from Special Relativity.
+
 \subsection{Expanding Universe} \label{subsection:expansion}
 
-A major milestone in modern cosmology was the discovery that the Universe is expanding, independently established by Lema\^itre in 1927~\cite{lemaitre1927} and Hubble in 1929~\cite{hubble1929},\jc{ based on galaxies observations from Vesto Slipher between 1912 and 1917~\cite{slipher1913,slipher1917}. Observations showed that distant galaxies apparently recede from each other, with a velocity proportional to their distance. This relation, now known as Hubble-Lema\^itre law, provided the first evidence that the Universe is not static but in global expansion.}
-
-This expansion is described by the \emph{scale factor} \(a(t)\), which quantifies how distances between comoving points evolve with time. By convention, the scale factor is normalized to \(a(t_0) = 1\) today. As the Universe expands, the scale factor increases, implying that physical distances between distant, gravitationally unbound objects grow proportionally with time, as illustrated in Figure~\ref{fig:illustration_comoving_distances}.
+A major milestone in modern cosmology was the discovery that the Universe is expanding, independently established by Lema\^itre in 1927~\cite{lemaitre1927} and Hubble in 1929~\cite{hubble1929},\jc{ based on galaxies observations from Vesto Slipher between 1912 and 1917~\cite{slipher1913,slipher1917}. \jc{Observations showed that distant galaxies apparently recede from each other, with a velocity proportional to their distance. The proportional factor is called \emph{Hubble constant}, and can be seen in Figure~\ref{fig:illustration_comoving_distances}.} This relation, now known as Hubble-Lema\^itre law, provided the first evidence that the Universe is not static but in global expansion.}
 
 \begin{figure}[!htbp]
     \centering
@@ -39,7 +72,20 @@ This expansion is described by the \emph{scale factor} \(a(t)\), which quantifie
     \label{fig:illustration_comoving_distances}
 \end{figure}
 
-An observable consequence of this expansion is the \emph{cosmological redshift} \(z\). As light propagates through an expanding Universe, its wavelength is stretched along with space. This effect is not a simple Doppler redshift~\cite{doppler1842}, but rather a consequence of the expansion of spacetime, hence the name of cosmological redshift, illustrated in Figure~\ref{fig:cosmological_redshift}. 
+This expansion is described by the \emph{scale factor} \(a(t)\), which quantifies how distances between comoving points evolve with time. By convention, the scale factor is normalized to \(a(t_0) = 1\) today. As the Universe expands, the scale factor increases, implying that physical distances between distant, gravitationally unbound objects grow proportionally with time \jc{The expansion rate is quantified by the Hubble parameter:}
+\[
+H(t) = \frac{\dot{a}(t)}{a(t)},
+\]
+
+\jc{with \emph{Hubble constant} being $H(0) \equiv H_0.$}
+
+An observable consequence of this expansion is the \emph{cosmological redshift} \(z\). As light propagates through an expanding Universe, its wavelength is stretched along with space. This effect is not a simple Doppler redshift~\cite{doppler1842}, but rather a consequence of the expansion of spacetime, hence the name of cosmological redshift, illustrated in Figure~\ref{fig:cosmological_redshift}. \jc{Nevertheless, the interpretation of cosmological redshift is misleading, as it has nothing to do with any recession velocity. It is often interpreted as the stretching of space due to expansion, which would have the effect of increasing the wavelenght along photon's trajectory. However, general relativity assets that local reference frame can't be distinguished from Minkowski space, and by extension, that the photon will never know about spacetime stretching. The observed shift in photon's frequency is rather due to integration of infinitesimal Doppler shifts along the travelpath, caused by Lorentz' boost to go from one Minkowski frame to another. (see \cite{Bunn_2009} for more accurate description)}. \rmk{Very complicated article... Tell me if I resumed it correctly ! Also, I am not sure about the integration of these few sentences in the subsection, and how to make the transition with the other paragraphes.}
+
+Yet, the redshift can still be simply defined as:
+
+\begin{equation}
+    1 + z \equiv \frac{\lambda_{\text{obs}}}{\lambda_{\text{emit}}} \equiv \frac{a_{\text{obs}}}{a_{\text{emit}}} = \frac{1}{a_{\text{emit}}}
+\end{equation}
 
 \begin{figure}[!htbp]
     \centering
@@ -47,12 +93,6 @@ An observable consequence of this expansion is the \emph{cosmological redshift} 
     \caption{Illustration, from \cite{Cosmological_redshift_illustration}, showing the difference between Doppler redshift and cosmological redshift. Doppler's redshift~\cite{doppler1842}, on top, is the decrease in wavelength of an object approaching us, and the broadening of an object moving away from us. Cosmological's redshift~\cite{hubble1929} is the broadening of the wavelength in all directions due to the expansion of the Universe.}
     \label{fig:cosmological_redshift}
 \end{figure}
-
-The redshift is defined as:
-
-\begin{equation}
-    1 + z \equiv \frac{\lambda_{\text{obs}}}{\lambda_{\text{emit}}} \equiv \frac{a_{\text{obs}}}{a_{\text{emit}}} = \frac{1}{a_{\text{emit}}}
-\end{equation}
 
 This relation allows us to infer distances and the expansion history of the Universe from observations of spectral lines. In his original work, Hubble measured the redshift of galaxies and compared it to their distances, establishing the linear relation between velocity and distance shown in Figure~\ref{fig:hubble_diagram}. This observation demonstrates that the expansion of the Universe is uniform on large scales: every observer sees distant galaxies receding, without implying a special position in space.
 
@@ -63,12 +103,54 @@ This relation allows us to infer distances and the expansion history of the Univ
     \label{fig:hubble_diagram}
 \end{figure}
 
-\subsection{Cosmological principle} \label{subsection:cosmological_principle}
+\jc{\subsection{Cosmological principle}} \label{subsection:cosmological_principle}
 
-The fundamental concept of the cosmological principle states that the Universe is homogeneous and isotropic at large scales. This idea was introduced as a simplification to solve the general relativity equations~\cite{einstein1916_general_relativity}. It was done by Einstein in 1917 in the case of a static Universe~\cite{einstein1917_homogeneous_Universe}, but as we saw in previous subsection~\ref{subsection:expansion}, it was not relevant any more to assume a static Universe after Lemaître and Hubble's works. In 1922, Friedmann showed that a non-static solution for a homogeneous Universe is possible~\cite{friedmann1922}, quickly followed by evidences of Universe expansion in 1927 by Lemaître~\cite{lemaitre1927}.
-\jc{In parallel to these developments, alternative solutions of Einstein’s equations also highlighted the role of global structure in determining local physics. The de Sitter Universe~\cite{deSitter1917}, obtained in the absence of matter, already exhibited an expanding spacetime driven solely by the cosmological constant, showing that expansion could arise without a material source. More conceptually, these ideas were closely related to Mach’s principle~\footnote{as named by Einstein, based on \cite{mach1883} book}, according to which local inertial properties should be determined by the global distribution of matter in the Universe. Although general relativity was inspired by this principle, it does not fully implement it, as vacuum solutions such as de Sitter spacetime remain valid.}
-Building on these results, Robertson~\cite{robertson1935} and Walker~\cite{walker1936} formulated the general relativistic metric for a homogeneous and isotropic expanding Universe. This metric forms the cornerstone of the $\Lambda$CDM model.
-The veracity of this principle is much debated, but latest result from Planck Satellite suggest that the Universe is homogeneous and isotropic at $10^{-5}$ (= 0.001\%) at scale above $6^\circ$ on the sky~\cite{planck2018VII}. 
+The fundamental concept of the cosmological principle states that the Universe is homogeneous and isotropic at sufficiently large scales. This assumption considerably simplifies the Einstein field equations~\cite{einstein1916_general_relativity} and forms the basis of modern cosmology. Einstein first applied this principle in 1917 to construct a static cosmological model~\cite{einstein1917_homogeneous_Universe}. However, as discussed in Section~\ref{subsection:expansion}, the hypothesis of a static Universe became incompatible with later observational evidence of cosmic expansion obtained by Lemaître and Hubble.
+
+In 1922, Friedmann demonstrated that Einstein's equations naturally admit homogeneous and isotropic non-static solutions~\cite{friedmann1922}, quickly followed by Lemaître's interpretation of the observed galactic redshifts as evidence for cosmic expansion in 1927~\cite{lemaitre1927}. In parallel to these developments, alternative solutions of Einstein's equations also highlighted the role of global structure in determining local physics. In particular, the de Sitter Universe~\cite{deSitter1917}, obtained in the absence of matter, describes an expanding spacetime driven solely by the cosmological constant, showing that cosmic expansion can arise even without a material source.
+
+These ideas are closely connected to Mach's principle\footnote{The term ``Mach's principle'' was introduced by Einstein based on the ideas developed by Mach in~\cite{mach1883}.}, according to which local inertial properties should be determined by the global distribution of matter in the Universe. In this view, rotational motion is not defined with respect to an absolute space, as in Newtonian mechanics, but relative to the large-scale matter distribution of the Universe. Einstein was strongly influenced by this principle during the development of General Relativity, where no preferred inertial frame exists a priori. Nevertheless, General Relativity does not fully implement Mach's principle, since vacuum solutions such as de Sitter spacetime remain valid even in the absence of matter.
+
+Building on these results, Robertson~\cite{robertson1935} and Walker~\cite{walker1936} formulated the general relativistic metric describing a homogeneous and isotropic expanding Universe. This metric, now known as the Friedmann--Lemaître--Robertson--Walker (FLRW) metric, forms the cornerstone of the $\Lambda$CDM cosmological model. It is written as :
+
+\begin{equation}
+    ds^2 = c^2 dt^2 - a(t)^2 \left( \frac{dr^2}{1 - kr^2} + r^2 d\Omega^2 \right),
+\end{equation}
+
+where $a(t)$ is the \emph{scale factor}, introduced in Section~\ref{subsection:expansion}, and $k$ is the spatial curvature parameter. The latter determines the geometry of spatial hypersurfaces:
+\[
+k =
+\begin{cases}
++1 & \text{closed Universe (positive curvature)}, \\
+0 & \text{flat Universe (Euclidean space)}, \\
+-1 & \text{open Universe (negative curvature)}.
+\end{cases}
+\]
+
+By inserting the FLRW metric into Einstein's field equations, one obtains the Friedmann equations, which govern the evolution of the scale factor depending on the content of the Universe (see \ref{subsection:content_Universe}):
+\begin{equation}
+    \left( \frac{\dot{a}}{a} \right)^2
+    =
+    \frac{8\pi G}{3}\rho
+    - \frac{kc^2}{a^2}
+    + \frac{\Lambda c^2}{3},
+\end{equation}
+
+\begin{equation}
+    \frac{\ddot{a}}{a}
+    =
+    -\frac{4\pi G}{3}
+    \left(
+    \rho + \frac{3P}{c^2}
+    \right)
+    + \frac{\Lambda c^2}{3},
+\end{equation}
+
+where $\rho$ and $P$ are respectively the total energy density and pressure of the cosmological fluid.
+
+The first Friedmann equation relates the expansion rate of the Universe to its matter-energy content, spatial curvature, and cosmological constant. The second equation describes the acceleration of the expansion. In particular, ordinary matter and radiation contribute to slowing down the expansion through gravitational attraction, while a positive cosmological constant leads to accelerated expansion. These equations provide the theoretical framework describing the successive eras of cosmological evolution, including radiation domination, matter domination, and the current epoch of dark-energy domination. Their solutions determine the thermal and dynamical history of the Universe within the standard cosmological model.
+
+Although the cosmological principle is fundamentally an assumption, modern observations strongly support its validity on large scales. In particular, measurements of the Cosmic Microwave Background (CMB) by the Planck satellite show that the temperature anisotropies are of order $10^{-5}$ above angular scales of approximately $6^\circ$~\cite{planck2018VII}, indicating that the Universe is remarkably homogeneous and isotropic at large scales.
 
 \subsection{Content of the Universe} \label{subsection:content_Universe}
 
@@ -83,9 +165,7 @@ These contents can be classified into three categories: radiation, matter, and t
     \label{fig:evolution_density}
 \end{figure}
 
-At early times of the Universe, the radiation was dominating. This radiation consisted of the relativistic particles : photons and neutrinos. At this time, Universe was a very dense plasma of protons and electron at thermal equilibrium, where very small photons' free path, forming a nearly perfect blackbody. The density of radiation and matter were equal at z $\sim$ 3400~\cite{desi2024,planck2018VI}, which correspond to approximatively 80000 years after first times of the Universe. 
-
-Today, radiation contributes about 0.008\% of the total energy density, as inferred from Planck 2018 data~\cite{planck2018VI}.
+At early times of the Universe, the radiation was dominating. This radiation consisted of the relativistic particles : photons and neutrinos. At this time, Universe was a very dense plasma of protons and electron at thermal equilibrium, where very small photons' free path, forming a nearly perfect blackbody. The density of radiation and matter were equal at z $\sim$ 3400~\cite{desi2024,planck2018VI}, which correspond to approximatively 80000 years after first times of the Universe. Today, radiation contributes about 0.008\% of the total energy density, as inferred from Planck 2018 data~\cite{planck2018VI}.
 
 As the Universe expanded, non-relativistic matter came to dominate the energy density. This matter is composed of baryonic matter and dark matter. The term "baryonic matter" is misleading, as it designates all non-relativistic particles of the Standard Model; however, its energy density is overwhelmingly dominated by protons and neutrons, hence the terminology. On the other hand, dark matter is a hypothetical form of matter, which only (or mostly) interact through gravitational force, and thus, which does not emit light. It was first suggested by comparing "seen mass" computed from galaxies light and "unseen mass" computed from galaxies velocity in the Coma Galaxies Cluster by Zwicky in 1933~\cite{zwicky1933}. The mass computed from galaxies velocity was much higher than the luminous mass, suggesting the presence of massive matter that does not emit light. 
 
@@ -120,18 +200,16 @@ Within the standard Friedmann evolution, flatness is not a stable state: any sma
 An answer to the three problems was proposed by Alexei Starobinsky in 1979~\cite{starobinskii1979} and Alan Guth in 1981~\cite{guth1981}, through the idea of an exponential expansion phase at the very beginning of the Universe. The model was then developed by Andrei Linde in 1983~\cite{linde1983}, and has since given rise to a wide variety of models. We will explain in the following subsection the idea behind this theory and how it can solve the issues discussed previously.
 
 \subsection{Inflation theory}  \label{subsection:inflation}
-\rmk{Should I talk about the Inflation scale ($\exp{-N}$, with $N \sim 60$), to make more understandable that it solves all the problems}
 
 The theory of Inflation postulates that in the very early Universe, all regions were causally connected. These regions were then disconnected due to an exponentially expanded phase. This theory was developed to solve the various problems presented previously~\ref{subsection:cosmo_pb}. 
 \textbf{Horizon Problem.} Indeed, if all regions were connected in the very early Universe, they could have thermalised, explaining why the CMB temperature is uniform at a very large scale. 
 \textbf{Flatness Problem.} As we said, a nearly flat Universe is an unstable solution, meaning that it is very unlikely to happen. But, Inflation suggests that they do not care about the curvature before it occurs, as an exponential expansion will make all local curvatures negligible. We can understand this argument with the analogy of a sphere: if we zoom enough on a sphere, its surface will appear flat. This mechanism explains why the Universe is flat today, independently of its initial conditions.
 \textbf{Monopole Problem.} The GUT theories predict the formation of monopoles, but the exponential expansion dilutes their density to the point where they become unobservable today. 
 
+
 \jc{An additional issue arises within the equations of the standard cosmological model. As for any dynamical system, the evolution of the Universe is fully determined only once a set of initial conditions is specified. This naturally raises the question of how such initial conditions can be justified or constrained observationally. In the context of the $\Lambda$CDM model, the observed properties of the Universe—large-scale homogeneity, isotropy, and near spatial flatness—must be imposed as initial conditions. From a theoretical perspective, these conditions may appear finely tuned, since they require the early Universe to occupy a very specific region of phase space. The inflationary paradigm provides a dynamical mechanism to address this issue. A period of accelerated, approximately exponential expansion drives the Universe toward homogeneity, isotropy, and flatness, effectively suppressing sensitivity to the initial state. In this sense, inflation acts as an attractor mechanism in the space of initial conditions. Moreover, inflation naturally generates primordial density perturbations. Quantum fluctuations of the inflaton field are stretched to cosmological scales by the rapid expansion, where they become classical perturbations. These perturbations seed the anisotropies observed in the Cosmic Microwave Background (CMB) and later grow via gravitational instability to form the large-scale structure of the Universe observed today~\cite{mukhanov1985}.}
 
 The most widely studied inflationary scenario involves a scalar field that slowly evolves toward its true ground state~\cite{linde1982}~\cite{albrecht_steinhardt1982}. In this framework, the field’s potential energy remains nearly constant and therefore rapidly comes to dominate over both its kinetic energy and the energy density of other components. Inflation comes to an end when the field reaches the minimum of its potential, after which it undergoes oscillations and decays into lighter particles, eventually producing those of the Standard Model of Particles. A wide variety of potential shapes have been proposed in the literature (see \cite{inflation_overview2014} for an overview of the different models), and many of these can be adjusted to fit current observations. This highlights the importance of observational constraints in discriminating between competing inflationary models.
-
-\rmk{Is it enough on Inflation ? Or should I talk more about the mechanism, slow-roll approximation, ...? }
 
 \section{Thermal history of the Universe}
 
@@ -167,7 +245,7 @@ The predicted primordial abundances are in good agreement with observations, mak
 
 During the radiation-dominated era, photons were tightly coupled to baryons through Thomson scattering of free electrons~\cite{dodelson}, forming a single photon-baryon fluid. Due to the primordial density fluctuations generated during inflation (see Section~\ref{subsection:inflation}), overdense regions acted as gravitational potential wells, attracting baryonic matter.
 However, photon pressure counteracted gravitational fall. The competition between gravity and radiation pressure led to acoustic oscillations in the coupled photon-baryon fluid, generating spherical sound waves propagating outward from initial under and over densities.
-These oscillations ceased at recombination (see Section~\ref{subsection:recombination}), when photons decoupled from baryons and began to free-stream. The maximum distance traveled by these sound waves, moving at $v \sim c / \sqrt{3}$, defines a characteristic scale, known as the sound horizon.
+\jc{These oscillations ceased at recombination (see Section~\ref{subsection:recombination}), when photons decoupled from baryons and began to free-stream. The maximum distance traveled by these sound waves, moving at $v \sim c / \sqrt{3}$, defines a characteristic scale, known as the sound horizon. As CMB was emitted at $t_{CMB} \sim 380000$ years, corresponding to a resdhift $1 + z \sim 1100$, the characteristic scale of the oscillations can be computed by : $c / \sqrt{3} * t_{CMB} * z \equiv 75 Mpc$. Unfortunately, this back of the envelope computation does not include expansion during sound wave propagation, and integrated over the emission of CMB, as decoupling between photons and baryons does not happen instantaneously, but took about $115000$ years~\cite{planck2018VI}. Adding these effects, characteristic scale of BAO is about 150 Mpc.}
 This scale is imprinted in the late-time matter distribution as a preferred clustering scale. Baryon Acoustic Oscillations (BAO) were first detected in the large-scale distribution of galaxies by the Sloan Digital Sky Survey~\cite{Eisenstein_2005} and independently confirmed by the 2dF Galaxy Redshift Survey~\cite{Cole_2005}. They appear as a distinct peak in the two-point correlation function at a scale of approximately $150\,\mathrm{Mpc}$, corresponding to the sound horizon at recombination (see Fig.~\ref{fig:bao_peak}).
 
 \begin{figure}[!htbp]
