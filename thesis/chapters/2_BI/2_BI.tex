@@ -26,9 +26,10 @@ The QUBIC collaboration published a series of eight papers in 2022 describing th
 
 \subsection{Classical approach: Imager}
 
-Before introducing QUBIC instrument, it is interesting to first present the design of numerous modern CMB instruments, called \emph{direct imaging}. Imagers are long-exposure telescope, directly forming images of the sky on their focal planes, where detectors are located. This design is widely adopted by CMB experiments, such as Planck~\cite{PlanckDesign}, Bicep2/Keck Array~\cite{BicepDesign} or Simons Observatory~\cite{SODesign}. 
-These experiments use thousands of detectors, each observing a small patch of the sky. These detectors obserbe photons, measuring their total power. CMB polarisation observations need very high sensitivity detectors. The dominant technology is bolometer, which are equiping nearly every CMB instrument\footnote{Another type of antenna called Kinetic Inductance Detectors (KIDs) are at the center of many R\&D projects, in order to replace bolometers in CMB experiment~\cite{KIDs, KIDs_Overview}. KIDs are currently used in NIKA2 camera~\cite{NIKA2} and tolTEC camera~\cite{tolTEC}}. Bolometers are measuring the modification of conductance, due to a rising of temperature of the thermal mass, after interaction with photons in the absorber (see Figure~\ref{fig:bolometer}). 
+\rmk{Can we discuss what to add here ? I don't really know which information is relevant and which is not ? Maybe convolution, or major limitations (Beam's non-gaussianities, Cross-polarisation, 1/f noise, ...) ?}
 
+Before introducing QUBIC instrument, it is interesting to first present the design of numerous modern CMB instruments, called \emph{direct imaging}. Imagers are long-exposure telescope, directly forming images of the sky on their focal planes, where detectors are located. This design is widely adopted by CMB experiments, such as Planck~\cite{PlanckDesign}, Bicep2/Keck Array~\cite{BicepDesign} or Simons Observatory~\cite{SODesign}. 
+These experiments use thousands of detectors, each observing a small patch of the sky. These detectors observe photons, measuring their total power. CMB polarisation observations need very high sensitivity detectors. The dominant technology used is bolometer, which are equiping nearly every CMB instrument\footnote{Another type of antenna called Kinetic Inductance Detectors (KIDs) are at the center of many R\&D projects, in order to replace bolometers in CMB experiment~\cite{KIDs, KIDs_Overview}. KIDs are currently used in NIKA2 camera~\cite{NIKA2} and tolTEC camera~\cite{tolTEC}}. Bolometers are measuring the modification of conductance, due to a rising of temperature of the thermal mass, after interaction with photons in the absorber (see Figure~\ref{fig:bolometer}). 
 
 \begin{figure}[!htbp]
     \centering
@@ -37,11 +38,11 @@ These experiments use thousands of detectors, each observing a small patch of th
     \label{fig:bolometer}
 \end{figure}
 
-As detectors are observing different regions of the sky, they are completly independent. Meaning that the raw sensitivity of such instrument in directly related with the number of detectors. In consequence, modern CMB experiment are looking at adding the maximum number of detectors possible in their focal plane, representing a large fraction of their budget, the number of detectors increasing with time~\footnote{Bicep2/Keck Array (2015): $\sim 3000$ detectors, Simons Observatory (2025): $\sim 60 000$ detectors}.
-
-
+As detectors are observing different regions of the sky, they are completly independent. Meaning that the raw sensitivity of such instrument in directly related with the number of detectors. Indeed, the noise variance of one detector, assuming white uncorrelated noise, is given by : $\sigma \propto 1 / \sqrt(t)$, with t the observing time, or equivalently, the number of time samples. That means that for $N$ independent detectors observing simultaneously, the expected noise variance is : $\sigma \propto 1 / \sqrt{N_{det}t_{obs}}$. As a consequence, modern CMB experiment are looking at adding the maximum number of detectors possible in their focal plane, representing a large fraction of their budget, the number of detectors increasing with time\footnote{Bicep2/Keck Array (2015): $\sim 3000$ detectors, Simons Observatory (2025): $\sim 60 000$ detectors}.
 
 \subsection{Innovative design: Bolometric Interferometry}
+
+Instead of observing directly the sky with detectors, as a classical imager, a bolometric interferometer will observe an interference pattern of the sky, projected on its focal plane. Contrary to an imager, every detector of a bolometric interferometer is highly correlated with the other ones, which is the strenght of this type of instrument, but requires complex algorithms for data analysis. 
 
 \section{QUBIC Experiment}
 
