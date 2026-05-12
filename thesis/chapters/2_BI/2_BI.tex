@@ -26,45 +26,162 @@ The QUBIC collaboration published a series of eight papers in 2022 describing th
 
 \subsection{Classical approach: Imager}
 
-\rmk{Can we discuss what to add here ? I don't really know which information is relevant and which is not ? Maybe convolution, or major limitations (Beam's non-gaussianities, Cross-polarisation, 1/f noise, ...) ?}
+Before introducing QUBIC instrument, it is interesting to first present the design adopted by most modern CMB experiments, called \emph{direct imaging}. Imagers are long-exposure telescopes directly forming images of the sky on their focal planes, where detectors are located. Contrary to interferometers, imagers directly measure the sky intensity projected onto the focal plane, producing sky maps after scanning and reconstruction. This design is widely adopted by modern CMB experiments such as Planck~\cite{PlanckDesign}, Bicep2/Keck Array~\cite{BicepDesign} or Simons Observatory~\cite{SODesign}. 
 
-Before introducing QUBIC instrument, it is interesting to first present the design of numerous modern CMB instruments, called \emph{direct imaging}. Imagers are long-exposure telescope, directly forming images of the sky on their focal planes, where detectors are located. This design is widely adopted by CMB experiments, such as Planck~\cite{PlanckDesign}, Bicep2/Keck Array~\cite{BicepDesign} or Simons Observatory~\cite{SODesign}. 
-These experiments use thousands of detectors, each observing a small patch of the sky. These detectors observe photons, measuring their total power. CMB polarisation observations need very high sensitivity detectors. The dominant technology used is bolometer, which are equiping nearly every CMB instrument\footnote{Another type of antenna called Kinetic Inductance Detectors (KIDs) are at the center of many R\&D projects, in order to replace bolometers in CMB experiment~\cite{KIDs, KIDs_Overview}. KIDs are currently used in NIKA2 camera~\cite{NIKA2} and tolTEC camera~\cite{tolTEC}}. Bolometers are measuring the modification of conductance, due to a rising of temperature of the thermal mass, after interaction with photons in the absorber (see Figure~\ref{fig:bolometer}). 
+The angular resolution of such instruments is fundamentally limited by diffraction, and scales approximately as :
+\begin{equation}
+    \theta \sim \frac{\lambda}{D},
+\end{equation}
+where $\lambda$ is the observing wavelength and $D$ the telescope diameter. As a consequence, large aperture telescopes are required to observe small angular scales.
+
+These experiments use thousands of detectors, each observing a small patch of the sky independently. These detectors measure the total incoming power from photons. CMB polarisation observations require extremely sensitive detectors operating close to the photon noise limit\footnote{\emph{Photon noise} is the fundamental statistical noise coming from the energy discretisation of photons arriving randomly at the detector. This is an intrinsic limit in detector's sensitivity.²}. The dominant technology used in modern CMB instruments is the bolometer, currently equipping nearly all major experiments\footnote{Another type of detector called Kinetic Inductance Detectors (KIDs) is currently at the center of many R\&D projects, in order to replace bolometers in future CMB experiments~\cite{KIDs, KIDs_Overview}. KIDs are already used in instruments such as NIKA2~\cite{NIKA2} and TolTEC~\cite{tolTEC}.}. Bolometers measure the variation of conductance caused by an increase of temperature of a thermal mass after absorption of incoming radiation (see Figure~\ref{fig:bolometer}).
 
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.3\linewidth]{Bolometer.pdf}
-    \caption{Diagram of bolometer. Incoming radiation is interacting in the abosrber, in thermal equilibrium with the thermal mass, leading to an increasing of its temperature. This modifies the conductance G of the material, which can be measured, in order to compute the total power of input photons.}
+    \caption{Diagram of a bolometer. Incoming radiation is absorbed by the absorber, in thermal equilibrium with the thermal mass, leading to an increase of its temperature. This modifies the conductance $G$ of the material, which can be measured in order to estimate the total incoming power.}
     \label{fig:bolometer}
 \end{figure}
 
-As detectors are observing different regions of the sky, they are completly independent. Meaning that the raw sensitivity of such instrument in directly related with the number of detectors. Indeed, the noise variance of one detector, assuming white uncorrelated noise, is given by : $\sigma \propto 1 / \sqrt(t)$, with t the observing time, or equivalently, the number of time samples. That means that for $N$ independent detectors observing simultaneously, the expected noise variance is : $\sigma \propto 1 / \sqrt{N_{det}t_{obs}}$. As a consequence, modern CMB experiment are looking at adding the maximum number of detectors possible in their focal plane, representing a large fraction of their budget, the number of detectors increasing with time\footnote{Bicep2/Keck Array (2015): $\sim 3000$ detectors, Simons Observatory (2025): $\sim 60 000$ detectors}.
+As detectors observe different regions of the sky independently, the ideal white-noise sensitivity improves with the number of detectors. Assuming uncorrelated white noise, the noise RMS of one detector scales as :
+\begin{equation}
+    \sigma \propto \frac{1}{\sqrt{t}},
+\end{equation}
+where $t$ is the observing time. For $N_{\mathrm{det}}$ independent detectors observing simultaneously, the sensitivity therefore scales as :
+\begin{equation}
+    \sigma \propto \frac{1}{\sqrt{N_{\mathrm{det}} t_{\mathrm{obs}}}}.
+\end{equation}
+
+As a consequence, modern CMB experiments aim at maximizing the number of detectors populating the focal plane, representing a large fraction of the instrument complexity and cost. The number of detectors has dramatically increased over the last decade\footnote{Bicep2/Keck Array (2015): $\sim 3000$ detectors, Simons Observatory (2025): $\sim 60\,000$ detectors. \rmk{Add budget of the two experiments..?}}.
 
 \subsection{Innovative design: Bolometric Interferometry}
 
-Instead of observing directly the sky with detectors, as a classical imager, a bolometric interferometer will observe an interference pattern of the sky, projected on its focal plane. Contrary to an imager, every detector of a bolometric interferometer is highly correlated with the other ones, which is the strenght of this type of instrument, but requires complex algorithms for data analysis. 
+Interferometry was the dominant design for several CMB experiments in the early 2000s. Important examples include VSA~\cite{VSA}, DASI~\cite{DASI}, CBI~\cite{CBI} or more recently QUIET~\cite{QUIET}. Interferometers can be separated into two main categories: \emph{Coherent Interferometry} (CI) and \emph{Bolometric Interferometry} (BI).
+
+In coherent interferometers, the instrument measures correlations between antennas, similarly to classical radio interferometry. Each antenna receives an electric field $E_i(t)$, which is amplified and pairwise correlated with the signals from other antennas through complex correlators. The measured quantity is called the \emph{visibility} :
+\begin{equation}
+    V(u,v) = \langle E_i E_j^\ast \rangle,
+\end{equation}
+which corresponds to a Fourier mode of the sky. One major advantage of this approach is its excellent control of systematic effects, due to the direct comparison between baselines. Interferometers also provide direct access to Fourier modes of the sky, simplifying power spectrum estimation. In addition, their optical design is generally simpler than large imaging telescopes.
+
+However, coherent interferometers suffer from several major limitations. First, amplifier noise complicates high-sensitivity measurements at CMB frequencies. More importantly, the number of correlators scales as :
+\begin{equation}
+    N_{\mathrm{corr}} \sim N_{\mathrm{ant}}^2,
+\end{equation}
+making large interferometric arrays extremely expensive and technically complex. This scalability problem is the main reason why direct imagers progressively replaced coherent interferometers in modern CMB experiments.
+
+Bolometric interferometry aims at combining the advantages of interferometry with the high sensitivity of bolometric detectors. In BIs, electronic correlators are replaced by an optical combiner, naturally producing interference patterns from many baselines simultaneously. Amplifiers are also removed, and the signal is directly measured using high-sensitivity bolometers. In bolometric interferometers, the different baselines are produced using an array of horns, which can be seen as an array of Young's holes~\cite{young1804}. The signals are then combined through an optical system composed of large mirrors, focusing the resulting interference pattern onto a focal plane where detectors are located. Bolometric interferometry therefore aims at mitigating the scalability limitations of coherent interferometry while preserving its strong control of systematic effects. In addition, bolometers provide significantly higher sensitivity than coherent amplifiers at CMB frequencies ($[100 - 300]~\mathrm{GHz}$). 
+Nevertheless, several important challenges remain. Bolometric interferometers rely on complex optical systems involving many elements (large horn arrays, mirrors, switches, etc.), increasing both instrumental complexity and potential systematic effects. Moreover, the synthesized beam produced by the instrument is significantly more complicated than in direct imagers and requires extremely precise characterisation for high-precision cosmological measurements. Since this architecture has never been deployed at the scale of modern imaging experiments, uncertainties on its scalability still remain.
+
+The QUBIC experiment was designed to demonstrate the advantages of bolometric interferometry and evaluate its relevance for primordial B-mode polarisation observations.
+\rmk{I guess you will not like this sentence JC, but I am not sure that we can say that QUBIC aims at being cometitive for B-modes in 2026.}
 
 \section{QUBIC Experiment}
 
 \subsection{QUBIC Collaboration}
 
+During the 2000s, multiple projects starting to develop around the concept of Bolometric Interferometry. We can cite Millimetre-wave Bolometric Interferometer (MBI)~\cite{MBI2002, MBI2003}, Einstein Polarization Interferometer for Cosmology (EPIC)~\cite{EPIC}, Background RAdiation INterferometer (BRAIN)~\cite{BRAIN} or CMBPol~\cite{CMBPol}. The different members of these collaborations joined together to work on a common project : the Q \& U Bolometric Interferometer for Cosmology\footnote{\url{https://www.qubic.org.ar/}} (QUBIC)~\cite{preQUBICI,ghribiPhD,preQUBICII,preQUBICIII, QUBICI}. QUBIC is an international collaboration, with participations from France, Italy, Argentina, Ireland, the USA, the UK, and more recently Marocco. 
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{qubic_members.png}
+    \caption{QUBIC observing site and collaboration laboratories accross the world.}
+    \label{fig:members}
+\end{figure}
+
+The fundamental concept of QUBIC as a Bolometric Interferometer started in 2008~\cite{preQUBICI}, until its integration and validation at APC laboratory\footnote{\url{https://apc.u-paris.fr/}} in Paris, between 2018 and 2020. 
+The Technical Demonstrator (TD) of the intrument was sent to Argentina in 2021. The installation on the observing site and commisioning started in 2021 and 2022. For financial and political reasons, commisioning stoped in 2023. It started again in 2025. At today (half of 2026), QUBIC's commisioning and validation continue. Figure \ref{fig:moon_obs} shows the first observation of the moon by QUBIC Instrument at the observing site, in 2026.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.6\linewidth]{moon_observation_TES96.pdf}
+    \caption{Observation of the moon at observing site in 2026.}
+    \label{fig:moon_obs}
+\end{figure}
+
 \subsection{Observing Site} 
+
+An observing site dedicated to CMB polarisation measurements must satisfy two main constraints. First, like any astronomical observatory, it must be located far from major sources of light pollution. Second, it must be situated at high altitude and in an extremely dry region. These latter requirements are intended to minimise atmospheric water vapour, which constitutes one of the main contaminants for ground-based observations (see \ref{subsection:atm} and \ref{chap:atm}), since the water vapour content decreases rapidly with altitude. Only a few privileged observing sites exist worldwide, as illustrated in Figure \ref{fig:best_obs_sites}: the high-altitude regions of the Andes between Chile and Argentina, the Tibetan Plateau, Greenland, and the South Pole.
+From an atmospheric perspective, the South Pole, where experiments such as BICEP2 and Keck Array are located, provides exceptionally favourable observing conditions thanks to its extremely low PWV and highly stable atmosphere, despite its relatively modest altitude. However, the logistical challenges associated with operating in Antarctica (transportation, power supply, extremely low temperatures, limited repair capabilities, and restricted human presence) reduce the attractiveness of the site. Political and environmental considerations, governed by the Antarctic Treaty System, complicate the deployment of future facilities.\footnote{For example, discussions surrounding the implementation of next-generation projects such as CMB-S4 have highlighted the increasing logistical and environmental constraints associated with Antarctic deployment.} In addition, only a limited fraction of the sky is observable from the South Pole, making large sky surveys impossible from this location. On the other hand, the same sky patch remains continuously visible, enabling uninterrupted long-duration observations, unlike at lower latitudes where targets rise and set during the day.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{transmission_world.png}
+    \caption{Median transmission at 925 GHz at Zenith accross the world (left) and focus on the South Pole (right). The transmission is directly related to Precipitable Water Vapour (PWV) of the atmosphere in this region. The frequency of this map is not relevant for CMB observations, but it has been chosed as it amplifies the effect of atmosphere (whose transmission decrease with frequency, see Figure \ref{fig:atm_spectrum}) for visibility purpose. For astrophysical observations, we are looking for the highest transmission, meaning the bluest regions on the maps. Taken from \cite{Suen_2014}. \rmk{I had to take a screenshot from PDF, because paper's figures are not accessible on arXiv, should I keep this figure ? I found another map of PWV from NASA, but best observation sites are less visible.}}
+    \label{fig:best_obs_sites}
+\end{figure}
+
+The most privileged observing site is the Atacama Desert in the Chilean Andes, where experiments such as Atacama Cosmology Telescope, Simons Observatory, POLARBEAR, Simons Array, CLASS, and QUIET (as well as several non-CMB facilities) are located. This region is among the driest on Earth outside Antarctica, providing excellent atmospheric conditions for millimetre and sub-millimetre observations. Chile also has a long-standing history of astronomical collaboration, which has enabled the development of robust infrastructure and stable logistical support in this region~\cite{Atacama}. On the Argentine side of the Andes, the Alto Chorrillos region\footnote{The Atacama Desert and Alto Chorrillos are separated by approximately $\sim 300,\mathrm{km}$.} hosts experiments such as QUBIC, as shown Figure \ref{fig:qubic_obs_site} and the LLAMA project. This site shares very similar atmospheric characteristics with the Atacama plateau, including high altitude and low precipitable water vapour. However, differences in long-term investment in astronomical infrastructure and the maturity of large-scale observatory ecosystems result in a less developed operational environment compared to northern Chile.
+In the Northern Hemisphere, Greenland and Tibet are also promising high-altitude or high-latitude sites for millimetre astronomy~\cite{tibet_greenland}. Greenland suffers from similar logistical limitations to the South Pole, particularly in terms of infrastructure and accessibility, despite excellent atmospheric conditions. Tibet, while offering high-altitude dry sites, faces challenges related to infrastructure development and long-term operational stability, which currently limit its use for large-scale CMB observatories.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{qubic_on_site.png}
+    \caption{Picture of QUBIC during its inauguration in 2022, in Alto Chorrillos, Salta, Argentina.}
+    \label{fig:qubic_obs_site}
+\end{figure}
 
 \subsection{Science Objectives}
 
+\subsubsection{CMB Polarisation}
+
+As suggested by its name, the QUBIC instrument was specifically designed to measure CMB polarisation. Several instrumental features were developed for this purpose. They are briefly introduced here and discussed in detail throughout this thesis.
+
+The first requirement for detecting primordial CMB B-modes is a very high sensitivity. QUBIC achieves this using Transition Edge Sensors (TES)~\cite{QUBICIV}, a specific class of bolometric detectors described in Subsection \ref{sub:TES}. At the same time, an excellent control of instrumental systematics is mandatory. QUBIC plans to use \emph{self-calibration}, a technique widely employed in radio interferometry, which consists in comparing signals measured by redundant baselines in order to constrain instrumental systematics~\cite{paper_selfcal_1,paper_selfcal_2,selfcal_overview,paper_marie_selfcal}. This method is discussed in Chapter \ref{chap:gps}, and more specifically in Subsection \ref{sub:selfcal}.
+
+Another key feature of QUBIC is the use of a polarising grid coupled to intensity-only detectors. This architecture strongly suppresses instrumental cross-polarisation effects~\cite{QUBICVI}; further details are provided in Subsection \ref{sub:polariser}.
+
+\subsubsection{Foreground Mitigation}
+
+Separating the CMB polarisation signal from astrophysical foreground contamination relies primarily on the different spectral dependences of the various emissions. In practice, this requires observations over multiple frequency channels in order to disentangle the different contributions.
+
+For traditional imagers, this leads to a significant increase in instrumental complexity and cost, since dedicated detector arrays are generally required for each frequency band. Bolometric interferometers, however, naturally exhibit a frequency-dependent synthesized beam, allowing the spectral information to be spatially encoded across the focal plane. This unique feature, referred to as \emph{spectral imaging}, is one of the main advantages of bolometric interferometry. It is presented in detail in Chapter \ref{chap:spectral_imaging}, which constitutes the core of this thesis, as all chapters in Part \ref{part:MM} rely on this concept.
+
+It is also important to note that an instrument designed to separate CMB emission from astrophysical foregrounds must necessarily be highly sensitive to the properties of these foreground emissions themselves. In this respect, QUBIC could also provide valuable measurements for Galactic science, even though this is not part of its primary scientific program.
+
+\subsubsection{Demonstrating Bolometric Interferometry}
+
+QUBIC is a unique instrument employing a technology that is entirely novel within the field of CMB observations. As such, it serves as a proof of concept for bolometric interferometry, demonstrating both its capabilities and its potential for future generations of CMB experiments.
+
 \section{Instrumental Design}
 
-\subsection{Cryogenics}
+In this Section, the full instrumental design of QUBIC is described, as the knowledge of the instrumental design is mandatory to understand the behaviours of QUBIC. 
+Before entering into the details of the different electronic and optic element, here is a quick resume of the instrumental design of QUBIC. Photons enter the instrument through a 56 cm transparent window, before behing filtered to eliminate frequencies outside the observation bandwidths, to avoid being heated by high-energy photons. Then, photons enter inside QUBIC's cryostat~\cite{QUBICV}. The light polarisation is modulated by a rotating Half-Wave Plate (HWP), before interacting with a polariser to select one polarisation direction, the resulting signal being transmitted to the array of 400 back-to-back horns~\cite{QUBICVII}, during the \emph{4K stage}. The 400 splited signals will then be reflected by 2 concave mirrors at 1K, to be focused on the focal plane where the TESs~\cite{QUBICIV} cooled down at $\sim 320 mK$ are located, to produce an interference pattern.
 
-\subsection{Filters}
+\begin{figure}[!htbp]
+    \begin{minipage}{0.5\linewidth}
+        \centerline{\includegraphics[width=0.8\linewidth]{qubic_instrument.pdf}}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.5\linewidth}
+        \centerline{\includegraphics[width=1\linewidth]{qubic_schematic_wideband.png}}
+    \end{minipage}
+    \hfill
+    \caption[]{}
+    \label{fig:qubic_instrument}
+\end{figure}
 
-\subsection{Half Wave Plate \& Polariser}
+\subsection{Technical Demonstrator}
+
+\subsection{Window \& Filters}
+
+\subsection{Half Wave Plate}
+
+\subsection{Polariser} \label{sub:polariser}
 
 \subsection{Horns Array}
 
+\subsection{Legacy element: Dichroic Filter}
+
 \subsection{Optical Combiner}  
 
-\subsection{Bolometers}
+\subsection{Bolometers} \label{sub:TES}
+
+\subsection{Cryogenics}
+
+
+\rmk{Should I add a subsection about the various instrumental designs ? UWB, DB, SMB, Split Dual Bands}
+
 
 \ifSubfilesClassLoaded{
     \addstarredchapter{Bibliography}

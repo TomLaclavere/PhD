@@ -5,10 +5,19 @@
 \newcommand{\Hrule}{\rule{\linewidth}{0.3mm}}
 
 % Remark in blue
-\newcommand{\rmk}[1]{\textcolor{blue}{#1}}
+\newcommand{\rmk}[1]{%
+  {\textcolor{blue}{\underline{\textbf{Remark/Question:}} #1}}
+}
 
-% Correction
-\newcommand{\jc}[1]{\textcolor{red}{#1}}
+% Modification from JC in red
+\newcommand{\jc}[1]{%
+  {\textcolor{red}{\underline{\textbf{(JC)}} #1}}
+}
+
+% Modification from Steve in green
+\newcommand{\steve}[1]{%
+  {\textcolor{green}{\underline{\textbf{(Steve)}} #1}}
+}
 
 % Personal contribution in purple
 \newcommand{\personal}[1]{%
