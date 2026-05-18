@@ -17,15 +17,16 @@ for src_tex in thesis/chapters/*/*.tex; do
   [ -f "$src_tex" ] || continue
 
   chapter_dir="$(dirname "$src_tex")"
-  chapter_name="$(basename "$chapter_dir" | sed 's/_/ /g')"
-  chapter_slug="$(basename "$chapter_dir" \
+  chapter_basename="$(basename "$chapter_dir")"
+  chapter_name="$(echo "$chapter_basename" | sed 's/_/ /g')"
+  chapter_slug="$(echo "$chapter_basename" \
   | tr '[:upper:]' '[:lower:]' \
   | sed 's/ /_/g; s/[^a-z0-9_-]//g')"
 
-  pdf_file="$CHAPTER_DIR/${chapter_slug}.pdf"
+  pdf_file="$CHAPTER_DIR/${chapter_basename}.pdf"
   [ -f "$pdf_file" ] || continue
 
-  fname="$(basename "$pdf_file")"
+  fname="${chapter_basename}.pdf"
   filesize="$(ls -lh "$pdf_file" | awk '{print $5}')"
   src_size="$(du -sh "$chapter_dir" | awk '{print $1}')"
   fig_count="$(find "$chapter_dir/Figures" -type f | wc -l | tr -d ' ')"
@@ -71,11 +72,11 @@ for src_tex in thesis/chapters/*/*.tex; do
         </a>
         </div>
         <div style="display: flex; gap: 10px;">
-            <a href="$WEB_DIR/$chapter_slug.tar.xz" class="btn" style="flex: 1;">
+            <a href="$WEB_DIR/$chapter_basename.zip" class="btn" style="flex: 1;">
                 <i class="fas fa-download"></i>
-                Download TAR
+                Download ZIP
             </a>
-            <a href="https://github.com/TomLaclavere/PhD/tree/main/thesis/chapters/$chapter_slug" class="btn btn-secondary" style="flex: 1;">
+            <a href="https://github.com/TomLaclavere/PhD/tree/main/thesis/chapters/$chapter_basename" class="btn btn-secondary" style="flex: 1;">
                 <i class="fas fa-eye"></i>
                 Preview on GitHub
             </a>

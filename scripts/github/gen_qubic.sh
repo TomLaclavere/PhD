@@ -11,7 +11,9 @@ mkdir -p "$(dirname "$OUT_FILE")"
 : > "$OUT_FILE"
 
 # Find information on repo
-repo_json=$(curl -s "https://api.github.com/repos/$GITHUB_USER/$REPO_NAME")
+AUTH_HEADER=()
+[[ -n "${GITHUB_TOKEN:-}" ]] && AUTH_HEADER=(-H "Authorization: Bearer $GITHUB_TOKEN")
+repo_json=$(curl -s "${AUTH_HEADER[@]}" "https://api.github.com/repos/$GITHUB_USER/$REPO_NAME")
 
 if [[ $(echo "$repo_json" | jq 'has("message")') == "true" ]]; then
     echo "Error : Repo not find or private."
@@ -33,7 +35,7 @@ commit_count=0
 page=1
 
 while :; do
-    count=$(curl -s \
+    count=$(curl -s "${AUTH_HEADER[@]}" \
       "https://api.github.com/repos/$GITHUB_USER/$REPO_NAME/commits?per_page=100&page=$page&author=$AUTHOR" \
       | jq 'length')
 
