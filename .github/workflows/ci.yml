@@ -25,6 +25,8 @@ jobs:
             gettext 
 
       - name: Build website
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: scripts/website/build_website.sh
 
       # Deploy to GitHub Pages
