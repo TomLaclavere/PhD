@@ -22,6 +22,8 @@ In this chapter, we present the QUBIC experiment in detail. We first describe th
 
 The QUBIC collaboration published a series of eight papers in 2022 describing the instrument in detail. These articles cover the overall project~\cite{QUBICI}, its unique spectral capabilities~\cite{QUBICII}, and comprehensive descriptions of its key instrumental components~\cite{QUBICIII, QUBICIV, QUBICV, QUBICVI, QUBICVII, QUBICVIII}. They form the foundation of this chapter.
 
+\rmk{Should I add a subsection about the various instrumental designs ? UWB, DB, SMB, Split Dual Bands}
+
 \section{Telescopes for CMB physics}
 
 \subsection{Classical approach: Imager}
@@ -165,22 +167,117 @@ Before entering into the details of the different electronic and optic element, 
 
 \subsection{Window \& Filters}
 
-\subsection{Half Wave Plate}
+\subsection{Half-Wave Plate \& polariser} \label{sub:polariser}
 
-\subsection{Polariser} \label{sub:polariser}
+Right after the filters, two optical elements dealing with polarisation are placed: the Half-Wave Plate (HWP)~\cite{QUBICVI} and the polariser. They are both cooled down to $4\,\mathrm{K}$ to limit the thermal load of the instrument.
+
+The HWP rotates in a step-by-step manner and modulates the sky signal depending on its rotation angle. After the HWP, the electric field
+\[
+\vec{E} =
+\begin{pmatrix}
+E_x \\
+E_y
+\end{pmatrix}
+\]
+becomes:
+\begin{equation}
+\vec{E}' =
+\begin{pmatrix}
+E_x \cos(2\varphi(t)) + E_y \sin(2\varphi(t)) \\
+E_x \sin(2\varphi(t)) - E_y \cos(2\varphi(t))
+\end{pmatrix},
+\end{equation}
+where $\varphi$ is the rotation angle of the HWP.
+
+The motor is placed outside the cryostat, and its rotation is transmitted to the HWP via a fiberglass axis connected to a pulley system, rotating the plate with a belt (see Figure~\ref{fig:qubic_hwp}).
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{hpw_model.jpeg}
+    \caption{3D model of the Half-Wave Plate rotator mechanism. Taken from \cite{QUBICVI}.}
+    \label{fig:qubic_hwp}
+\end{figure}
+
+After the HWP, the signal enters a polariser, which transmits only the component aligned with its axis, effectively selecting a single linear polarisation state. The field becomes:
+\begin{equation}
+\vec{E}' =
+\begin{pmatrix}
+E_x \cos(2\varphi(t)) + E_y \sin(2\varphi(t)) \\
+0
+\end{pmatrix}.
+\end{equation}
+
+The resulting detected signal mixes intensity and polarisation, allowing reconstruction with intensity-only detectors:
+\begin{equation}
+S = I + Q\cos(4\varphi(t)) + U\sin(4\varphi(t)).
+\end{equation}
+
+The fixed HWP positions and associated signals are summarised in Table~\ref{tab:hwp_signal}.
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+        \hline
+        Position & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 \\
+        \hline
+        $\varphi$ [rad] & $0$ & ${\pi}/{16}$ & ${\pi}/{8}$ & ${3\pi}/{16}$ & ${\pi}/{4}$ & ${5\pi}/{16}$ & ${3\pi}/{8}$ & ${7\pi}/{16}$ \\[6pt]
+        $S$ & $I+Q$ & $I+\frac{Q+U}{\sqrt{2}}$ & $I+U$ & $I-\frac{Q-U}{\sqrt{2}}$ & $I-Q$ & $I-\frac{Q+U}{\sqrt{2}}$ & $I-U$ & $I+\frac{Q-U}{\sqrt{2}}$ \\[6pt]
+        \hline
+    \end{tabular}
+    \caption{Intensity measured as a function of $I$, $Q$, and $U$ for the eight HWP steps of QUBIC.}
+    \label{tab:hwp_signal}
+\end{table}
+
+Although it may seem wasteful to discard half of the incoming photons with the polariser, this is a key instrumental choice. By selecting a single polarisation axis early in the optical chain and using intensity-only detectors, the instrument becomes less sensitive to internal cross-polarisation effects arising from optical components such as horns and mirrors, as well as from inner reflections within the instrument (e.g. cables and screws) downstream of the polariser. Since mitigating such systematics would otherwise require significant effort, it is more effective to accept the photon loss in exchange for improved control of the polarisation state. In \cite{QUBICI}, cross-polarisation was measured at a level below 0.4\% at 95\% C.L., showing the effectiveness of such design.
 
 \subsection{Horns Array}
 
+The next and key part of the interferometric desing of QUBIC is the horns array~\cite{QUBICVII}. It is constituted of 400 back-to-back corrugated horns at $4K$, separated by $14 mm$. Corrugations are periodic grooves machined inside the horn walls, meant to improve beam symmetry and reduce cross-polarisation systematics, visible in Figure \ref{fig:horn}. The both back-to-back horns are designed to be identical, to observe the sky and illuminate the optical combiner with a Full-Widht at Half-Maximum (FWHM) of 12.9° at $150 GHz$. Between them is a mechanical switch, thought to remotly closed or open each horn in the array separatly, a mandatory feature to perform self-calibration~\cite{paper_marie_selfcal} (see \ref{sub:selfcal}).
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{qubic_horns_profile.pdf}
+    \caption{Schematic of the profil of the corrugated horn. Taken from \cite{QUBICVII}.}
+    \label{fig:horn}
+\end{figure}
+
+\begin{figure}[!htbp]
+    \begin{minipage}{0.5\linewidth}
+        \centerline{\includegraphics[width=0.8\linewidth]{horns_model.png}}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.5\linewidth}
+        \centerline{\includegraphics[width=1\linewidth]{horn_picture.png}}
+    \end{minipage}
+    \hfill
+    \caption[]{(left) 3D model of horn array. (right) Picture of the fully integrated back-to-back horn array. Taken from \cite{QUBICVII}.}
+    \label{fig:horn_array}
+\end{figure}
+
 \subsection{Legacy element: Dichroic Filter}
+
+\rmk{Should I talk about it ? If yes, it should be related with the evolution of the instrumental design (from DB to UWB).}
 
 \subsection{Optical Combiner}  
 
+The multiple rays produced by the horn arrays are then illumintating the optical combiner~\cite{QUBICVIII}, two concave mirrors, to focus light into the focal plan, producing then an interference pattern. The two mirrors have a diameter of $600 mm$ with a focal lenght of $30 cm$, and are cooled down at $1 K$.
+
 \subsection{Bolometers} \label{sub:TES}
 
-\subsection{Cryogenics}
+As said before, the focal plane of QUBIC is made of a matrix of bolometers, which measure light intensity by measuring the modification of resistivity due to the modification of temperature induced by the absorption of photons. In particular, QUBIC is using Transition Edge Sensor (TES)~\cite{QUBICIV}, chosen for their high sensitivity. These detectors, made of NbSi, are placed at the transition of supraconductivity, around $300 mK$. At this temperature, the resistance shows high resistance variation for small temperature modification, as visible in Figure \ref{fig:TES}. This figure shows measurements of resistivity for four TESs at different temperatures. Resistance is close to $0 \Omega$ below $0.47 K$, showing a supreconductivity state. The transition occurs between $0.47 K$ and $0.49 K$, we can see a quick variation of resistance with temperature in this region, with compare to the region above $0.5 K$.
 
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{RdeT_P41_new.png}
+    \caption{Restistance's measurements of four TESs at different temperature. It shows that at the supraconductivity transition, resistivity evolves quickly with temperature. Taken from \cite{QUBICIV}.}
+    \label{fig:TES}
+\end{figure}
 
-\rmk{Should I add a subsection about the various instrumental designs ? UWB, DB, SMB, Split Dual Bands}
+Measurements of Noise Equivalent Power (NEP), the noise per frequency bands, are described in \cite{QUBICIV}, giving $NEP = 4.7 x 10^{-17} W / Hz$ in laboratory conditions, while measurements with the TD's readout chain gave $2.05 x 10^{-16} W/Hz$. This aliasing will be solved in the FI by using Nyquist inductance to reach the expected performances~\cite{QUBICIV}.
+
+\rmk{Maybe we should talk a bit about that, not sure to understand.}
+
+\rmk{If I am not wrong, the figure \ref{fig:TES} shows that the transition temperature is about 470 mK, while we are saying in papers that the detectors while be between 300 and 380 mK. Is this difference due to the heating by the sky ? Meaning that if the aperture is closed, TES reached the supraconductivity transition at $\sim 470 mK$, but they need to be cooled at $\sim 320 mK$ to reach the transition while observing the sky ?}
 
 
 \ifSubfilesClassLoaded{
