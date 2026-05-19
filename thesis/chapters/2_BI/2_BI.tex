@@ -271,21 +271,18 @@ The multiple rays produced by the horn arrays are then illumintating the optical
 
 \subsection{Bolometers} \label{sub:TES}
 
-As said before, the focal plane of QUBIC is made of a matrix of bolometers, which measure light intensity by measuring the modification of resistivity due to the modification of temperature induced by the absorption of photons. In particular, QUBIC is using Transition Edge Sensor (TES)~\cite{QUBICIV}, chosen for their high sensitivity. These detectors, made of NbSi, are placed at the transition of supraconductivity, around $300 mK$. At this temperature, the resistance shows high resistance variation for small temperature modification, as visible in Figure \ref{fig:TES}. This figure shows measurements of resistivity for four TESs at different temperatures. Resistance is close to $0 \Omega$ below $0.47 K$, showing a supreconductivity state. The transition occurs between $0.47 K$ and $0.49 K$, we can see a quick variation of resistance with temperature in this region, with compare to the region above $0.5 K$.
+As said before, the focal plane of QUBIC is made of a matrix of bolometers, which measure light intensity by measuring the modification of resistivity due to the modification of temperature induced by the absorption of photons. In particular, QUBIC is using Transition Edge Sensor (TES)~\cite{QUBICIV}, chosen for their high sensitivity. These detectors, made of NbSi, are placed at the transition of supraconductivity, around $300 mK$. At this temperature, the resistance shows high resistance variation for small temperature modification, as visible in Figure \ref{fig:TES}. This figure shows measurements of resistivity for four TESs at different temperatures. Resistance is close to $0 \Omega$ below $0.47 K$, showing a supreconductivity state. The transition occurs between $0.47 K$ and $0.49 K$, we can see a quick variation of resistance with temperature in this region, with compare to the region above $0.5 K$. \footnote{This measurement comes from the TES sample P41, while the one currenlty used for the TD is the sample P87, with different properties (in particular, a different critical temperature). This plot is used only for understanding purposes.}
 
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=1\linewidth]{RdeT_P41_new.png}
-    \caption{Restistance's measurements of four TESs at different temperature. It shows that at the supraconductivity transition, resistivity evolves quickly with temperature. Taken from \cite{QUBICIV}.}
+    \caption{Restistance's measurements of four TESs at different temperature. It shows that at the supraconductivity transition, resistivity evolves quickly with small temperature changes. Taken from \cite{QUBICIV}.}
     \label{fig:TES}
 \end{figure}
 
 Measurements of Noise Equivalent Power (NEP), the noise per frequency bands, are described in \cite{QUBICIV}, giving $NEP = 4.7 x 10^{-17} W / Hz$ in laboratory conditions, while measurements with the TD's readout chain gave $2.05 x 10^{-16} W/Hz$. This aliasing will be solved in the FI by using Nyquist inductance to reach the expected performances~\cite{QUBICIV}.
 
 \rmk{Maybe we should talk a bit about that, not sure to understand.}
-
-\rmk{If I am not wrong, the figure \ref{fig:TES} shows that the transition temperature is about 470 mK, while we are saying in papers that the detectors while be between 300 and 380 mK. Is this difference due to the heating by the sky ? Meaning that if the aperture is closed, TES reached the supraconductivity transition at $\sim 470 mK$, but they need to be cooled at $\sim 320 mK$ to reach the transition while observing the sky ?}
-
 
 \ifSubfilesClassLoaded{
     \addstarredchapter{Bibliography}
