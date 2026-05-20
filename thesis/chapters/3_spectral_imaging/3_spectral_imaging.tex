@@ -4,24 +4,129 @@
 
 \begin{document}
 
-\rmk{Inverser chapitres Spectral Imaging et GPS ? C'est peut-être mieux de parler du GPS, où j'introduis la self-cal, juste après QUBIC, puis d'ensuite parler de spectral imaging.}
+\rmk{Inverser chapitres Spectral Imaging et GPS ? C'est peut-être mieux de parler du GPS, où j'introduis la self-cal, juste après QUBIC, puis d'ensuite parler de spectral imaging. + ainsi, on parle du FMM juste après spectral imaging.}
 \chapter{Bolometric Interferometry to Spectral Imaging} \label{chap:spectral_imaging}
 
 \minitoc
 
 \section*{Introduction}
 
+\section*{Introduction}
 
+A central feature of the QUBIC instrument is its horn array, which produces an interference pattern on the focal plane through bolometric interferometry. Unlike conventional imagers, the instrument response is therefore described by a synthesized beam resulting from the coherent combination of signals originating from all horn pairs.
+This synthesized beam exhibits a complex spatial structure composed of interference fringes and secondary peaks whose morphology strongly depends on the observing frequency. As a consequence, the signal measured on the focal plane contains not only spatial information, but also spectral information encoded in the chromatic evolution of the interference pattern.
+This property forms the basis of the spectral imaging capability of QUBIC. Byeloiting the frequency dependence of the synthesized beam, the wide instrumental bandwidth can be decomposed into several sub-bands, allowing a partial reconstruction of the sky signal as a function of frequency.
+In this chapter, we first introduce the theoretical framework of synthesized beams in bolometric interferometry and describe their monochromatic and polychromatic properties. We thenelain how the chromaticity of the interference pattern can be used to perform spectral imaging and improve component separation for CMB observations.
 
 \section{Synthesized Beam}
 
-\subsection{Theory}
+The \emph{synthesized beam}, or "dirty beam" for an interferometer, is the beam with which a detector is scanning the sky. Then, it strongly depends on the detector's position on the focal plane. This section aims at providing all the thoeritical basis to understand and describe this beam, as well aselaining its main properties.
 
-\subsection{Monochromatic}
+\subsection{Theoritical description}
 
+\subsubsection{Definitions}
+
+Before introducing the mathematical description of QUBIC, several definitions are required to clarify the key concepts used throughout this chapter.
+The \emph{beam} of a detector characterises its angular response on the sky, or equivalently, its sensitivity as a function of sky direction. For a bolometric interferometer, this response is called the \emph{synthesized beam}, since it results from the interference of the signals collected by all pairs of horns. The synthesized beam therefore exhibits a complex interference structure determined by the geometry of the horn array.
+On the focal plane, radiation coming from a single direction on the sky produces a specific interference pattern. This pattern corresponds to the instrument \emph{Point Spread Function} (PSF), describing how a point source is distributed over the detector array. The synthesized beam and the PSF therefore represent two complementary descriptions of the same instrumental response: the former describes the response on the sky, while the latter corresponds to its projection onto the focal plane.
+Each detector samples the PSF at its own position on the focal plane. As the instrument scans the sky, the relative position of the source with respect to the synthesized beam evolves, producing a varying signal in time. Combining measurements obtained during the scan allows reconstruction of the sky signal from the detector timelines.
+For QUBIC, the horn facing the sky and the one facing the instrument are identical, ensuring that for a perfect instrument (exactly identical horns and ideal optical combiner) that the PSF and the synthesized beam are egual~\cite{QUBICVIII} : 
+
+\begin{equation} \label{eq:synth_beam}
+    B_{synth}^{\vec{n}}(\vec{r}) = PSF^{\vec{r}}(\vec{n}),
+\end{equation}
+
+with $\vec{r} = (x, y, 0)$ the position on the focal plane and $\vec{n}$ the direction of the instrument on the sky.
+
+\subsubsection{Synthesized Beameression}
+
+% \begin{figure}[!htbp]
+%     \centering
+%     \includegraphics[width=1\linewidth]{}
+%     \caption{Placeholder}
+%     \label{fig:schematic_opt_design}
+% \end{figure}
+
+The PSF can beeressed as : 
+
+\begin{equation} \label{eq:psf}
+    \vec{PSF}^{\vec{n}}(\vec{r}, \lambda) = |A_{det}^{\vec{n}}(\vec{r}, \lambda)|^2,
+\end{equation}
+
+with $A_{det}^{\vec{n}}(\vec{r}, \lambda)$ the amplitude on the detector at position $\vec{r}$, for the instrument looking in direction $\vec{n}$ at wavelength $\lambda$.
+
+The amplitude for a detector can beeressed from how each individual horn is illuminating the focal,eressed by $A_horn^{\vec{n}}(\vec{r} - \vec{r_h}, \lambda)$, representing the amplitude transmitted by one horn at position  $\vec{r_f}$ at wavelength $\lambda$ to the position $\vec{r}$ on the focal plane : 
+
+\begin{equation} \label{eq:A_det_A_horn}
+    A_{det}^{\vec{n}}(\vec{r}, \lambda) = \sum_{h = 1}^{N_{horns}} A_horn^{\vec{n}}(\vec{r} - \vec{r_h}, \lambda)
+\end{equation}
+
+By analogy with classical interferometry shown on Figure \ref{fig:schematic_interferometer}, $A_horn$ can be rewritten, as its value is completly defined by its position in the horn array, modulo a phase shift $\delta$ : 
+
+\begin{align}
+    A_1^{\vec{n}}(\vec{r_1}, \lambda) 
+    &= A_2^{\vec{n}}(\vec{r_2}, \lambda) e^{-i\delta}
+    &= A_2^{\vec{n}}(\vec{r_2}, \lambda) e^{-2\pi i \frac{(\vec{r_2} - \vec{r_1}) \cdot \vec{n}}{\lambda}}
+\end{align}
+
+% \begin{figure}[!htbp]
+%     \centering
+%     \includegraphics[width=1\linewidth]{}
+%     \caption{Placeholder}
+%     \label{fig:schematic_interferometer}
+% \end{figure}
+
+In QUBIC case, we need to account for the additional phase shift included by the optical combiner, incorporing its focal lenght $D_f$ : 
+
+\begin{align}
+    A_1^{\vec{n}}(\vec{r_1}, \lambda) 
+    &= A_2^{\vec{n}}(\vec{r_2}, \lambda) e^{-2\pi i \frac{\vec{x_h} \cdot \vec{n}}{\lambda}} e^2{\pi i \frac{\vec{x_h} \cdot \vec{n}}{\lambda D_f}}
+    &= A_2^{\vec{n}}(\vec{r_2}, \lambda) e^{\frac{2\pi i}{\lambda} \vec{x_h} (\frac{\vec{r}}{D_f} - \vec{n})}
+\end{align}
+
+Using this equation, \ref{eq:A_det_A_horn} is now :
+
+\begin{equation} 
+    A_{det}^{\vec{n}}(\vec{r}, \lambda) = A_{horn}^{\vec{n}}(\vec{r}, \lambda) \sum_{h = 1}^{N_{horns}} e^{\frac{2\pi i}{\lambda} \vec{x_h} (\frac{\vec{r}}{D_f} \cdot \vec{n})}
+\end{equation}
+
+Now, replacing in Equation \ref{eq:synth_beam} :
+
+\begin{align}
+    B_{synth}^{\vec{n}}(\vec{r}) 
+    &= |A_{horn}^{\vec{n}}(\vec{r}, \lambda)|^2 |\sum_{h = 1}^{N_{horns}} e^{\frac{2\pi i}{\lambda} \vec{x_h} (\frac{\vec{r}}{D_f} - \vec{n})}
+    &= B_{prim}(\vec{r}, \lambda)B_{sec}(\vec{n}, \lambda)|\sum_{h = 1}^{N_{horns}} e^{\frac{2\pi i}{\lambda} \vec{x_h} (\frac{\vec{r}}{D_f} - \vec{n})}
+\end{align}
+
+The sum can be simplified using : $\sum_{n=1}^{N} x^N = \frac{1 - x^N}{1 - x}$. Giving : 
+
+\begin{align}
+    \sum_{h=1}^{N_{horn}}e^{\frac{2\pi i}{\lambda} \vec{x_h} (\frac{\vec{r}}{D_f} - \vec{n})}
+    &= \sum_{h=1}^{N_{horn}}e^{\frac{2\pi i}{\lambda} N_{horn} \Delta_h (\frac{x_h}{D_f} - n_x)} \sum_{h=1}^{N_{horn}}e^{\frac{2\pi i}{\lambda} N_{horn} \Delta_h (\frac{y_h}{D_f} - n_y)} 
+    &= \frac{1 - e^{\frac{2\pi i}{\lambda} N_{horn} \Delta_h (\frac{x_h}{D_f} - n_x)}}{1 - e^{\frac{2\pi i}{\lambda} \Delta_h (\frac{x_h}{D_f} - n_x)}} \frac{1 - e^{\frac{2\pi i}{\lambda} N_{horn} \Delta_h (\frac{y_h}{D_f} - n_y)}}{1 - e^{\frac{2\pi i}{\lambda} \Delta_h (\frac{y_h}{D_f} - n_y)}}
+    &= \frac{\frac{e^{i\pi}}{\lambda}N_{horn}\Delta_h(\frac{x_f}{D_f} - n_x)}{\frac{e^{i\pi}}{\lambda}\Delta_h(\frac{x_f}{D_f} - n_x)} \frac{\sin(\frac{\pi N_{horn}\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])}{\sin(\frac{\pi\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])} \frac{\frac{e^{i\pi}}{\lambda}N_{horn}\Delta_h(\frac{y_f}{D_f} - n_y)}{\frac{e^{i\pi}}{\lambda}\Delta_h(\frac{y_f}{D_f} - n_y)} \frac{\sin(\frac{\pi N_{horn}\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}{\sin(\frac{\pi\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}
+\end{align}
+
+Finally, the synthesized beam is described by :
+
+\begin{equation}
+    B_{synth}^{\vec{n}}(\vec{r}) = B_{prim}(\vec{r}, \lambda)B_{sec}(\vec{n}, \lambda) \frac{\sin^{2}(\frac{\pi N_{horn}\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])}{\sin^{2}(\frac{\pi\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])}\frac{\sin^{2}(\frac{\pi N_{horn}\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}{\sin^{2}(\frac{\pi\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}
+\end{equation}
+
+\subsection{Beam properties}
+
+\section{Polychromaticity of the synthesized beam}
+
+\subsection{Spectral dependency}
+
+\subsection{Polychromatic beam}
 
 \section{Spectral Imaging}
 
-\subsection{Polychromatic}
+\subsection{Principle}
+
+\subsection{Sub-band reconstruction}
+
+\subsection{Interest for foreground separation}
 
 \end{document}
