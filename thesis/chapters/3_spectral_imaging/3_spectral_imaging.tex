@@ -33,12 +33,18 @@ Each detector samples the PSF at its own position on the focal plane. As the ins
 For QUBIC, the horn facing the sky and the one facing the instrument are identical, ensuring that for a perfect instrument (exactly identical horns and ideal optical combiner) that the PSF and the synthesized beam are egual~\cite{QUBICVIII} : 
 
 \begin{equation} \label{eq:synth_beam}
-    B_{synth}^{\vec{n}}(\vec{r}) = PSF^{\vec{r}}(\vec{n}),
+    B_{synth}^{\vec{n}}(\vec{r}) = PSF^{\vec{r}}(\vec{n}).
 \end{equation}
 
-with $\vec{r} = (x, y, 0)$ the position on the focal plane and $\vec{n}$ the direction of the instrument on the sky.
+As helper, here are the notations adopted throughout this section:
+\begin{itemize}
+    \item $\vec{n} = (n_x,n_y)$: direction on the sky,
+    \item $\vec{x}_h$: position of horn $h$ in the horn array plane,
+    \item $\vec{r} = (x_f,y_f)$: position on the focal plane,
+    \item $D_f$: focal length of the optical combiner.
+\end{itemize}
 
-\subsubsection{Synthesized Beameression}
+\subsubsection{Synthesized Beam expression}
 
 % \begin{figure}[!htbp]
 %     \centering
@@ -47,26 +53,26 @@ with $\vec{r} = (x, y, 0)$ the position on the focal plane and $\vec{n}$ the dir
 %     \label{fig:schematic_opt_design}
 % \end{figure}
 
-The PSF can beeressed as : 
+The PSF can be expressed as : 
 
 \begin{equation} \label{eq:psf}
-    \vec{PSF}^{\vec{n}}(\vec{r}, \lambda) = |A_{det}^{\vec{n}}(\vec{r}, \lambda)|^2,
+    \mathrm{PSF}^{\vec{n}}(\vec{r}, \lambda) = \vert A_{det}^{\vec{n}}(\vec{r}, \lambda)\vert ^2,
 \end{equation}
 
 with $A_{det}^{\vec{n}}(\vec{r}, \lambda)$ the amplitude on the detector at position $\vec{r}$, for the instrument looking in direction $\vec{n}$ at wavelength $\lambda$.
 
-The amplitude for a detector can beeressed from how each individual horn is illuminating the focal,eressed by $A_horn^{\vec{n}}(\vec{r} - \vec{r_h}, \lambda)$, representing the amplitude transmitted by one horn at position  $\vec{r_f}$ at wavelength $\lambda$ to the position $\vec{r}$ on the focal plane : 
+The amplitude for a detector can be expressed from how each individual horn is illuminating the focal plane, expressed by $A_{horn}^{\vec{n}}(\vec{r} - \vec{x}_h, \lambda)$, representing the amplitude transmitted by one horn at position  $\vec{x}_h$ and wavelength $\lambda$ to the position $\vec{r}$ on the focal plane : 
 
 \begin{equation} \label{eq:A_det_A_horn}
-    A_{det}^{\vec{n}}(\vec{r}, \lambda) = \sum_{h = 1}^{N_{horns}} A_horn^{\vec{n}}(\vec{r} - \vec{r_h}, \lambda)
+    A_{det}^{\vec{n}}(\vec{r}, \lambda) = \sum_{h = 1}^{N_{horns}} A_{horn}^{\vec{n}}(\vec{r} - \vec{x}_h, \lambda)
 \end{equation}
 
-By analogy with classical interferometry shown on Figure \ref{fig:schematic_interferometer}, $A_horn$ can be rewritten, as its value is completly defined by its position in the horn array, modulo a phase shift $\delta$ : 
+By analogy with classical interferometry shown on Figure \ref{fig:schematic_interferometer}, $A_{horn}$ can be rewritten, as its value is completely defined by its position in the horn array, up to the relative phase shift $\delta$ between two horns originates from the geometrical path difference associated with the observing direction $\vec n$ : 
 
 \begin{align}
-    A_1^{\vec{n}}(\vec{r_1}, \lambda) 
-    &= A_2^{\vec{n}}(\vec{r_2}, \lambda) e^{-i\delta}
-    &= A_2^{\vec{n}}(\vec{r_2}, \lambda) e^{-2\pi i \frac{(\vec{r_2} - \vec{r_1}) \cdot \vec{n}}{\lambda}}
+    A_1^{\vec{n}}(\vec{x}_1, \lambda)
+    &= A_2^{\vec{n}}(\vec{x}_2, \lambda) e^{-i\delta} \\
+    &= A_2^{\vec{n}}(\vec{x}_2, \lambda) e^{-2\pi i \frac{(\vec{x}_2 - \vec{x}_1) \cdot \vec{n}}{\lambda}}
 \end{align}
 
 % \begin{figure}[!htbp]
@@ -76,41 +82,41 @@ By analogy with classical interferometry shown on Figure \ref{fig:schematic_inte
 %     \label{fig:schematic_interferometer}
 % \end{figure}
 
-In QUBIC case, we need to account for the additional phase shift included by the optical combiner, incorporing its focal lenght $D_f$ : 
+In QUBIC case, we need to account for the additional phase shift included by the optical combiner, incorporating its focal lenght $D_f$ : 
 
 \begin{align}
-    A_1^{\vec{n}}(\vec{r_1}, \lambda) 
-    &= A_2^{\vec{n}}(\vec{r_2}, \lambda) e^{-2\pi i \frac{\vec{x_h} \cdot \vec{n}}{\lambda}} e^2{\pi i \frac{\vec{x_h} \cdot \vec{n}}{\lambda D_f}}
-    &= A_2^{\vec{n}}(\vec{r_2}, \lambda) e^{\frac{2\pi i}{\lambda} \vec{x_h} (\frac{\vec{r}}{D_f} - \vec{n})}
+    A_1^{\vec{n}}(\vec{x}_1, \lambda)
+    &= A_2^{\vec{n}}(\vec{x}_2, \lambda) e^{-2\pi i \frac{\vec{x}_h \cdot \vec{n}}{\lambda}} e^{2\pi i \frac{\vec{x}_h \cdot \vec{r}}{\lambda D_f}} \\
+    &= A_2^{\vec{n}}(\vec{x}_2, \lambda) e^{\frac{2\pi i}{\lambda} \vec{x}_h \cdot (\frac{\vec{r}}{D_f} - \vec{n})}
 \end{align}
 
 Using this equation, \ref{eq:A_det_A_horn} is now :
 
 \begin{equation} 
-    A_{det}^{\vec{n}}(\vec{r}, \lambda) = A_{horn}^{\vec{n}}(\vec{r}, \lambda) \sum_{h = 1}^{N_{horns}} e^{\frac{2\pi i}{\lambda} \vec{x_h} (\frac{\vec{r}}{D_f} \cdot \vec{n})}
+    A_{det}^{\vec{n}}(\vec{r}, \lambda) = A_{horn}^{\vec{n}}(\vec{r}, \lambda) \sum_{h = 1}^{N_{horns}} e^{\frac{2\pi i}{\lambda} \vec{x}_h \cdot (\frac{\vec{r}}{D_f} - \vec{n})}
 \end{equation}
 
 Now, replacing in Equation \ref{eq:synth_beam} :
 
 \begin{align}
-    B_{synth}^{\vec{n}}(\vec{r}) 
-    &= |A_{horn}^{\vec{n}}(\vec{r}, \lambda)|^2 |\sum_{h = 1}^{N_{horns}} e^{\frac{2\pi i}{\lambda} \vec{x_h} (\frac{\vec{r}}{D_f} - \vec{n})}
-    &= B_{prim}(\vec{r}, \lambda)B_{sec}(\vec{n}, \lambda)|\sum_{h = 1}^{N_{horns}} e^{\frac{2\pi i}{\lambda} \vec{x_h} (\frac{\vec{r}}{D_f} - \vec{n})}
+    B_{synth}^{\vec{n}}(\vec{r})
+    &= \abs{A_{horn}^{\vec{n}}(\vec{r}, \lambda)}^2 \abs{\sum_{h = 1}^{N_{horns}} e^{\frac{2\pi i}{\lambda} \vec{x}_h \cdot (\frac{\vec{r}}{D_f} - \vec{n})}}^2 \\
+    &= B_{prim}(\vec{r}, \lambda)B_{sec}(\vec{n}, \lambda)\abs{\sum_{h = 1}^{N_{horns}} e^{\frac{2\pi i}{\lambda} \vec{x}_h \cdot (\frac{\vec{r}}{D_f} - \vec{n})} }^2
 \end{align}
 
-The sum can be simplified using : $\sum_{n=1}^{N} x^N = \frac{1 - x^N}{1 - x}$. Giving : 
+Assuming a regular square horn array with spacing $\Delta_h$, the interference term can be factorised along the two spatial directions, the sum can be simplified using : $\sum_{n=1}^{N} x^N = \frac{1 - x^N}{1 - x}$. Giving : 
 
 \begin{align}
-    \sum_{h=1}^{N_{horn}}e^{\frac{2\pi i}{\lambda} \vec{x_h} (\frac{\vec{r}}{D_f} - \vec{n})}
-    &= \sum_{h=1}^{N_{horn}}e^{\frac{2\pi i}{\lambda} N_{horn} \Delta_h (\frac{x_h}{D_f} - n_x)} \sum_{h=1}^{N_{horn}}e^{\frac{2\pi i}{\lambda} N_{horn} \Delta_h (\frac{y_h}{D_f} - n_y)} 
-    &= \frac{1 - e^{\frac{2\pi i}{\lambda} N_{horn} \Delta_h (\frac{x_h}{D_f} - n_x)}}{1 - e^{\frac{2\pi i}{\lambda} \Delta_h (\frac{x_h}{D_f} - n_x)}} \frac{1 - e^{\frac{2\pi i}{\lambda} N_{horn} \Delta_h (\frac{y_h}{D_f} - n_y)}}{1 - e^{\frac{2\pi i}{\lambda} \Delta_h (\frac{y_h}{D_f} - n_y)}}
-    &= \frac{\frac{e^{i\pi}}{\lambda}N_{horn}\Delta_h(\frac{x_f}{D_f} - n_x)}{\frac{e^{i\pi}}{\lambda}\Delta_h(\frac{x_f}{D_f} - n_x)} \frac{\sin(\frac{\pi N_{horn}\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])}{\sin(\frac{\pi\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])} \frac{\frac{e^{i\pi}}{\lambda}N_{horn}\Delta_h(\frac{y_f}{D_f} - n_y)}{\frac{e^{i\pi}}{\lambda}\Delta_h(\frac{y_f}{D_f} - n_y)} \frac{\sin(\frac{\pi N_{horn}\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}{\sin(\frac{\pi\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}
+    \sum_{h=1}^{N_{horns}}e^{\frac{2\pi i}{\lambda} \vec{x}_h \cdot (\frac{\vec{r}}{D_f} - \vec{n})}
+    &= \sum_{h=1}^{N_{horns}}e^{\frac{2\pi i}{\lambda} x_h (\frac{x_f}{D_f} - n_x)} \sum_{h=1}^{N_{horns}}e^{\frac{2\pi i}{\lambda} y_h (\frac{y_f}{D_f} - n_y)} \\
+    &= \frac{1 - e^{\frac{2\pi i}{\lambda} N_{horns} \Delta_h (\frac{x_f}{D_f} - n_x)}}{1 - e^{\frac{2\pi i}{\lambda} \Delta_h (\frac{x_f}{D_f} - n_x)}} \frac{1 - e^{\frac{2\pi i}{\lambda} N_{horns} \Delta_h (\frac{y_f}{D_f} - n_y)}}{1 - e^{\frac{2\pi i}{\lambda} \Delta_h (\frac{y_f}{D_f} - n_y)}} \\
+    &= \frac{e^{i\frac{\pi N_{horns}\Delta_h}{\lambda}(\frac{x_f}{D_f} - n_x)}}{e^{i\frac{\pi\Delta_h}{\lambda}(\frac{x_f}{D_f} - n_x)}} \frac{\sin(\frac{\pi N_{horns}\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])}{\sin(\frac{\pi\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])} \frac{e^{i\frac{\pi N_{horns}\Delta_h}{\lambda}(\frac{y_f}{D_f} - n_y)}}{e^{i\frac{\pi\Delta_h}{\lambda}(\frac{y_f}{D_f} - n_y)}} \frac{\sin(\frac{\pi N_{horns}\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}{\sin(\frac{\pi\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}
 \end{align}
 
 Finally, the synthesized beam is described by :
 
 \begin{equation}
-    B_{synth}^{\vec{n}}(\vec{r}) = B_{prim}(\vec{r}, \lambda)B_{sec}(\vec{n}, \lambda) \frac{\sin^{2}(\frac{\pi N_{horn}\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])}{\sin^{2}(\frac{\pi\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])}\frac{\sin^{2}(\frac{\pi N_{horn}\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}{\sin^{2}(\frac{\pi\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}
+    B_{synth}^{\vec{n}}(\vec{r}) = B_{prim}(\vec{r}, \lambda)B_{sec}(\vec{n}, \lambda) \frac{\sin^{2}(\frac{\pi N_{horns}\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])}{\sin^{2}(\frac{\pi\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])}\frac{\sin^{2}(\frac{\pi N_{horns}\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}{\sin^{2}(\frac{\pi\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}
 \end{equation}
 
 \subsection{Beam properties}

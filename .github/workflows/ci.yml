@@ -22,7 +22,8 @@ jobs:
             texlive-fonts-recommended \
             biber \
             latexmk \
-            gettext 
+            gettext \
+            texlive-science
 
       - name: Build website
         env:
