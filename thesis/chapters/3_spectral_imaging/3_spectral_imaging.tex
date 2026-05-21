@@ -71,7 +71,7 @@ By analogy with classical interferometry shown on Figure \ref{fig:schematic_inte
 
 \begin{align}
     A_1^{\vec{n}}(\vec{x}_1, \lambda)
-    &= A_2^{\vec{n}}(\vec{x}_2, \lambda) e^{-i\delta} \\
+    &= A_2^{\vec{n}}(\vec{x}_2, \lambda) e^{-i\delta} \notag \\
     &= A_2^{\vec{n}}(\vec{x}_2, \lambda) e^{-2\pi i \frac{(\vec{x}_2 - \vec{x}_1) \cdot \vec{n}}{\lambda}}
 \end{align}
 
@@ -86,7 +86,7 @@ In QUBIC case, we need to account for the additional phase shift included by the
 
 \begin{align}
     A_1^{\vec{n}}(\vec{x}_1, \lambda)
-    &= A_2^{\vec{n}}(\vec{x}_2, \lambda) e^{-2\pi i \frac{\vec{x}_h \cdot \vec{n}}{\lambda}} e^{2\pi i \frac{\vec{x}_h \cdot \vec{r}}{\lambda D_f}} \\
+    &= A_2^{\vec{n}}(\vec{x}_2, \lambda) e^{-2\pi i \frac{\vec{x}_h \cdot \vec{n}}{\lambda}} e^{2\pi i \frac{\vec{x}_h \cdot \vec{r}}{\lambda D_f}} \notag \\
     &= A_2^{\vec{n}}(\vec{x}_2, \lambda) e^{\frac{2\pi i}{\lambda} \vec{x}_h \cdot (\frac{\vec{r}}{D_f} - \vec{n})}
 \end{align}
 
@@ -100,7 +100,7 @@ Now, replacing in Equation \ref{eq:synth_beam} :
 
 \begin{align}
     B_{synth}^{\vec{n}}(\vec{r})
-    &= \abs{A_{horn}^{\vec{n}}(\vec{r}, \lambda)}^2 \abs{\sum_{h = 1}^{N_{horns}} e^{\frac{2\pi i}{\lambda} \vec{x}_h \cdot (\frac{\vec{r}}{D_f} - \vec{n})}}^2 \\
+    &= \abs{A_{horn}^{\vec{n}}(\vec{r}, \lambda)}^2 \abs{\sum_{h = 1}^{N_{horns}} e^{\frac{2\pi i}{\lambda} \vec{x}_h \cdot (\frac{\vec{r}}{D_f} - \vec{n})}}^2 \notag \\
     &= B_{prim}(\vec{r}, \lambda)B_{sec}(\vec{n}, \lambda)\abs{\sum_{h = 1}^{N_{horns}} e^{\frac{2\pi i}{\lambda} \vec{x}_h \cdot (\frac{\vec{r}}{D_f} - \vec{n})} }^2
 \end{align}
 
@@ -108,9 +108,10 @@ Assuming a regular square horn array with spacing $\Delta_h$, the interference t
 
 \begin{align}
     \sum_{h=1}^{N_{horns}}e^{\frac{2\pi i}{\lambda} \vec{x}_h \cdot (\frac{\vec{r}}{D_f} - \vec{n})}
-    &= \sum_{h=1}^{N_{horns}}e^{\frac{2\pi i}{\lambda} x_h (\frac{x_f}{D_f} - n_x)} \sum_{h=1}^{N_{horns}}e^{\frac{2\pi i}{\lambda} y_h (\frac{y_f}{D_f} - n_y)} \\
-    &= \frac{1 - e^{\frac{2\pi i}{\lambda} N_{horns} \Delta_h (\frac{x_f}{D_f} - n_x)}}{1 - e^{\frac{2\pi i}{\lambda} \Delta_h (\frac{x_f}{D_f} - n_x)}} \frac{1 - e^{\frac{2\pi i}{\lambda} N_{horns} \Delta_h (\frac{y_f}{D_f} - n_y)}}{1 - e^{\frac{2\pi i}{\lambda} \Delta_h (\frac{y_f}{D_f} - n_y)}} \\
-    &= \frac{e^{i\frac{\pi N_{horns}\Delta_h}{\lambda}(\frac{x_f}{D_f} - n_x)}}{e^{i\frac{\pi\Delta_h}{\lambda}(\frac{x_f}{D_f} - n_x)}} \frac{\sin(\frac{\pi N_{horns}\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])}{\sin(\frac{\pi\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])} \frac{e^{i\frac{\pi N_{horns}\Delta_h}{\lambda}(\frac{y_f}{D_f} - n_y)}}{e^{i\frac{\pi\Delta_h}{\lambda}(\frac{y_f}{D_f} - n_y)}} \frac{\sin(\frac{\pi N_{horns}\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}{\sin(\frac{\pi\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}
+    &= \sum_{h=1}^{N_{horns}}e^{\frac{2\pi i}{\lambda} x_h (\frac{x_f}{D_f} - n_x)} \sum_{h=1}^{N_{horns}}e^{\frac{2\pi i}{\lambda} y_h (\frac{y_f}{D_f} - n_y)} \notag \\
+    &= \frac{1 - e^{\frac{2\pi i}{\lambda} N_{horns} \Delta_h (\frac{x_f}{D_f} - n_x)}}{1 - e^{\frac{2\pi i}{\lambda} \Delta_h (\frac{x_f}{D_f} - n_x)}} \frac{1 - e^{\frac{2\pi i}{\lambda} N_{horns} \Delta_h (\frac{y_f}{D_f} - n_y)}}{1 - e^{\frac{2\pi i}{\lambda} \Delta_h (\frac{y_f}{D_f} - n_y)}} \notag \\
+    &= \frac{e^{i\frac{\pi N_{horns}\Delta_h}{\lambda}(\frac{x_f}{D_f} - n_x)}}{e^{i\frac{\pi\Delta_h}{\lambda}(\frac{x_f}{D_f} - n_x)}} \frac{\sin(\frac{\pi N_{horns}\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])}{\sin(\frac{\pi\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])} \notag \\
+    &\quad\times \frac{e^{i\frac{\pi N_{horns}\Delta_h}{\lambda}(\frac{y_f}{D_f} - n_y)}}{e^{i\frac{\pi\Delta_h}{\lambda}(\frac{y_f}{D_f} - n_y)}} \frac{\sin(\frac{\pi N_{horns}\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}{\sin(\frac{\pi\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}
 \end{align}
 
 Finally, the synthesized beam is described by :
@@ -118,6 +119,8 @@ Finally, the synthesized beam is described by :
 \begin{equation}
     B_{synth}^{\vec{n}}(\vec{r}) = B_{prim}(\vec{r}, \lambda)B_{sec}(\vec{n}, \lambda) \frac{\sin^{2}(\frac{\pi N_{horns}\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])}{\sin^{2}(\frac{\pi\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])}\frac{\sin^{2}(\frac{\pi N_{horns}\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}{\sin^{2}(\frac{\pi\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}
 \end{equation}
+
+\rmk{Good luck to verify that...}
 
 \subsection{Beam properties}
 
