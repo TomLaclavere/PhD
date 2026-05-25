@@ -10,16 +10,16 @@ freq = 150e9  # frequency [Hz]
 lam = 3e8 / freq  # wavelength [m] = 2 mm
 fwhm_deg = 12.9  # horn beam FWHM at 150 GHz [deg]
 
-sigma_sec = np.deg2rad(fwhm_deg) / (2 * np.sqrt(2 * np.log(2)))  # [rad]
-sigma_prim = D_f * sigma_sec  # [m]
+sigma_prim = np.deg2rad(fwhm_deg) / (2 * np.sqrt(2 * np.log(2)))  # [rad]
+sigma_sec = D_f * sigma_prim  # [m]
 
 
-def B_prim(xf, yf):
-    return np.exp(-(xf**2 + yf**2) / (2 * sigma_prim**2))
+def B_prim(nx, ny):
+    return np.exp(-(nx**2 + ny**2) / (2 * sigma_prim**2))
 
 
-def B_sec(nx, ny):
-    return np.exp(-(nx**2 + ny**2) / (2 * sigma_sec**2))
+def B_sec(xf, yf):
+    return np.exp(-(xf**2 + yf**2) / (2 * sigma_sec**2))
 
 
 def array_factor_1d(u):
@@ -33,7 +33,7 @@ def array_factor_1d(u):
 def synth_beam(xf, yf, nx, ny):
     ux = xf / D_f - nx
     uy = yf / D_f - ny
-    return B_prim(xf, yf) * B_sec(nx, ny) * array_factor_1d(ux) * array_factor_1d(uy)
+    return B_prim(nx, ny) * B_sec(xf, yf) * array_factor_1d(ux) * array_factor_1d(uy)
 
 
 n_pts = 500
@@ -65,9 +65,9 @@ axes1[0].set_xlabel("$n_x$ [deg]")
 axes1[0].set_ylabel("$n_y$ [deg]")
 fig1.colorbar(im0, ax=axes1[0], label="Normalized intensity (log)")
 
-sec = B_sec(n_vals, 0.0)
+prim = B_prim(n_vals, 0.0)
 af = array_factor_1d(0.0 / D_f - n_vals) / N_horn**2
-axes1[1].plot(n_deg, sec, label="$B_{sec}(\\vec{n})$", lw=1.5)
+axes1[1].plot(n_deg, prim, label="$B_{prim}(\\vec{n})$", lw=1.5)
 # axes1[1].plot(n_deg, af, label="Array factor (norm.)", lw=1.5, linestyle="--")
 axes1[1].plot(n_deg, beam_center[mid, :], label="$B_{synth}$", lw=1.5, color="C2")
 axes1[1].set_xlabel("$n_x$ [deg]")
