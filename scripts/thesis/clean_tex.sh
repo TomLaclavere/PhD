@@ -50,7 +50,7 @@ echo "-> Removing output folders"
 find "$ROOT_DIR/thesis" -type d -name output -exec rm -rf {} +
 
 if $REMOVE_PDF; then
-  echo "-> Removing generated PDFs (excluding Figures/)"
+  echo "-> Removing generated PDFs"
 
   # Chapters PDFs (excluding Figures directories)
   if [[ -d "$CHAPTERS_DIR" ]]; then

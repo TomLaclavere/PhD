@@ -5,6 +5,43 @@
 \begin{document}
 \chapter{Frequency Map-Making} \label{chap:FMM}
 
+In Chapter \ref{chap:spectral_imaging}, we presented the frequency dependency of QUBIC's beam, and about the possibility to use this property, called \emph{spectral imaging}, to split the physical bandwidth into frequency sub-bands to increase the spectral resolution of the instrument. We now introduce a map-making algorithm based on spectral imaging, to reconstruct multiple frequency maps of the sky. We call this algorithm \emph{Frequency Map-Making} (FMM).
+We start by introducing the general fundamentals of map-making for CMB experiment, followed by the description of the numerical implementation for QUBIC Instrument. The resulting maps are then analysed to understand the behaviour of FMM : numerical cost, noise structure and anti-correlations introduced by spectral imaging. 
+
+\rmk{JC, can you tell me about the exact chronology ?}
+\personal{The content of this chapter is the result multiple people within QUBIC Collaboration. HERE, I WILL ADD A COMPLETE DESCRIPTION OF THE PEOPLE WHO WORKED ON MAP-MAKING FOR QUBIC, Non-exhausted list : JC Hamilton, Pierre Chanial, Mikhail Stolpovskiy, Louise Mousset (je ne vois pas vraiment de développement dans sa thèse), Mathias Regnier.
+During my first year, I contributed with Mathias Regnier to the development and the implementation of the Frequency Map-Making algorithm. This work is presented in Mathias' thesis \cite{mathiasthesis}, and led to a publication \cite{FMM}. During my second year, I completly refactored and cleaned the FMM code, then I built a pipeline allowing simulation, reconstruction and analysis for FMM, easy to use from a single parameters file. During my third year, I extended the analysis of the numerical parameters and their effect on the reconstruction, leading to a forecast-ready pipeline for QUBIC instrument. These last contributions will be furthered developped in Chapters \ref{chap:tod}, \ref{chap:xspectrum} and \ref{chap:forecast}.}
+
+\section{General Principle}
+
+\subsection{Map-Making Equation}
+
+\subsection{Forward Modelling}
+
+\subsection{Iterative Solver: PCG}
+
+\section{Numerical Implementation \& Methodology}
+
+\subsection{Acquisition Matrix}
+
+\subsection{Gaussian beam approximation}
+
+\subsection{Modelisation \& key numerical parameters}
+
+\subsection{Angular resolution}
+
+\subsection{External data ?}
+
+We saw that Planck does not really improve FMM, while it is still useful to add at Xspectra stage.
+
+\section{Characterisation}
+
+\subsection{Numerical ressources: memory and parallelisation}
+
+\subsection{Noise structure}
+
+\subsection{Sub-bands Correlations}
+
 \minitoc
 
 \end{document}
