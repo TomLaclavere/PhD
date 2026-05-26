@@ -51,7 +51,7 @@ def save_log(m, filename, title):
         m, title=title, cmap="jet", min=vmin, max=vmax, norm="log", fig=fig.number, hold=True
     )
     hp.graticule()
-    fig.axes[-1].remove()
+    fig.axes[-1].set_xlabel(UNIT_LABEL)
     fig.savefig(OUTPUT_DIR / filename, bbox_inches="tight")
     plt.close(fig)
     print(f"  saved {filename}")
@@ -69,11 +69,12 @@ def save_symlog(m, filename, title, linthresh=None):
     projected = np.where(projected == hp.UNSEEN, np.nan, projected)
 
     fig, ax = plt.subplots(figsize=(10, 5))
-    ax.imshow(
+    im = ax.imshow(
         projected, norm=norm, cmap="jet", origin="lower", interpolation="nearest", aspect="auto"
     )
     ax.set_title(title)
     ax.axis("off")
+    fig.colorbar(im, ax=ax, label=UNIT_LABEL, fraction=0.046, pad=0.04)
     fig.savefig(OUTPUT_DIR / filename, bbox_inches="tight")
     plt.close(fig)
     print(f"  saved {filename}")
