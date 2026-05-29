@@ -5,12 +5,16 @@
 \begin{document}
 \chapter{Frequency Map-Making} \label{chap:FMM}
 
-In Chapter \ref{chap:spectral_imaging}, we presented the frequency dependency of QUBIC's beam, and about the possibility to use this property, called \emph{spectral imaging}, to split the physical bandwidth into frequency sub-bands to increase the spectral resolution of the instrument. We now introduce a map-making algorithm based on spectral imaging, to reconstruct multiple frequency maps of the sky. We call this algorithm \emph{Frequency Map-Making} (FMM).
-We start by introducing the general fundamentals of map-making for CMB experiment, followed by the description of the numerical simulation implementation for QUBIC Instrument. The resulting maps are then analysed to understand the behaviour of FMM : numerical cost, noise structure and anti-correlations introduced by spectral imaging. 
+\minitoc
+
+\rmk{While writing, I have the feeling that the chapter is quick confusing, between reconstruction, simulation, data acquisition, etc... Can you take extra attention to the general chapter to check the overall coherence ? I also feel that I lack definitions and explanation somewhere, but I can't point exactly where while I am inside the writing...}
+
+In Chapter \ref{chap:spectral_imaging}, we presented the frequency dependency of QUBIC's beam, and the possibility of using this property, called \emph{spectral imaging}, to split the physical bandwidth into frequency sub-bands to increase the spectral resolution of the instrument. We now introduce a map-making algorithm based on spectral imaging, to reconstruct multiple frequency maps of the sky. We call this algorithm \emph{Frequency Map-Making} (FMM).
+We start by introducing the general fundamentals of map-making for CMB experiment, followed by the QUBIC-specific formalism covering both the forward simulation model and the FMM reconstruction algorithm. The resulting maps are then analysed to understand the behaviour of FMM : numerical cost, noise structure and anti-correlations introduced by spectral imaging. 
 
 \rmk{JC, can you tell me about the exact chronology ?}
-\personal{The content of this chapter is the result multiple people within QUBIC Collaboration. HERE, I WILL ADD A COMPLETE DESCRIPTION OF THE PEOPLE WHO WORKED ON MAP-MAKING FOR QUBIC, Non-exhausted list : JC Hamilton, Pierre Chanial, Mikhail Stolpovskiy, Louise Mousset (je ne vois pas vraiment de développement dans sa thèse), Mathias Regnier.
-During my first year, I contributed with Mathias Regnier to the development and the implementation of the Frequency Map-Making algorithm. This work is presented in Mathias' thesis \cite{mathiasthesis}, and led to a publication \cite{FMM}. During my second year, I completly refactored and cleaned the FMM code, then I built a pipeline allowing simulation, reconstruction and analysis for FMM, easy to use from a single parameters file. During my third year, I extended the analysis of the numerical parameters and their effect on the reconstruction, leading to a forecast-ready pipeline for QUBIC instrument. My contributions to FMM are furthered developped in Chapters \ref{chap:qubicsoft}, \ref{chap:tod}, \ref{chap:xspectrum} and \ref{chap:forecast}.}
+\personal{The content of this chapter is the result multiple people within QUBIC Collaboration. HERE, I WILL ADD A COMPLETE DESCRIPTION OF THE PEOPLE WHO WORKED ON MAP-MAKING FOR QUBIC, Non-exhaustive list : JC Hamilton, Pierre Chanial, Mikhail Stolpovskiy, Louise Mousset (je ne vois pas vraiment de développement dans sa thèse), Mathias Regnier.
+During my first year, I contributed with Mathias Regnier to the development and the implementation of the Frequency Map-Making algorithm. This work is presented in Mathias' thesis \cite{mathiasthesis}, and led to a publication \cite{FMM}. During my second year, I completely refactored and cleaned the FMM code, then I built a pipeline allowing simulation, reconstruction and analysis for FMM, easy to use from a single parameters file. During my third year, I extended the analysis of the numerical parameters and their effect on the reconstruction, leading to a forecast-ready pipeline for QUBIC instrument. My contributions to FMM are further developed in Chapters \ref{chap:qubicsoft}, \ref{chap:tod}, \ref{chap:xspectrum} and \ref{chap:forecast}.}
 
 
 \rmk{PB: same subsection names than in Mathias' Thesis..., I am afraid that it is too close to his chapter.}
@@ -28,7 +32,7 @@ The most general way to describe the data acquisition at one time is :
     d(\vec{u}(t)) = \int_{\nu_{min}}^{\nu_{max}} \mathcal{H}_\nu(\vec{u}(t)) s_\nu d\nu + n(\vec{u}(t)),
 \end{equation}
 
-where $\vec{u}(t)$ is the pointing direction on the sky at time $t$, $d$ is the TOD at time $t$, $\nu_{min}$ and $\nu_{max}$ the physical frequency bandwidth of the instrument, $\mathcal{H}_\nu$ is the acquisition operator of the instrument, which models the data acquisition of the instrument (including convolution, PSF, optics, electronics, etc), $s_\nu$ is the sky map and $n$ is the detector and photon noise contribution at time $t$. $\mathcal{H}_\nu$ is a very complex object, which will be discussed in details in (\rmk{I don't know where yet, it can be in this chapter or in qubicsoft one}). 
+where $\vec{u}(t)$ is the pointing direction on the sky at time $t$, $d$ is the TOD at time $t$, $\nu_{min}$ and $\nu_{max}$ the physical frequency bandwidth of the instrument, $\mathcal{H}_\nu$ is the acquisition operator of the instrument, which models the data acquisition of the instrument (including convolution, PSF, optics, electronics, etc), $s_\nu$ is the sky map of size $\left(N_{pix}, N_{stokes}\right)$, $N_{stokes}$ being equal to 3 for I, Q, U parameters (see subsection \ref{subsub:polarisation}), and $n$ is the detector and photon noise contribution at time $t$. $\mathcal{H}_\nu$ is a very complex object, which will be discussed in details in (\rmk{I don't know where yet, it can be in this chapter or in qubicsoft one}). 
 
 For simplicity, the scanning strategy is included in the acquisition operator. The entire TOD acquisition can then be written as : 
 
@@ -38,8 +42,8 @@ For simplicity, the scanning strategy is included in the acquisition operator. T
     &= H\vec{s} + \vec{n},
 \end{align}
 
-defining $H$ as the acquisition operator integrating into the frequency band. TThe goal is now to estimate the unknown sky $\vec{s}$ from the data $\vec{d}$ and the instrument model encoded in the acquisition operator $H$.
-Assuming a gaussian noise $\vec{n}$, all the statistical information is stored in the noise covariance matrix $N=\left\langle\vec{n}\vec{n}^{~T}\right\rangle$. Its probability distribution, noting $N_{pointings}$ the number of time sample, is then written :
+defining $H$ as the acquisition operator integrating into the frequency band. The goal is now to estimate the unknown sky $\vec{s}$ from the data $\vec{d}$ and the instrument model encoded in the acquisition operator $H$.
+Assuming Gaussian noise $\vec{n}$, all the statistical information is stored in the noise covariance matrix $N=\left\langle\vec{n}\vec{n}^{~T}\right\rangle$. Its probability distribution, noting $N_{pointings}$ the number of time sample, is then written :
 
 \begin{equation}
     P(\vec{n}) = \frac{1}{\left|(2\pi)^{N_{pointings}}N\right|^{1/2}} \exp\left(-\frac{1}{2}\vec{n}^{~T} N^{-1}\vec{n}\right).
@@ -48,23 +52,24 @@ Assuming a gaussian noise $\vec{n}$, all the statistical information is stored i
 The best solution for map-making equation \ref{eq:acquisition} is obtained by maximising the likelihood function giving the probability of getting data $\vec{d}$ from a sky $\vec{s}$, noted $\mathcal{L} \equiv P(\vec{d} | \vec{s})$, as detailed in \cite{wright1996}. Using Bayes theorem~\cite{bayes1763} :
 
 \begin{align}
-    \mathcal{L} \equiv P(\vec{d} | \vec{s}) = \frac{P(\vec{s}|\vec{d})P(\vec{d})}{P(\vec{s})} \propto P(\vec{s}|\vec{d}).
+    \mathcal{L} \equiv P(\vec{d} | \vec{s}) = \frac{P(\vec{s}|\vec{d})P(\vec{d})}{P(\vec{s})} \propto P(\vec{s}|\vec{d}),
 \end{align}
+where the last proportionality assumes a flat (uninformative) prior $P(\vec{s}) = \text{const}$.
 
-As said above, we expect the noise to follow a Gaussian distribution. The probability to observe the sky according to our data is then equal to the probability distribution of the noise, meaning : $\mathcal{L} \propto P(\vec{n})$. 
-Considering equation \ref{eq:acquisition}, $\vec{n} = \vec{d} - \vec{s}$. The likelihood function can then be written as : 
+Since the noise is Gaussian, $\mathcal{L} \propto P(\vec{n})$.
+From equation \ref{eq:acquisition}, $\vec{n} = \vec{d} - H\vec{s}$. The likelihood function can then be written as : 
 
 \begin{equation}
     \mathcal{L} \propto P(\vec{n}) = \frac{1}{\left|(2\pi)^{N_{pointings}}N\right|^{1/2}} \exp\left(-\frac{1}{2}(\vec{d} - H\vec{s})^{~T} N^{-1}(\vec{d} - H\vec{s})\right).
 \end{equation}
 
-Maximising the likelihood $\mathcal{L}$ corresponds at computing the most likely sky $\vec{s}$ to correspond to the data $\vec{d}$ according to the noise $\vec{n}$. Equivalently, we can minimise thhe $\chi^2$ function associated with this likelihood : 
+Maximising the likelihood $\mathcal{L}$ corresponds to computing the most likely sky $\vec{s}$ to correspond to the data $\vec{d}$ according to the noise $\vec{n}$. Equivalently, we can minimise the $\chi^2$ function associated with this likelihood : 
 
 \begin{equation}
     \chi^2 \equiv -2\ln\mathcal{L} \propto (\vec{d} - H\vec{s})^{~T} N^{-1}(\vec{d} - H\vec{s}).
 \end{equation}
 
-To minimise this function, we need to compute the sky for which the derivate of $\chi^2$ function is zero. The minimization proceeds as follows: : 
+To minimise this function, we need to compute the sky for which the derivative of $\chi^2$ is zero. The minimisation proceeds as follows: 
 
 \begin{align} \label{eq:mapmaking_inv}
     & \frac{\partial \chi^2}{\partial \vec{s}} = \frac{\partial \chi^2}{\partial \vec{s}^{~T}} = 0 \notag \\
@@ -75,12 +80,12 @@ To minimise this function, we need to compute the sky for which the derivate of 
 
 where we note $\vec{\hat{s}}$ the maximal-likelihood solution of the map-making equation. 
 
-Unfortunately, despite $\vec{\hat{s}}$ having an analytical solution, it requires to compute the inverse of the matrix $M \equiv (H^{~T} N^{-1} H)$. $M$ has a size $(N_{pix} x N_{pix})$, with $N_{pix} \sim 10^7$ for modern experiment. Inversion algorithms, like Cholesky factorisation or LU decomposition, have a computation cost in $\mathcal{O}(N_pix^{~3})$ and a memory usage in $\mathcal{O}(N_pix^{~2})$~\cite{golub13}. It then requires $\sim 10^{21}$ to invert such a matrix. With the CPU on my laptop\footnote{Intel i7-13850HX}, being able to perform around $100~GFLOP/s$, I would need about many years to perform an inversion ($\sim 320$ years with Cholesky decomposition). Even with exascale supercomputer, with $10^{18}~FLOP/s$, $\sim 20$ minutes are still needed. But, the main issue comes from memory, as in double precision\footnote{8 bytes per element}, the computation needs $8 \times (N_{pix})^2 = 800~TB$, just to store the matrix. \\
+Unfortunately, despite $\vec{\hat{s}}$ having an analytical solution, it requires to compute the inverse of the matrix $M \equiv (H^{~T} N^{-1} H)$. $M$ has a size $(N_{pix} x N_{pix})$, with $N_{pix} \sim 10^7$ for modern experiment. Inversion algorithms, like Cholesky factorisation or LU decomposition, have a computation cost in $\mathcal{O}(N_pix^{~3})$ and a memory usage in $\mathcal{O}(N_pix^{~2})$~\cite{golub13}. It then requires $\sim 10^{21}$~FLOP to invert such a matrix. With the CPU on my laptop\footnote{Intel i7-13850HX}, being able to perform around $100~GFLOP/s$, I would need many years to perform an inversion ($\sim 320$ years with Cholesky decomposition). Even with exascale supercomputer, with $10^{18}~FLOP/s$, $\sim 20$ minutes are still needed. But, the main issue comes from memory, as in double precision\footnote{8 bytes per element}, the computation needs $8 \times (N_{pix})^2 = 800~TB$, just to store the matrix. \\
 From these elements, matrix inversion is not feasible on realistic CMB datasets.
 
 \subsection{Iterative Solver: PCG}
 
-As discussed in the previous subsection, it is not reasonable to inverse the matrix $M$ to solve the map-making equation for realistic CMB datasets. Consequently, modern map-making algorithms rely on iterative solvers, such as the Preconditionate Conjugate Gradient (PCG) method, which avoid explicit matrix inversion and only require repeated evaluations of the operator. Indeed, equation \ref{eq:mapmaking_inv} can be rewritten : 
+As discussed in the previous subsection, it is not reasonable to invert the matrix $M$ to solve the map-making equation for realistic CMB datasets. Consequently, modern map-making algorithms rely on iterative solvers, such as the Preconditioned Conjugate Gradient (PCG) method, which avoid explicit matrix inversion and only require repeated evaluations of the operator. Indeed, equation \ref{eq:mapmaking_inv} can be rewritten : 
 
 \begin{align} \label{eq:mapmaking}
     & \vec{\hat{s}} = (H^{~T} N^{-1} H)^{-1} H^{~T} N^{-1} \vec{d} \notag \\
@@ -94,54 +99,99 @@ with $A \equiv (H^{~T}N^{-1}H)$ and $b \equiv H^{~T} N^{-1} \vec{d}$. This linea
     \Delta f(\vec{x}) = A\vec{x} - \vec{b}.
 \end{equation}
 
-CG algorithm will iterate on $\vec{x}$ to minimise $\Delta f(\vec{x})$, which exactly corresponds at finding the solution of equation \ref{eq:mapmaking}. Still, the size of $\vec{x}$ remains a problem, at the order of $N_{pix} \sim 10^7$. A preconditionning is then including in the Conjugate Gradiant solver. The preconditionner transforms the linear system in an equivalent one that converges faster, and can be seen as a matrix that approximates $A$, but easier to invert. A common preconditionner used in CMB experiment is $diag(A)$. A complete description of PCG algorithm can be found in \cite{shewchuk1994}.
+CG algorithm will iterate on $\vec{x}$ to minimise $\Delta f(\vec{x})$, which exactly corresponds to finding the solution of equation \ref{eq:mapmaking}. Still, the size of $\vec{x}$ remains a problem, at the order of $N_{pix} \sim 10^7$. A preconditioning is then included in the Conjugate Gradient solver. The preconditioner transforms the linear system into an equivalent one that converges faster, and can be seen as a matrix that approximates $A$, but easier to invert. A common preconditioner used in CMB experiments is $diag(A)$. A complete description of PCG algorithm can be found in \cite{shewchuk1994}.
+\rmk{I don't find that necessary to copy past the complete PCG algorithm, while it is already in previous thesis from Louise and Mathias.}
 
 \section{Numerical Implementation \& Methodology}
 
-In the previous section \ref{section:mapmaking}, we derived the general solution of the map-making equation together with the iterative numerical solver required to compute it. We now extend this formalism to the specific case of the QUBIC instrument, with particular emphasis on its spectral imaging capabilities (see \ref{chap:spectral_imaging}). 
+We now extend this formalism to the specific case of QUBIC. Two complementary operations must be distinguished. The forward model (simulation) computes synthetic TOD, noted $\vec{\tilde{d}}$, from a known input sky $\vec{\tilde{s}}$ using equation~\ref{eq:acquisition}; this is used to validate the algorithm and study its properties under controlled conditions. The reconstruction does the reverse: given $\vec{\tilde{d}}$, the PCG-based map-making algorithm of Section~\ref{section:mapmaking} recovers an estimated sky $\vec{\hat{s}}$. Throughout this chapter, we use tildes ($\vec{\tilde{s}}$, $\vec{\tilde{d}}$) for simulation quantities (true and simulated data) and hats ($\vec{\hat{s}}$) for estimated quantities recovered by reconstruction.
 
-\subsection{Modelling \& Key Numerical Parameters}
+\subsection{Simulation: Forward model}
 
 In the previous derivation of the map-making equation, the frequency dependence of the instrumental model $H$ was neglected. For conventional imagers, this approximation is generally sufficient, since the instrumental response varies only weakly across the bandwidth. However, as discussed in the description of the spectral imaging capabilities of bolometric interferometry (in Chapter \ref{chap:spectral_imaging}), the frequency dependence plays a major role in shaping the QUBIC synthesized beam. The acquisition equation \ref{eq:acquisition} must therefore be written as : 
 
 \begin{equation}
-    \vec{d} = H\vec{s} + \vec{n} = \int_{\nu_{min}}^{\nu_{max}}\mathcal{H}_\nu\vec{s_\nu}d\nu + \vec{n}. 
+    \vec{\tilde{d}} = H\vec{\tilde{s}} + \vec{n} = \int_{\nu_{min}}^{\nu_{max}}\mathcal{H}_\nu\vec{\tilde{s_\nu}}d\nu + \vec{n}.
 \end{equation}
 
-For the numerical modelisation, the matrix $\mathcal{H_\nu}$ cannot be integrated. Therefore, we can discretise the integration into frequency sub-bands, introducing the parameter $N_{sub}$, the number of sub-band : 
+For the numerical modelling, the matrix $\mathcal{H_\nu}$ cannot be integrated, as it is too large and complex. Therefore, we can discretise the integration into frequency sub-bands, introducing the parameter $N_{sub}$, the number of sub-band : 
 
 \begin{align} \label{eq:nsub_acq}
-    \vec{d} &= \int_{\nu_{min}}^{\nu_{max}}\mathcal{H}_\nu\vec{s_\nu}d\nu + \vec{n} \notag \\
-    & \approx \sum_{i = 1}^{N_{sub}} \mathcal{H}_{\nu_i} \vec{s_{\nu_i}}\Delta_{\nu_i} + \vec{n},
+    \vec{\tilde{d}} &= \int_{\nu_{min}}^{\nu_{max}}\mathcal{H}_\nu\vec{\tilde{s_\nu}}d\nu + \vec{n} \notag \\
+    & \approx \sum_{i = 1}^{N_{sub}} \mathcal{H}_{\nu_i} \vec{\tilde{s_{\nu_i}}}\Delta_{\nu_i} + \vec{n},
 \end{align}
 with $\Delta_{\nu_i}$ the bandwidth of the sub-bands associated with the frequency $\nu_i$.
 
-To ensure the validity of such an approximation, $N_{sub}$ needs to be large enough. A deeper analysis of this parameter can be found in the subsection \ref{sub:nsub}. 
-The discretisation in $N_{sub}$ sub-bands can be seen as a numerical trick to compute the integration over the frequency bandwidth. It is then necessary to compute the instrumental model at each frequency associated with the sub-bands, which is numerically expensive. $N_{sub}$ is then only a numerical, un-physical parameter. \\
-Nevertheless, as we can separate the bandwidth into sub-bands, it is therefore possible to reconstruct them using the map-making solution. This idea, the fundamental basis of what we call the Frequency Map-Making, needs to reformulate the previous equation \ref{eq:nsub_acq} :
+To ensure the validity of such an approximation, $N_{sub}$ needs to be large enough. A deeper analysis of this parameter can be found in subsection~\ref{sub:nsub}. 
+The discretisation into $N_{sub}$ sub-bands can be seen as a numerical trick to compute the integral over the frequency bandwidth. Computing the instrumental model at each frequency associated with the sub-bands is numerically expensive, and $N_{sub}$ is therefore a purely numerical, unphysical parameter. For real data, we can consider $N_{sub} = \infty$, which is totally unpractical for numerical modelisation.
+
+\subsection{Reconstruction: Frequency Map-Making}
+
+This decomposition, introduced purely for simulation purposes, turns out to have a direct physical interpretation: the $N_{sub}$ sub-band sky maps can be treated as independent unknowns and recovered jointly from the TOD. This is the key idea behind Frequency Map-Making. To make this reconstruction tractable, we introduce a second parameter $N_{rec} \leq N_{sub}$, the number of frequency maps to reconstruct, and reformulate the acquisition equation~\ref{eq:nsub_acq} as :
 
 \begin{align}
-    \vec{d} &= \sum_{i = 1}^{N_{sub}} \mathcal{H}_{\nu_i} \vec{s_{\nu_i}}\Delta_{\nu_i} + \vec{n} \notag \\
-    &= \sum_{i = 1}^{N_{rec}} \left( \sum_{j = 1}^{f_{sub}} \mathcal{H}_{\nu_{ij}}  \Delta_{\nu_{ij}} \right) \vec{s}_{\nu_{i}} + \vec{n},
+    \vec{\tilde{d}} &= \sum_{i = 1}^{N_{sub}} \mathcal{H}_{\nu_i} \vec{\tilde{s_{\nu_i}}}\Delta_{\nu_i} + \vec{n} \notag \\
+    &= \sum_{i = 1}^{N_{rec}} \left( \sum_{j = 1}^{f_{sub}} \mathcal{H}_{\nu_{ij}}  \Delta_{\nu_{ij}} \right) \vec{\hat{s_{\nu_{i}}}} + \vec{n},
 \end{align}
 
-where $N_{rec}$ is the number of frequency maps we are trying to reconstruct and $f_{sub} \equiv N_{sub} / N_{rec}$, a sub parameter defining the number of frequency sub-bands integrated into each reconstructed maps.
-
+where $f_{sub} \equiv N_{sub} / N_{rec}$, a sub parameter defining the number of frequency sub-bands integrated into each reconstructed map. Here, $\vec{\hat{s}}_{\nu_i}$ denotes the estimated sky maps (unknowns of the reconstruction), with total size $\left(N_{rec}, N_{pix}, N_{stokes}\right)$. 
+The main advantage of such a method is that it is only a software trick. Indeed, it does not affect the data acquisition (or the data simulation), which is always performed with equation \ref{eq:nsub_acq}. Including the extra $N_{rec}$ dimension allows reconstructing multiple frequency maps inside the QUBIC bandwidth. Thus, the $N_{rec}$ parameter can be adjusted during the data analysis process, depending on the needs. Still, $N_{rec}$ suffers from limitations, as it cannot be arbitrarily large. We discussed in Chapter~\ref{chap:spectral_imaging} that we should avoid overlapping peaks while discretising, imposing an upper limit of $N_{rec} \approx 5$ per focal plane. However, since the beam is completely frequency-dependent, even the smallest discretisation $N_{rec}=2$ will create anti-correlations between the $2$ reconstructed maps, resulting in additional noise in the pixels. On the other hand, reconstructing multiple sky maps inside the physical bandwidth leads to higher spectral resolution, which will help to separate the CMB from its contaminants.  
+In summary, increasing $N_{rec}$ improves component separation capabilities of QUBIC, but at the cost of higher noise in the maps due to anti-correlations introduced by spectral imaging. Results to study the effect of $N_{rec}$ are performed in the forecast chapter \ref{chap:forecast}.
 
 \subsection{Angular resolution}
+\rmk{I am writting this subsection here, but I am not sure that I want to let it here. It can also be in the tod realism chapter \ref{chap:tod}. Or, maybe the case where we add convolution inside PCG (normal and best case) should be in the chapter, and we can explore the case where we let the PCG reconstruct a convolved map without imposing resolution during reconstruction can be put somewhere else. I will write both here for now, I will let you tell me what you think.}
+
+\subsubsection{Fixed angular resolution reconstruction}
+
+Any telescope observing the sky reconstructs a blurred image of it, which depends on its angular resolution determined by the size of its beam. The blurring can be approximated by the convolution of the sky by a Gaussian with width equal to the FWHM of the beam. For QUBIC, the FWHM depends on the distance between horns, through : $\sigma_\nu = \frac{c}{\nu\Delta_h}$, with $\sigma_\nu$ the FWHM at frequency $\nu$, $c$ the speed of light and $\Delta_h$ the distance between two horns. As the frequency largely affects QUBIC's synthesized beam, convolutions need to be treated carefully in the reconstruction algorithm. By noting $C_\nu$ the convolution operator and $\vec{\tilde{s_\nu}}^{~\infty}$ the sky at frequency $\nu$ and at \enquote{infinite} resolution, the data acquisition model can be rewritten:
+
+\begin{equation}
+    \vec{\tilde{d}} = \int_{\nu_{min}}^{\nu_{max}} \mathcal{H}_\nu C_\nu \vec{\tilde{s_\nu}}^{~\infty} d\nu + \vec{n}.
+\end{equation}
+
+Then, from the reconstruction point of view, each of the $N_{rec}$ reconstructed maps corresponds to a combination of $f_{sub}$ frequency sub-bands, each associated with a different angular resolution. This raises the question of the effective resolution at which the reconstructed maps should be defined. Since it is impossible to reconstruct information at an angular resolution higher than that contained in the data, the reconstructed map resolution is fundamentally limited by the instrumental resolution within the considered frequency range. For a given reconstructed sub-band, the highest achievable resolution therefore corresponds to the smallest synthesized beam, i.e. the highest frequency within the sub-band. Consequently, all frequency sub-bands contributing to a reconstructed map must be brought to a common angular resolution. Otherwise, the reconstructed map would contain a scale-dependent bias induced by the varying beam sizes across the band, as illustrated in Figure \ref{fig:fwhm_bias}.
+
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{fwhm_mismatch.png}
+    \caption{Frequency maps reconstruction with constant angular resolution within each sub-bands, leading to an unbiased FWHM reconstructed (left), and with a different angular resolution for each sub-bands, leading to a biased FWHM reconstructed (right). Taken from \cite{mathiasthesis}.}
+    \label{fig:fwhm_bias}
+\end{figure}
+
+Therefore, we can define the resolution degradation operator $\mathcal{C}_{ij}$, which apply a gaussian kernel with width :
+
+\begin{equation}
+    \sigma_{ij} = \sqrt{\sigma_{\nu_i}^2 - \sigma_{\nu_j}^2}.
+\end{equation}
+
+By introducing this operator in the reconstruction model, it ensures that the reconstruction of the sky is at the best resolution from QUBIC within each frequency sub-bands. The reconstruction equation is then given by :
+
+\begin{equation}
+    \vec{\tilde{d}} = \sum_{i=1}^{N_{rec}}\left(\sum_{j=1}^{f_{sub}}\Delta_{\nu_{ij}}\mathcal{H}_{\nu_{ij}}\mathcal{C}_{ij}\right)\vec{\hat{s}}_{\nu_i} + \vec{n}.
+\end{equation}
+
+Unfortunately, applying a convolution on the sky is an expensive operation, in particular if it is performed for each frequency sub-bands, and at each iteration of the numerical solver. Therefore, it considerabely slows down the reconstruction, despite being necessary for the physical correctness and the realism of the method.
+
+\subsubsection{Free angular resolution reconstruction}
+
+The numerical cost associated with the reconstruction of frequency maps is particularly challenging. Consequently, we explored an alternative approach consisting in removing the operator $\mathcal{C}_{ij}$ from the reconstruction equation, while still keeping the convolution operator in the data simulation pipeline Indeed, the convolution operator acts by blurring the sky signal over neighboring pixels. Since the PCG algorithm reconstructs the sky pixels directly, part of this smoothing may be implicitly absorbed into the reconstructed maps themselves. As a consequence, even when $\mathcal{C}_{ij}$ is omitted from the reconstruction equation, the reconstructed maps remain effectively convolved. However, in this configuration, the effective angular resolution of the reconstructed maps becomes unknown. It is therefore necessary to estimate this reconstructed resolution in order to compare the reconstructed maps with the input sky maps at a common angular resolution.
+
 
 \subsection{External data ?}
 
-We saw that Planck does not really improve FMM, while it is still useful to add at Xspectra stage.
+\rmk{We saw that Planck does not really improve FMM, while it is still useful to add at Xspectra stage. Do we want to add a part on it ? Maybe it can be done in the tod realism chapter as well... What do you think ?}
+
+\section{Results}
 
 \section{Characterisation}
 
-\subsection{Numerical ressources: memory and parallelisation}
+\subsection{Numerical resources: memory and parallelisation}
 
 \subsection{Noise structure}
 
 \subsection{Sub-bands Correlations}
 
-\minitoc
+
 
 \end{document}
