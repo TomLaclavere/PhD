@@ -151,7 +151,6 @@ Any telescope observing the sky reconstructs a blurred image of it, which depend
 
 Then, from the reconstruction point of view, each of the $N_{rec}$ reconstructed maps corresponds to a combination of $f_{sub}$ frequency sub-bands, each associated with a different angular resolution. This raises the question of the effective resolution at which the reconstructed maps should be defined. Since it is impossible to reconstruct information at an angular resolution higher than that contained in the data, the reconstructed map resolution is fundamentally limited by the instrumental resolution within the considered frequency range. For a given reconstructed sub-band, the highest achievable resolution therefore corresponds to the smallest synthesized beam, i.e. the highest frequency within the sub-band. Consequently, all frequency sub-bands contributing to a reconstructed map must be brought to a common angular resolution. Otherwise, the reconstructed map would contain a scale-dependent bias induced by the varying beam sizes across the band, as illustrated in Figure \ref{fig:fwhm_bias}.
 
-
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=1\linewidth]{fwhm_mismatch.png}
@@ -198,13 +197,82 @@ Although the method performs satisfactorily in simulations, its applicability to
 
 Now that we detailed the Frequency Map-Making algorithm, we can start looking at its results. In this section is presented reconstructed maps using FMM for few cases (a full analysis is led in Chapter \ref{chap:tod}), as well as characterisation of the algorithm. This includes an estimation of the numerical resources and the need to parallelise to run the algorithm, analysis of the structure of noise in the maps, and the effect of splitting the physical bands of QUBIC in the maps. 
 
+\subsection{Simulation setup}
+
+In order to run the FMM algorithm from simulating date to reconstruct sky maps, we need to define some concepts. 
+
+\subsubsection{Scanning Strategy} \label{subsub:scanning_strategy}
+
+The scanning strategy consists at defining where the telescope points and when. It is a tool used to mitigate instrumental systematics and atmospheric fluctuations, by scanning the same part of the sky multiple times. For the simulation in this thesis, it was chosen to not use a realistic scanning strategy, but a random scanning strategy. It means that at each time, the instrument will point at a random position inside the patch. The goal of this method is to achieve a good coverage of the sky patch with a reasonable number of points. It allows to simpler instrumental model and shorter dataset, both will benefit for the numerical computation point of view, and should not affect the result of the reconstruction (but, with a realistic scanning strategy, it would only take much more pointings to achieve the same coverage level of the patch).
+Additionally, the location on the sky matters for a scientific survey. For CMB experiments, the main criterium is a region with low astrophysical emissions, meaning that we can't observe close to the Milky Way center. For all figures inside this thesis, the simulated instrument observes the expected scientific patch of QUBIC experiment, described in subsection \ref{sub:sky_patch}.
+
 \subsection{Maps}
 
+\rmk{I don't really know which maps I should add or not in this section + I don't really know what to say in this subsection.}
 
+By applying the map-making on a simulated sky\footnote{simulated using PySM3 framework : \url{https://github.com/galsci/pysm}.} composed of CMB and Dust, we can reconstruct sky maps, as shown in Figure \ref{fig:I_maps_DB_nrec4} and \ref{fig:pol_maps_DB_nrec2}. 
+These plots and a majority of plots within this thesis, follow the same format as the two figures presented here. The left column represents the input map, or the true map, used to simulate the data. The central column is the output map, the one reconstructed by PCG. Finally, the right column is the residual map, the difference between true and reconstructed maps. The residual map is supposed to include only noise for a perfect reconstruction.
+Figure \ref{cal tower} shows the reconstruction into $Nrec=4$ frequency bands of the Intensity sky maps. Each line correspond to one frequency sub-bands reconstructed, in $\mu K_{CMB}$ units. On the other hand, Figure \ref{fig:pol_maps_DB_nrec2} shows reconstruction for the two polarisation parameters $Q$ and $U$, for a $150~GHz$ band, in the case $Nrec=2$. The first line corresponding to the $Q$ map and the second the $U$ map.
 
-\subsection{Numerical resources: memory and parallelisation}
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{maps_I_Nrec=4.pdf}
+    \caption{Intensity maps of the sky with $Nrec=4$.}
+    \label{fig:I_maps_DB_nrec4}
+\end{figure}
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{pol_maps_Nrec=2.pdf}
+    \caption{$Q$ and $U$ maps of the sky, with $Nrec=2$.}
+    \label{fig:pol_maps_DB_nrec2}
+\end{figure}
+
+\subsection{Numerical resources: memory and computational time}
+
+One of the main limitation of the Frequency Map-Making algorithm is its memory usage, as well as the computation time. 
+
+\subsubsection{Memory usage}
+
+The core complexity lives in $H$ operator, which can be seen as a sparse matrix simulating the instrument (a detailed description of this operator is given in Chapter \ref{chap:qubicsoft}). This matrix, for one frequency band, has a shape of $\left(N_{det} x N_{pointings}, N_{peak}\right)$. Considering that the matrix is composed of float64, written $64 bits = 16 bytes$. Thus, for $N_{det} = 992$, $N_{pointing} = 10000$, and $N_{peak} = (2k_{max}+1)^2 = 49$ with $k_{max} = 3$, the resulting memory used is then $10000 x 992 x 49 x 16 = 7.778 x 10^9 bytes = 7.243 GiB$\footnote{$ 1~GiB = 1024~MiB = 1024^{2}~KiB = 1024^{3}~bytes$.}. So, for $N_{sub} = 40$, we need $\sim 289.7~GiB$ of RAM only to store the operator $H$. It is important to note that the value given as an example are far from being extreme. It explains the need for a random scanning strategy, as explained in the part \ref{subsub:scanning_strategy}. Additionally, a complete study of the minimal parameter value is led in Chapter \ref{chap:tod}, to save as much memory as possible. 
+In reality, the reconstruction can't be done with large $N_{sub}$, $N_{pointings}$ or $k_{max}$ values, as a large $H$ results in a very slow reconstruction with PCG. Therefore, it is important for realism to simulate data with the largest value possible (in particular $N_{sub}$ and $k_{max}$, as they are equal to $\infty$ in real acquisition). In order to achieve that, I designed a sequential data simulation, where multiple TOD with small $N_{pointing}$ are created and concatenate into a large one. This method allows for a TOD simulation with large parameters while being still runable with a reasonable amount of memory. 
+
+\subsubsection{Computational time}
+
+The computational time to run the FMM algorithm is its second limitation alongside memory. As expected regarding the size of $H$, it is very expensive to apply this operator on a sky to simulate data. Unfortunately, the iterative reconstruction through PCG implies applying $H$ during each iteration, leading to a significant computational cost.
+Indeed, considering $N_{det} = 992$, $N_{pointing} = 1000$, $N_{peak} = (2k_{max}+1)^2 = 9$ with $k_{max} = 1$ and $N_{sub} = 20$, each PCG iteration takes $\sim 15~\text{sec}$ for an operator $H$ with a memory footprint of $\sim 6.65~\text{GiB}$. These parameters are relatively small compared to those used in the previous section, in order to run on a simple laptop. To achieve this reasonable time per iteration, given that PCG requires $\sim 100$ iterations to converge, parallelisation and optimisation are included. In particular, the most expensive part of $H$, which computes the coordinate change between sky positions and the Cartesian instrumental frame, is written in Fortran and parallelised with OpenMP\footnote{\url{https://www.openmp.org/}}. OpenMP (Open Multi-Processing) is an API for thread-based parallelism on a shared-memory machine, allowing multiple CPU cores to work on the same data simultaneously.
+Additionally, MPI (Message Passing Interface), through mpi4py\footnote{\url{https://pypi.org/project/mpi4py/}}, is used for the Python part of the simulation software, distributing the time samples and the detectors across processes. While OpenMP is active even on a single laptop, MPI is only exploited when the code is run on an HPC cluster, where multiple nodes are requested.
 
 \subsection{Noise structure}
+
+It is important to understand the profile of noise in the reconstructed maps. Indeed, as visible in Figures \ref{fig:I_maps_DB_nrec4} and \ref{fig:pol_maps_DB_nrec2}, the noise in the residual maps is not uniform across the sky patch. The feature is due to the coverage of the patch being inhomogeneous. 
+Indeed, due to the random scanning strategy we are using to simulate the data acquisition, it is expected to observe the inner part of the patch more often\footnote{It is important to note that with a more realistic scanning strategy, this effect will be more important than with the random one. In addition, the coverage will also be less uniform for the same number of time sample.}. The coverage, corresponding to the number of time all pixels is observed by the instrument, is plotted in Figure \ref{fig:coverage}.
+
+\begin{figure}[!htbp]
+    \begin{minipage}{0.6\linewidth}
+        \centerline{\includegraphics[width=1\linewidth]{coverage_mollview.pdf}}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.4\linewidth}
+        \centerline{\includegraphics[width=1\linewidth]{coverage_gnomview.pdf}}
+    \end{minipage}
+    \caption{Coverage of QUBIC sky patch in Mollview projection (left) and Gnomview projection (right).}
+    \label{fig:coverage}
+\end{figure}
+
+From statistical point of view, it is expected to have the worst reconstruction in the regions where the coverage is smaller, as we spend less time to observe the outter parts.
+A way to show that is by plotting the noise profile regarding the angular distance to the center of the patch. The result is presented in Figure \ref{fig:angular_profile}.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{angular_profile_residual_I_150.0GHz.pdf}
+    \caption{RMS of the residual map with the angular distance to the center of the patch.}
+    \label{fig:angular_profile}
+\end{figure}
+
+This figure exhibits multiple interesting features. First, there is a plateau at the 
+
+\rmk{RMS noise vs 1/cov, expected to be linear for imager. We are not seeing that with QUBIC. But, should try with $H^T H$ vs coverage computed with counting pixels.}
 
 \subsection{Sub-bands Correlations}
 
