@@ -246,7 +246,7 @@ Additionally, MPI (Message Passing Interface), through mpi4py\footnote{\url{http
 \subsection{Noise structure}
 
 It is important to understand the profile of noise in the reconstructed maps. Indeed, as visible in Figures \ref{fig:I_maps_DB_nrec4} and \ref{fig:pol_maps_DB_nrec2}, the noise in the residual maps is not uniform across the sky patch. The feature is due to the coverage of the patch being inhomogeneous. 
-Indeed, due to the random scanning strategy we are using to simulate the data acquisition, it is expected to observe the inner part of the patch more often\footnote{It is important to note that with a more realistic scanning strategy, this effect will be more important than with the random one. In addition, the coverage will also be less uniform for the same number of time sample.}. The coverage, corresponding to the number of time all pixels is observed by the instrument, is plotted in Figure \ref{fig:coverage}.
+Indeed, due to the random scanning strategy we are using to simulate the data acquisition, it is expected to observe the inner part of the patch more often\footnote{It is important to note that with a more realistic scanning strategy, this effect will be more important than with the random one. In addition, the coverage will also be less uniform for the same number of time sample.}. The coverage, corresponding to the number of time all pixels is observed by the instrument, is plotted in Figure \ref{fig:coverage}. It is computed by applying $H^T$, the transpose of the instrumental model $H$, on a uniform sky.
 
 \begin{figure}[!htbp]
     \begin{minipage}{0.6\linewidth}
@@ -260,19 +260,18 @@ Indeed, due to the random scanning strategy we are using to simulate the data ac
     \label{fig:coverage}
 \end{figure}
 
-From statistical point of view, it is expected to have the worst reconstruction in the regions where the coverage is smaller, as we spend less time to observe the outter parts.
-A way to show that is by plotting the noise profile regarding the angular distance to the center of the patch. The result is presented in Figure \ref{fig:angular_profile}.
+From statistical point of view, it is expected to have the worst reconstruction in the regions where the coverage is smaller, as we spend less time to observe the outer parts.
+A way to show that is by plotting the noise profile regarding the angular distance to the centre of the patch. The result is presented in Figure \ref{fig:angular_profile}.
 
 \begin{figure}[!htbp]
     \centering
-    \includegraphics[width=1\linewidth]{angular_profile_residual_I_150.0GHz.pdf}
-    \caption{RMS of the residual map with the angular distance to the center of the patch.}
+    \includegraphics[width=1\linewidth]{angular_profile_coverage.pdf}
+    \caption{RMS of the residual map with the angular distance to the centre of the patch. Blue points show the average between I, Q and U. Grey dash line shows the inverse of the normalised coverage.}
     \label{fig:angular_profile}
 \end{figure}
 
-This figure exhibits multiple interesting features. First, there is a plateau at the 
-
-\rmk{RMS noise vs 1/cov, expected to be linear for imager. We are not seeing that with QUBIC. But, should try with $H^T H$ vs coverage computed with counting pixels.}
+This figure exhibits multiple interesting features. First, looking at the RMS of the residual maps. We can see a plateau where RMS is relatively constant, then, it starts rising (approximatively where we are at a distance equivalent to the distance between peaks from the edge of the patch). Looking at the coverage, it seems less flat in the inner part of the patch, but exhibits the same rising when reaching the outer regions. 
+For an imager, we are used to seeing a direct correlation between $1/coverage$ and the RMS of noise in the residual maps. Here, the inverse of coverage follows the noise profile only in the outer part of the patch, but not in the inner parts. For QUBIC, the result seems to be different, as the RMS of noise is only following the inverse of coverage for the outer patch regions. This is still something to understand with BI and spectral imaging.
 
 \subsection{Sub-bands Correlations}
 
