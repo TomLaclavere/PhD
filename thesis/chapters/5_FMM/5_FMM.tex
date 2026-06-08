@@ -139,7 +139,7 @@ The main advantage of such a method is that it is only a software trick. Indeed,
 In summary, increasing $N_{rec}$ improves component separation capabilities of QUBIC, but at the cost of higher noise in the maps due to anti-correlations introduced by spectral imaging. Results to study the effect of $N_{rec}$ are performed in the forecast chapter \ref{chap:forecast}.
 
 \subsection{Angular resolution}
-\rmk{I am writting this subsection here, but I am not sure that I want to let it here. It can also be in the tod realism chapter \ref{chap:tod}. Or, maybe the case where we add convolution inside PCG (normal and best case) should be in the chapter, and we can explore the case where we let the PCG reconstruct a convolved map without imposing resolution during reconstruction can be put somewhere else. I will write both here for now, I will let you tell me what you think.}
+\rmk{I am writing this subsection here, but I am not sure that I want to let it here. It can also be in the tod realism chapter \ref{chap:tod}. Or, maybe the case where we add convolution inside PCG (normal and best case) should be in the chapter, and we can explore the case where we let the PCG reconstruct a convolved map without imposing resolution during reconstruction can be put somewhere else. I will write both here for now, I will let you tell me what you think.}
 
 \subsubsection{Fixed angular resolution reconstruction}
 
@@ -158,7 +158,7 @@ Then, from the reconstruction point of view, each of the $N_{rec}$ reconstructed
     \label{fig:fwhm_bias}
 \end{figure}
 
-Therefore, we can define the resolution degradation operator $\mathcal{C}_{ij}$, which apply a gaussian kernel with width :
+Therefore, we can define the resolution degradation operator $\mathcal{C}_{ij}$, which apply a Gaussian kernel with width :
 
 \begin{equation}
     \sigma_{ij} = \sqrt{\sigma_{\nu_i}^2 - \sigma_{\nu_j}^2}.
@@ -203,8 +203,8 @@ In order to run the FMM algorithm from simulating date to reconstruct sky maps, 
 
 \subsubsection{Scanning Strategy} \label{subsub:scanning_strategy}
 
-The scanning strategy consists at defining where the telescope points and when. It is a tool used to mitigate instrumental systematics and atmospheric fluctuations, by scanning the same part of the sky multiple times. For the simulation in this thesis, it was chosen to not use a realistic scanning strategy, but a random scanning strategy. It means that at each time, the instrument will point at a random position inside the patch. The goal of this method is to achieve a good coverage of the sky patch with a reasonable number of points. It allows to simpler instrumental model and shorter dataset, both will benefit for the numerical computation point of view, and should not affect the result of the reconstruction (but, with a realistic scanning strategy, it would only take much more pointings to achieve the same coverage level of the patch).
-Additionally, the location on the sky matters for a scientific survey. For CMB experiments, the main criterium is a region with low astrophysical emissions, meaning that we can't observe close to the Milky Way center. For all figures inside this thesis, the simulated instrument observes the expected scientific patch of QUBIC experiment, described in subsection \ref{sub:sky_patch}.
+The scanning strategy consists at defining where the telescope points and when. It is a tool used to mitigate instrumental systematics and atmospheric fluctuations, by scanning the same part of the sky multiple times. For the simulation in this thesis, it was chosen to not use a realistic scanning strategy, but a random scanning strategy. It means that at each time, the instrument will point at a random position inside the patch. The goal of this method is to achieve a good coverage of the sky patch with a reasonable number of points. It allows to simpler instrumental model and shorter dataset, both will benefit for the numerical computation point of view, and should not affect the result of the reconstruction (but, with a realistic scanning strategy, it would only take much more pointing to achieve the same coverage level of the patch).
+Additionally, the location on the sky matters for a scientific survey. For CMB experiments, the main criterium is a region with low astrophysical emissions, meaning that we can't observe close to the Milky Way centre. For all figures inside this thesis, the simulated instrument observes the expected scientific patch of QUBIC experiment, described in subsection \ref{sub:sky_patch}.
 
 \subsection{Maps}
 
@@ -274,5 +274,18 @@ This figure exhibits multiple interesting features. First, looking at the RMS of
 For an imager, we are used to seeing a direct correlation between $1/coverage$ and the RMS of noise in the residual maps. Here, the inverse of coverage follows the noise profile only in the outer part of the patch, but not in the inner parts. For QUBIC, the result seems to be different, as the RMS of noise is only following the inverse of coverage for the outer patch regions. This is still something to understand with BI and spectral imaging.
 
 \subsection{Sub-bands Correlations}
+
+For a classical imager, the sky is observed at different frequencies, using a different detector chain for each of them. It results that the noise in the reconstructed maps is independent between frequency channels : $Cov(\nu_i, \nu_j) \approxeq 0$ for $i \neq j$. 
+It is different for a Bolometric Interferometer, as it is possible to reconstruct multiple maps from data taken by the same detectors. Indeed, we are extracting the spectral information from the shape of the interference pattern on the focal plane. Since several reconstructed sub-bands contribute simultaneously to the same detector samples, a positive fluctuation assigned to one sub-band must be compensated by a negative fluctuation in neighbouring sub-bands in order to reproduce the same data. It means that reconstructed maps are anti-correlated with each other : $Cov(\nu_i, \nu_j) < 0$ for $i \neq j$. To understand deeper this behaviour, it is important to note that close sub-bands are more anti-correlated than distant ones because the synthesized beam changes only slightly with frequency. Consequently, neighbouring sub-bands produce very similar signatures in TOD and are harder to disentangle during the reconstruction.
+Figure \ref{fig:sub-bands_correlation} is illustrating these two specificities for BI. We are reconstructed $3$ maps within one physical band, and we compare the correlation, average over pixels, between reconstructed sub-maps for each Stokes parameters. The anti-correlation between the sub-bands $\nu_0$, $\nu_1$ and $\nu_2$ is visible. Also, as explained just above, anti-correlation is higher for neighbouring sub-bands. We don't expect any correlation between Stokes parameters for a perfect polariser and Half-Wave Plate.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{frequency_correlation_Nrec=6.pdf}
+    \caption{Correlation matrix over the pixels for 3 reconstructed maps within the physical band, for the 3 Stokes parameters. Taken from \cite{FMM}.}
+    \label{fig:sub-bands_correlation}
+\end{figure}
+
+Finally, the higher $N_{rec}$ is (so, the more maps we are trying to reconstruct), the closer will be the shape of the beam between all the sub-bands, leading to stronger anti-correlations and a degradation of the noise performance in the reconstructed maps. This is an intrinsic limitation to spectral imaging, when we can't distinguish the signal between too tight sub-bands.
 
 \end{document}
