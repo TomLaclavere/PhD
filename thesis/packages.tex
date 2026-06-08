@@ -5,6 +5,7 @@
 \usepackage{physics}
 \usepackage{graphicx}
 \usepackage[hyphens]{url}
+\usepackage[normalem]{ulem}
 \Urlmuskip=0mu plus 1mu
 
 % caption/subcaption: load caption before subcaption
@@ -21,6 +22,8 @@
 \usepackage{subfiles}
 
 \usepackage[hidelinks]{hyperref}
+\usepackage{xr-hyper}
+\ifSubfilesClassLoaded{\externaldocument{../../output/thesis}}{}
 \usepackage{minitoc}
 \setcounter{minitocdepth}{2} 
 \dominitoc

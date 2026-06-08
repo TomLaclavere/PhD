@@ -75,7 +75,7 @@ By analogy with classical interferometry, illustrated in Figure~\ref{fig:schemat
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.7\linewidth]{Schematic_interferometer.pdf}
-    \caption{Schematic of an interferometer, to illustrate how to compute amplitude in antenna 1 with respect to antenna 2, using the phase shift $\delta$.}
+    \caption{Schematic of an interferometer, to illustrate how to compute amplitude in antenna 1 with respect to antenna 2, using the phase shift $\delta$. \rmk{Remark from Steve : "I'm not sure about the additional phase shift introduced by the optical combiner.  My understanding is that the optical combiner is designed to maintain the total path length for any ray arriving at the aperture.  There should be no phase shift introduced by the optical combiner, except for imperfections in the manufacture of the surfaces.  Is this phase shift mentioned in Créidhe's paper?" My understanding is that interference can only happen with a phase shift, and that distance between horns and observation of sources not aligned with optical axis automatically create phase difference. I don't see this explanation in QUBICVIII, but there is no justification for the PSF equation... The demonstration is based on Mathias' one, and seems equivalent to the one derived by Louise.}}
     \label{fig:schematic_interferometer}
 \end{figure}
 
@@ -123,7 +123,7 @@ Finally, the synthesized beam is given by:
 
 Using QUBIC specifications, summarised in Table~\ref{table:qubic_spec}, we can use Equation~\ref{eq:synth_beam} to compute the synthesized beam of QUBIC. Figure~\ref{fig:synth_beam_qubic} shows a beam composed of multiple high-intensity peaks of different diffraction orders $k$. The number of peaks depends on the maximum order considered, and is given by $N_{peaks} = (2k_{max} + 1)^2$. For a central detector, the central peak is the order-0 peak, corresponding to the maximum of the primary beam. The order-1 peaks are the 8 peaks around the centre, while $k_{max} = 2$ corresponds to $25$ peaks (some at very low relative amplitude).
 
-\rmk{I wrote a small script to compute and plot QUBIC beam easily without using qubicsoft (it takes too much time to debug old stuff), in order to show different plots than in previous thesis and paper, is it OK ? }
+\rmk{I wrote a small script to compute and plot QUBIC beam easily without using qubicsoft (it takes too much time to debug old stuff), in order to show different plots than in previous thesis and paper, is it OK ? Steve likes it :)}
 
 
 

@@ -20,7 +20,7 @@ Repository to store my PhD work for QUBIC Instrument. It includes my Thesis, pub
 
 This ensures all required packages are installed, including:
 
-- `amsmath`, `graphicx`, `url`, `subfiles`, `caption`, `subcaption`, `multirow`, `xcolor`, `titlesec`, `minitoc`, `hyperref`
+- `amsmath`, `graphicx`, `url`, `ulem`, `subfiles`, `caption`, `subcaption`, `multirow`, `xcolor`, `titlesec`, `minitoc`, `hyperref`
 - `biblatex` with `backend=biber`
 
 ---
@@ -29,9 +29,9 @@ This ensures all required packages are installed, including:
 
 | OS | Command |
 |----|---------|
-| **Ubuntu / Debian** | ```bash sudo apt update sudo apt install -y texlive-latex-extra texlive-bibtex-extra biber latexmk ``` |
-| **Fedora** | ```bash sudo dnf install -y texlive-collection-latex texlive-collection-latexrecommended texlive-collection-latexextra biber latexmk ``` |
-| **Arch Linux / Manjaro** | ```bash sudo pacman -S --needed texlive-core texlive-latexextra texlive-bibtexextra texlive-binextra biber ``` |
+| **Ubuntu / Debian** | ```bash sudo apt update sudo apt install -y texlive-latex-extra texlive-bibtex-extra texlive-plain-generic biber latexmk ``` |
+| **Fedora** | ```bash sudo dnf install -y texlive-collection-latex texlive-collection-latexrecommended texlive-collection-latexextra texlive-collection-plaingeneric biber latexmk ``` |
+| **Arch Linux / Manjaro** | ```bash sudo pacman -S --needed texlive-core texlive-latexextra texlive-bibtexextra texlive-binextra texlive-plaingeneric biber ``` |
 | **macOS (Homebrew)** | ```bash brew install --cask mactex biber ``` |
 
 

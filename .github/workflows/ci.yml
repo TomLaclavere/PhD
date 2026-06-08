@@ -23,7 +23,8 @@ jobs:
             biber \
             latexmk \
             gettext \
-            texlive-science
+            texlive-science \
+            texlive-plain-generic
 
       - name: Build website
         env:
