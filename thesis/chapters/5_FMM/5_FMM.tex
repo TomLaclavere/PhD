@@ -10,7 +10,7 @@
 \rmk{While writing, I have the feeling that the chapter is quick confusing, between reconstruction, simulation, data acquisition, etc... Can you take extra attention to the general chapter to check the overall coherence ? I also feel that I lack definitions and explanation somewhere, but I can't point exactly where while I am inside the writing...}
 
 In Chapter \ref{chap:spectral_imaging}, we presented the frequency dependency of QUBIC's beam, and the possibility of using this property, called \emph{spectral imaging}, to split the physical bandwidth into frequency sub-bands to increase the spectral resolution of the instrument. We now introduce a map-making algorithm based on spectral imaging, to reconstruct multiple frequency maps of the sky. We call this algorithm \emph{Frequency Map-Making} (FMM).
-We start by introducing the general fundamentals of map-making for CMB experiment, followed by the QUBIC-specific formalism covering both the forward simulation model and the FMM reconstruction algorithm. The resulting maps are then analysed to understand the behaviour of FMM : numerical cost, noise structure and anti-correlations introduced by spectral imaging. 
+We start by introducing the general fundamentals of map-making for CMB experiment, followed by the QUBIC-specific formalism covering both the forward simulation model and the FMM reconstruction algorithm. The resulting maps are then analysed to understand the behaviour of FMM : numerical cost, noise structure and anti-correlations introduced by spectral imaging. This chapter remains methodological, deeper analysis and forecasts are presented in next chapters of this thesis.
 
 \rmk{JC, can you tell me about the exact chronology ?}
 \personal{The content of this chapter is the result multiple people within QUBIC Collaboration. HERE, I WILL ADD A COMPLETE DESCRIPTION OF THE PEOPLE WHO WORKED ON MAP-MAKING FOR QUBIC, Non-exhaustive list : JC Hamilton, Pierre Chanial, Mikhail Stolpovskiy, Louise Mousset, Mathias Regnier.
@@ -287,5 +287,9 @@ Figure \ref{fig:sub-bands_correlation} is illustrating these two specificities f
 \end{figure}
 
 Finally, the higher $N_{rec}$ is (so, the more maps we are trying to reconstruct), the closer will be the shape of the beam between all the sub-bands, leading to stronger anti-correlations and a degradation of the noise performance in the reconstructed maps. This is an intrinsic limitation to spectral imaging, when we can't distinguish the signal between too tight sub-bands.
+
+\section*{Conclusion}
+
+Through this chapter, we explained how spectral imaging can be used to reconstruct multiple frequency band within one physical one, defining the core of Frequency Map-Making. The main goal behind this algorithm is to improve the spectral resolution and the number of frequency information, which is the key point to improve component separation. The component separation method used on the reconstructed frequency maps is presented in Chapter \ref{chap:xspectrum}, and the forecast associated with it in Chapter \ref{chap:forecast}, while the hyperparameters effects and TOD realism criteria are discussed in Chapter \ref{chap:tod}.
 
 \end{document}

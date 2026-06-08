@@ -5,17 +5,37 @@
 \begin{document}
 \chapter{Component Map-Making} \label{chap:CMM}
 
+This chapter introduces an innovative algorithm for separating astrophysical components while performing map-making at the same time, using the frequency information in QUBIC data. This algorithm, while usable by all CMB experiments, is the most efficient when using spectral imaging enabled by bolometric interferometry. We call this method \emph{Component Map-Making} (CMM). 
+The first section focuses at describing the general principle of CMM and differences with FMM. Then, we talk about the component separation part, where two methods are implemented : one relying on theoretical models for foregrounds emissions, and another one free from this assumption. We end the chapter by a discussion on the numerical properties of CMM, along with the noise in reconstructed maps.
+This chapter aims at staying methodological, deeper development are presented in next chapters.
+
+\personal{The idea and implementation of CMM was developed during Mathias Regnier's PhD thesis~\cite{mathiasthesis}. During my first year, I was involved in the development and testing process, alongside with Mathias. This work leads to a publication \cite{CMM}. During my second, I refactored the CMM code and built a user-friendly pipeline based on a parameter file, while improving the general architecture and complexity. Then, I performed testing and characterisation of CMM, to increase our understanding and its parameters' dependency in my third year, and builds a forecast-ready software. My contributions are detailed in Chapters \ref{chap:qubicsoft}, \ref{chap:tod}, \ref{chap:atm} and \ref{chap:forecast}.}
+
 \section{General Principle}
+
+The previous chapter introduced the Frequency Map-Making algorithm, which uses QUBIC's spectral imaging capabilities to reconstruct multiple frequency maps of the sky. This operation is performed to improve the component separation part by increasing the number of frequency bands and improving the spectral resolution. Therefore, as the spectral information is directly accessible, it is not necessary to reconstruct sky maps to be able to distinguish between the different signals from the sky. 
+Based on this idea, we develop a completely new algorithm which separate contributions from the different component using spectral information encoded in TOD, while reconstructing their emission maps at the same time. Compared to FMM, the unknowns are no longer the sky maps at different frequencies, but directly the component maps.  
 
 \subsection{Map-Making equation}
 
+This philosophical modification of the map-making algorithm requires to modify the general map-making equation \ref{eq:acquisition} :
+
+\begin{equation}
+    \vec{d} = HA\vec{c} + \vec{n},
+\end{equation}
+
+introducing the mixing matrix $A$ and $\vec{c}$, a vector containing the maps of the different sky components, with shape $\left(N_{comp}, N_{pix}, N_{stokes}\right)$. 
+Therefore, two matrices are unknown in the equation : the mixing matrix and the component maps.
+
 \subsection{Mixing-Matrix}
+
+The mixing matrix $A$, with shape $\left(N_{comp}, N_{sub}\right)$ is the component separation tool of this formalism. It relies on the hypothesis that one component is a template in pixel space, which needs to be scale at different frequencies.  
 
 \subsection{Iterative Fitting}
 
 \section{Parametric Reconstruction}
 
-\subsection{Forgrounds models}
+\subsection{Foregrounds models}
 
 \subsection{Principle}
 
@@ -29,13 +49,15 @@
 
 \section{Characterisation}
 
-\subsection{Numerical ressources: memory \& parallelisation}
+\subsection{Numerical resources: memory \& parallelisation}
 
 \subsection{Noise structure}
 
 \subsection{Angular Resolution of components maps}
 
 \section{Comparison : FMM \& CMM}
+
+\rmk{Should be in Forecast I believe..}
 
 \minitoc
 
