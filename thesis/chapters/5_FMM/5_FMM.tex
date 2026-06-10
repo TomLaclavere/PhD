@@ -138,7 +138,7 @@ where $f_{sub} \equiv N_{sub} / N_{rec}$, a sub parameter defining the number of
 The main advantage of such a method is that it is only a software trick. Indeed, it does not affect the data acquisition (or the data simulation), which is always performed with equation \ref{eq:nsub_acq}. Including the extra $N_{rec}$ dimension allows reconstructing multiple frequency maps inside the QUBIC bandwidth. Thus, the $N_{rec}$ parameter can be adjusted during the data analysis process, depending on the needs. Still, $N_{rec}$ suffers from limitations, as it cannot be arbitrarily large. We discussed in Chapter~\ref{chap:spectral_imaging} that we should avoid overlapping peaks while discretising, imposing an upper limit of $N_{rec} \approx 5$ per focal plane. However, since the beam is completely frequency-dependent, even the smallest discretisation $N_{rec}=2$ will create anti-correlations between the $2$ reconstructed maps, resulting in additional noise in the pixels. On the other hand, reconstructing multiple sky maps inside the physical bandwidth leads to higher spectral resolution, which will help to separate the CMB from its contaminants.  
 In summary, increasing $N_{rec}$ improves component separation capabilities of QUBIC, but at the cost of higher noise in the maps due to anti-correlations introduced by spectral imaging. Results to study the effect of $N_{rec}$ are performed in the forecast chapter \ref{chap:forecast}.
 
-\subsection{Angular resolution}
+\subsection{Angular resolution} \label{sub:fmm_convolution}
 \rmk{I am writing this subsection here, but I am not sure that I want to let it here. It can also be in the tod realism chapter \ref{chap:tod}. Or, maybe the case where we add convolution inside PCG (normal and best case) should be in the chapter, and we can explore the case where we let the PCG reconstruct a convolved map without imposing resolution during reconstruction can be put somewhere else. I will write both here for now, I will let you tell me what you think.}
 
 \subsubsection{Fixed angular resolution reconstruction}
@@ -184,10 +184,43 @@ The reconstruction converges towards a map characterized by an effective angular
 
 where $\nu_j$ denotes the frequencies belonging to the reconstructed band $\nu_i$, $\alpha_{\nu_j}$ is the effective coverage, $w_{\nu_j}$ is a weighting factor, and $\sigma_{\nu_j}$ is the beam width associated with frequency $\nu_j$. The weighting factor depends on the sky emission model, since the relative contribution of the different sky components varies across the frequency band. For instance, thermal dust emission increases with frequency, giving a larger weight to the highest-frequency sub-bands when averaging the angular resolution. The weights are therefore derived from the spectral energy distributions (SEDs) of the considered sky components.
 
+To verify the validity of this hypothesis, several metrics have been used. The simplest and most satisfaying one consists at running the algorithm without adding the instrumental and photon noises contribution in simulated data. Doing so, with an unbiased method, we are expected to reconstruct perferctly the input maps. Then, any small difference between the true and computed reconstructed resolutions will be visible as noise in the residual. The result is shown in Figure \ref{fig:fmm_convolution_noiseless}.
+
+% \begin{figure}[!htbp]
+%     \centering
+%     \includegraphics[width=1\linewidth]{}
+%     \caption{Placehorld : FMM convolution noiseless.}
+%     \label{fig:fmm_convolution_noiseless}
+% \end{figure}
+
+We can also use the noise profile in residual maps. Indeed, as the number of photons is splited into two maps for polarisation, with respect to intensity one, we expect a noise ratio of $1/\sqrt{2}$ between the two. Observing this ratio between reconstructed maps ensures an unbiased noise repartition. Figure \ref{fig:fmm_noise_profile} exhibits that noise's RMS versus angular distance to the center of the patch in residual maps is identical between $I$ and $QU/\sqrt{2}$. The small fluctuations visible close to the center are due to statistical fluctuation, as RMS is computed along fewer pixels closer to the center than at the border. This result shows a consistent noise distribution between the $3$ Stokes parameters.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{noise_profile_150_GHz.pdf}
+    \caption{RMS of noise in the residual maps depending on their angular distance to the center of the patch.}
+    \label{fig:fmm_noise_profile}
+\end{figure}
+
+Finally, we can manualy fit the resolution for which the difference between the reconstructed maps and the true maps at infinite resolution, convolved at this resolution, is the lowest. This is equivalent as minimising the function :
+
+\begin{equation}
+    \chi^2(\sigma_{rec}) \propto \left(s_{rec} - C(\sigma_{rec})s^{~\infty}_{true}\right)^2,
+\end{equation}
+
+The result is presented in Figure \ref{fig:fmm_fit_fwhm}, where the expected computed value for the reconstructed FWHM is very close to the one minimising the most the difference between input and reconstruction. The small difference being explained by the random noise in the reconstructed map, but is small enough to be confident in our computation.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{chi2_fwhm_fit_150_GHz.pdf}
+    \caption{Fitting of the reconstructed FWHM for the 150 GHz map.}
+    \label{fig:fmm_fit_fwhm}
+\end{figure}
+
+\rmk{Should I add a figure with wrong resolution, to show what it looks like ?}
+
 This approach is currently under investigation and remains less robust than explicitly including the convolution operator in the reconstruction model. Nevertheless, within a controlled simulation framework, it provides a computationally efficient alternative that allows rapid exploration of the QUBIC map-making parameter space. This simplification proved particularly useful for the analyses presented in this thesis. A detailed comparison between reconstructions performed with and without the convolution operator is presented in Chapter \ref{chap:tod}.
-
 Although the method performs satisfactorily in simulations, its applicability to real data remains uncertain. In particular, instrumental systematics, calibration uncertainties, and imperfect knowledge of the frequency response may alter the effective frequency mixing within reconstructed sub-bands, thereby affecting the predicted angular resolution. Further investigations are therefore required before this approach can be considered for the analysis of observational data.
-
 
 \subsection{External data ?}
 
@@ -228,7 +261,7 @@ Figure \ref{cal tower} shows the reconstruction into $Nrec=4$ frequency bands of
     \label{fig:pol_maps_DB_nrec2}
 \end{figure}
 
-\subsection{Numerical resources: memory and computational time}
+\subsection{Numerical resources: memory and computational time} \label{sub:FMM_numerical_limits}
 
 One of the main limitation of the Frequency Map-Making algorithm is its memory usage, as well as the computation time. 
 
@@ -270,8 +303,8 @@ A way to show that is by plotting the noise profile regarding the angular distan
     \label{fig:angular_profile}
 \end{figure}
 
-This figure exhibits multiple interesting features. First, looking at the RMS of the residual maps. We can see a plateau where RMS is relatively constant, then, it starts rising (approximatively where we are at a distance equivalent to the distance between peaks from the edge of the patch). Looking at the coverage, it seems less flat in the inner part of the patch, but exhibits the same rising when reaching the outer regions. 
-For an imager, we are used to seeing a direct correlation between $1/coverage$ and the RMS of noise in the residual maps. Here, the inverse of coverage follows the noise profile only in the outer part of the patch, but not in the inner parts. For QUBIC, the result seems to be different, as the RMS of noise is only following the inverse of coverage for the outer patch regions. This is still something to understand with BI and spectral imaging.
+This figure exhibits multiple interesting features. First, looking at the RMS of the residual maps. We can see a plateau where RMS is relatively constant, then, it starts rising (approximatively where we are at a distance equivalent to the distance between peaks from the edge of the patch). Looking at the coverage, it seems less flat in the inner part of the patch, but exhibits the same rising when reaching the outer regions. The ratio of $1/\sqrt{2}$ between Intensity map and Polarisation maps is purely statistical, the number of photons being divided by $2$ due to the $2$ Polarisation maps in comparison with Intensity. Observing $RMS_I \sim RMS_{QU}$ means a correct noise repartition in the residual maps.
+For an imager, we are used to seeing a direct correlation between $1/coverage$ and the RMS of noise in the residual maps. Here, the inverse of coverage follows the noise profile only in the outer part of the patch, but not in the inner parts. For QUBIC, the result seems to be different, as the RMS of noise is only following the inverse of coverage for the outer patch regions. This is still underlying work needed to understand with BI and spectral imaging regarding its noise structure in maps.
 
 \subsection{Sub-bands Correlations}
 
