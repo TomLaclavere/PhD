@@ -4,30 +4,30 @@
 
 \begin{document}
 
-\chapter{Bolometric Interferometry to Spectral Imaging} \label{chap:spectral_imaging}
+\chapter[Spectral Imaging]{From Bolometric Interferometry to Spectral Imaging} \label{chap:spectral_imaging}
 
 \minitoc
 
 \section*{Introduction}
 
 A central feature of the QUBIC instrument is its horn array, which produces an interference pattern on the focal plane through bolometric interferometry. Unlike conventional imagers, the instrument response is therefore described by a synthesized beam resulting from the coherent combination of signals originating from all horn pairs.
-This synthesized beam exhibits a complex spatial structure composed of interference fringes and secondary peaks whose morphology strongly depends on the observing frequency. As a consequence, the signal measured on the focal plane contains not only spatial information, but also spectral information encoded in the chromatic evolution of the interference pattern.
-This property forms the basis of the spectral imaging capability of QUBIC. By exploiting the frequency dependence of the synthesized beam, the wide instrumental bandwidth can be decomposed into several sub-bands, allowing a partial reconstruction of the sky signal as a function of frequency.
+This synthesized beam exhibits a complex spatial structure composed of interference fringes forming a series of peaks whose morphology strongly depends on the observing frequency. As a consequence, the signal measured on the focal plane contains not only spatial information, but also spectral information encoded in the chromatic evolution of the interference pattern.
+This property forms the basis of the spectral imaging capability of QUBIC. By exploiting the frequency dependence of the synthesized beam, the wide instrumental bandwidth can be decomposed into several sub-bands, allowing a  reconstruction of the sky signal as a function of frequency.
 In this chapter, we first introduce the theoretical framework of synthesized beams in bolometric interferometry and describe the monochromatic and polychromatic properties of the synthesized beam. We then explain how the chromaticity of the interference pattern can be used to perform spectral imaging and improve component separation for CMB observations.
 
 \section{Synthesized Beam}
 
-The \emph{synthesized beam}, or ``dirty beam'' for an interferometer, is the beam with which a detector scans the sky. It therefore strongly depends on the detector's position on the focal plane. This section provides the theoretical framework needed to understand and describe this beam, along with its main properties.
+The \emph{synthesized beam}, or \enquote{dirty beam} for an interferometer, is the effective beam with which a detector scans the sky. Therefore, it strongly depends on the detector's position on the focal plane. This section provides the theoretical framework needed to understand and describe this beam, along with its main properties.
 
 \subsection{Theoretical description}
 
 \subsubsection{Definitions}
 
 Before introducing the mathematical description of QUBIC, several definitions are required to clarify the key concepts used throughout this chapter.
-The \emph{beam} of a detector characterises its angular response on the sky, or equivalently, its sensitivity as a function of sky direction. For a bolometric interferometer, this response is called the \emph{synthesized beam}, since it results from the interference of the signals collected by all pairs of horns. The synthesized beam therefore exhibits a complex multi-peaked structure determined by the geometry of the horn array.
+The \emph{beam} of a detector characterises its angular response on the sky, or equivalently, its sensitivity as a function of sky direction. For a bolometric interferometer, this response is called the \emph{synthesized beam}, since it results from the interference of the signals collected by all pairs of horns. The synthesized beam exhibits a complex multi-peaked structure determined by the geometry of the horn array.
 On the focal plane, radiation coming from a single direction on the sky produces a specific interference pattern. This pattern corresponds to the instrument \emph{Point Spread Function} (PSF), describing how a point source is distributed over the detector array. The synthesized beam and the PSF thus represent two complementary descriptions of the same instrumental response: the former describes the response on the sky, while the latter corresponds to its projection onto the focal plane.
 Each detector samples the PSF at its own position on the focal plane. As the instrument scans the sky, the relative position of the source with respect to the synthesized beam evolves, producing a time-varying signal. Combining measurements obtained during the scan allows reconstruction of the sky signal from the detector timelines. 
-For QUBIC, the horn facing the sky and the one facing the instrument are identical, meaning that the beam looking at the sky called the primary beam $B_{prim}(\vec{n}, \lambda)$ and the beam looking at the focal plane called the secondary beam $B_{sec}(\vec{r}, \lambda)$ are equal, ensuring that, for a perfect instrument (exactly identical horns and ideal optical combiner), the PSF and the synthesized beam are equal~\cite{QUBICVIII}: 
+For QUBIC, the horn facing the sky and the one facing the instrument are identical, meaning that, for a single horn, the beam looking at the sky called the primary beam $B_{prim}(\vec{n}, \lambda)$ and the beam looking at the focal plane called the secondary beam $B_{sec}(\vec{r}, \lambda)$ are equal, ensuring that, for a perfect instrument (exactly identical horns and ideal optical combiner), the PSF and the synthesized beam are equal~\cite{QUBICVIII}: 
 
 \begin{equation} \label{eq:synth_beam_init}
     B_{synth}^{\vec{n}}(\vec{r}) = \mathrm{PSF}^{\vec{r}}(\vec{n}).
@@ -56,7 +56,7 @@ The PSF can be expressed as:
     \mathrm{PSF}^{\vec{n}}(\vec{r}, \lambda) = \vert A_{det}^{\vec{n}}(\vec{r}, \lambda)\vert ^2,
 \end{equation}
 
-with $A_{det}^{\vec{n}}(\vec{r}, \lambda)$ the amplitude on the detector at position $\vec{r}$, for the instrument looking in direction $\vec{n}$ at wavelength $\lambda$.
+with $A_{det}^{\vec{n}}(\vec{r}, \lambda)$ the amplitude \jc{of the electric field $\vec{E}$} on the detector at position $\vec{r}$, for the instrument looking in direction $\vec{n}$ at wavelength $\lambda$.
 
 The amplitude at a detector can be expressed in terms of the contribution from each individual horn, described by $A_{horn}^{\vec{n}}(\vec{r} - \vec{x}_h, \lambda)$, the amplitude transmitted by a horn at position $\vec{x}_h$ and wavelength $\lambda$ to position $\vec{r}$ on the focal plane:
 
@@ -75,7 +75,7 @@ By analogy with classical interferometry, illustrated in Figure~\ref{fig:schemat
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.7\linewidth]{Schematic_interferometer.pdf}
-    \caption{Schematic of an interferometer, to illustrate how to compute amplitude in antenna 1 with respect to antenna 2, using the phase shift $\delta$. \rmk{Remark from Steve : "I'm not sure about the additional phase shift introduced by the optical combiner.  My understanding is that the optical combiner is designed to maintain the total path length for any ray arriving at the aperture.  There should be no phase shift introduced by the optical combiner, except for imperfections in the manufacture of the surfaces.  Is this phase shift mentioned in Créidhe's paper?" My understanding is that interference can only happen with a phase shift, and that distance between horns and observation of sources not aligned with optical axis automatically create phase difference. I don't see this explanation in QUBICVIII, but there is no justification for the PSF equation... The demonstration is based on Mathias' one, and seems equivalent to the one derived by Louise.}}
+    \caption{Schematic of an interferometer, to illustrate how to compute amplitude in antenna 1 with respect to antenna 2, using the phase shift $\delta$.}
     \label{fig:schematic_interferometer}
 \end{figure}
 
@@ -114,23 +114,29 @@ Assuming a regular square horn array with spacing $\Delta_h$, the interference t
 Finally, the synthesized beam is given by:
 
 \begin{equation} \label{eq:synth_beam}
-    B_{synth}^{\vec{n}}(\vec{r}) = B_{prim}(\vec{n}, \lambda)B_{sec}(\vec{r}, \lambda) \frac{\sin^{2}(\frac{\pi N_{horns}\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])}{\sin^{2}(\frac{\pi\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])}\frac{\sin^{2}(\frac{\pi N_{horns}\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}{\sin^{2}(\frac{\pi\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}
+    B_{synth}^{\vec{n}}(\vec{r}) = B_{prim}(\vec{n}, \lambda)B_{sec}(\vec{r}, \lambda) \left(\frac{\sin^{2}(\frac{\pi N_{horns}\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])}{\sin^{2}(\frac{\pi\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])}\right)\left(\frac{\sin^{2}(\frac{\pi N_{horns}\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}{\sin^{2}(\frac{\pi\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}\right)
 \end{equation}
-
-\rmk{Good luck to verify...}
 
 \subsection{Beam properties}
 
 Using QUBIC specifications, summarised in Table~\ref{table:qubic_spec}, we can use Equation~\ref{eq:synth_beam} to compute the synthesized beam of QUBIC. Figure~\ref{fig:synth_beam_qubic} shows a beam composed of multiple high-intensity peaks of different diffraction orders $k$. The number of peaks depends on the maximum order considered, and is given by $N_{peaks} = (2k_{max} + 1)^2$. For a central detector, the central peak is the order-0 peak, corresponding to the maximum of the primary beam. The order-1 peaks are the 8 peaks around the centre, while $k_{max} = 2$ corresponds to $25$ peaks (some at very low relative amplitude).
 
-\rmk{I wrote a small script to compute and plot QUBIC beam easily without using qubicsoft (it takes too much time to debug old stuff), in order to show different plots than in previous thesis and paper, is it OK ? Steve likes it :)}
-
-
-
 \begin{figure}[!htbp]
     \centering
-    \includegraphics[width=1\linewidth]{synthesized_beam.pdf}
-    \caption{(left) Projection of the synthesized beam as seen by a central detector on the focal plane, given by Equation~\ref{eq:synth_beam}. (right) One-dimensional cut of the synthesized beam. The amplitude of each peak is given by the primary beam amplitude at its position.}
+    \begin{subfigure}{\linewidth}
+        \centering
+        \includegraphics[width=0.8\textwidth]{synthesized_beam_2d.pdf}
+        \caption{}
+        \label{fig:synth_beam_qubic_2d}
+    \end{subfigure}
+
+    \begin{subfigure}{\linewidth}
+        \centering
+        \includegraphics[width=0.8\textwidth]{synthesized_beam_1d.pdf}
+        \caption{}
+        \label{fig:synth_beam_qubic_1d}
+    \end{subfigure}
+    \caption{(top) Projection of the synthesized beam as seen by a central detector on the focal plane, given by Equation~\ref{eq:synth_beam}. (bottom) One-dimensional cut of the synthesized beam. The amplitude of each peak is given by the primary beam amplitude at its position.}
     \label{fig:synth_beam_qubic}
 \end{figure}
 
@@ -144,7 +150,7 @@ To better understand the shape of the beam, it is useful to think about Young's 
 \end{figure}
 
 Due to their specific dimensions, the horn beams have a FWHM of $12.9^\circ$ at $150~\mathrm{GHz}$. The beam properties can be derived from the optical parameters summarised in Table~\ref{table:qubic_spec}. The FWHM of the peaks is given by $\sim\frac{\lambda}{\Delta_h}$, which is equal to $0.39^\circ$ at $150~\mathrm{GHz}$.
-Additionally, the position of the central peak depends on the position of the point source, or equivalently, on the position of the detector on the focal plane. Figure~\ref{fig:synth_beam_qubic} assumed a point source and a detector aligned with the optical axis. For an off-centre detector, however, the central peak is shifted by $\tan^{-1}\!\left(\frac{r}{D_f}\right)$, where $r$ is the distance from the optical axis to the detector. For $r=12~\mathrm{mm}$, the central peak is shifted by $\theta_{shift} \approx 2.3^\circ$. This case is shown in Figure~\ref{fig:synth_beam_off_centre}.
+Additionally, the position of the central peak depends on the position of the point source, or equivalently, on the position of the detector on the focal plane. Figure~\ref{fig:synth_beam_qubic} assumed a point source and a detector aligned with the optical axis. For an off-centre detector, however, the central peak is shifted by $\tan^{-1}\!\left(\frac{r}{D_f}\right)$, where $r$ is the distance from the optical axis to the detector. As an example, for $r=12~\mathrm{mm}$, the central peak is shifted by $\theta_{shift} \approx 2.3^\circ$. This case is shown in Figure~\ref{fig:synth_beam_off_centre}.
 
 \begin{figure}[!htbp]
     \centering
@@ -164,7 +170,7 @@ Additionally, the position of the central peak depends on the position of the po
         Horn distance $\Delta_h$ & 14~mm \\
         Focal length $D_f$ & 0.3~m \\
         Horn beam FWHM & 12.9$^\circ$ ($150~\mathrm{GHz}$)\\
-        Peak FWHM & 0.39$^\circ$ ($150~\mathrm{GHz}$) \\
+        Synth. beam peaks FWHM & 0.39$^\circ$ ($150~\mathrm{GHz}$) \\
         \hline
     \end{tabular}
     \caption{QUBIC instrument parameters used throughout this chapter~\cite{QUBICVII, QUBICVIII}.}
@@ -179,12 +185,13 @@ As in the case of interference fringes, the distance between two fringes is prop
 
 \subsection{Polychromatic beam}
 
-In the previous figures, the beam was treated as monochromatic. However, its shape changes when observing a polychromatic source, because the peak positions differ across frequencies. The left panel of Figure~\ref{fig:synth_beam_poly} illustrates this for the secondary peaks. The right panel shows the polychromatic case, which exhibits a continuous plateau resulting from the superposition of all monochromatic beams.
+In the previous figures, the synthesized beam was treated as monochromatic. However, its shape changes when observing a polychromatic source because the positions of the secondary peaks vary with frequency. The left panel of Figure~\ref{fig} illustrates this effect for several monochromatic beams. The right panel shows the corresponding polychromatic beam, where the superposition of monochromatic contributions produces a continuous plateau instead of distinct peaks.
+\jc{For a detector located at the centre of the focal plane and observing along the instrument line of sight, the optical path difference between all horn pairs vanishes. Consequently, the central peak remains at the same position for all frequencies and is not broadened by the spectral integration. Its amplitude is therefore simply determined by the value of the primary beam at $\vec{n}=0$.}
 
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=1\linewidth]{synth_beam_many_freq.pdf}
-    \caption{(left) 1D cut of the synthesized beam for QUBIC observing two monochromatic point sources at $131$ and $169~\mathrm{GHz}$. (right) 1D cut of the synthesized beam for QUBIC observing a polychromatic point source within its frequency bandwidth $\left[131, 169\right]~\mathrm{GHz}$, approximated by $5$ monochromatic beams. Taken from \cite{QUBICII}.}
+    \caption{(left) 1D cut of the synthesized beam for QUBIC observing two monochromatic point sources at $131$ and $169~\mathrm{GHz}$. (right) 1D cut of the synthesized beam for QUBIC observing a polychromatic point source within its frequency bandwidth $\left[131, 169\right]~\mathrm{GHz}$, approximated by $5$ monochromatic beams. \jc{The continuous integration over frequency of monochromatic synthesized beams leads to a plateau-like structure.} Taken from \cite{QUBICII}.}
     \label{fig:synth_beam_poly}
 \end{figure}
 
@@ -192,18 +199,28 @@ In the previous figures, the beam was treated as monochromatic. However, its sha
 
 \subsection{Principle}
 
-The idea behind \emph{spectral imaging} is to use the frequency dependence of QUBIC's synthesized beam to measure spectral information of the observed signal. This chromaticity causes the synthesized beam to spatially encode spectral information on the focal plane. By subdividing the secondary plateau into sub-bands, we can directly observe the signal in each sub-band with our bolometers, within the total frequency bandwidth. This results in an improved spectral resolution compared to a classical imager, which is limited to a single broad band. Typically, $\Delta_\nu / \nu \sim 0.3$ for an imager, while for QUBIC $\Delta_\nu / \nu \approx \frac{1}{P - 1} = 0.05$~\cite{QUBICII}.
+The idea behind \emph{spectral imaging} is to use the frequency dependence of QUBIC's synthesized beam to measure spectral information of the observed signal. This chromaticity causes the synthesized beam to spatially encode spectral information on the focal plane. By subdividing the secondary plateau into sub-bands, we can directly observe the signal in each sub-band with our bolometers, within the total frequency bandwidth. This results in an improved spectral resolution compared to a classical imager, which is limited to a single broad band. Typically, $\Delta_\nu / \nu \sim 0.3$ for an imager, while for QUBIC $\frac{\Delta_\nu}{\nu} \approx \frac{1}{P - 1} = 0.05$~\cite{QUBICII} (see below for a derivation, equation \ref{eq:spectral_resolution}).
 
 \subsection{Sub-band reconstruction}
 
-The extension of spectral imaging is the possibility of splitting the secondary plateau into frequency sub-bands. From a single polychromatic dataset, we can construct multiple monochromatic datasets using our knowledge of the beam. The number of recoverable sub-bands is limited by the requirement that adjacent peaks must be distinguishable. The condition can be derived from the angular separation between two peaks at different frequencies, $\theta_\nu = \frac{\lambda\Delta_\nu}{\Delta_h\nu}$, with $\Delta_\nu = \nu_2 - \nu_1$ and $\nu = \sqrt{\nu_1\nu_2}$, and their associated $\mathrm{FWHM}_\nu \sim \frac{\lambda}{\Delta_h(P-1)}$. From this, one finds that up to approximately 5 sub-bands can be constructed within the physical frequency bandwidth~\cite{QUBICII,thesislouise}. The splitting is illustrated in the right panel of Figure~\ref{fig:synth_beam_poly}.
-It is important to note that this separation is a post-processing step, performed during data analysis and not during data acquisition, so it can be applied without degrading the data.
+The logical application of spectral imaging is the possibility of splitting the plateau into frequency sub-bands. From a single polychromatic dataset, we can construct multiple monochromatic datasets using our knowledge of the beam. The number of recoverable sub-bands is limited by the requirement that adjacent peaks must be distinguishable. The condition can be derived from the angular separation between two peaks at different frequencies, $\theta_\nu = \frac{\lambda\Delta_\nu}{\Delta_h\nu}$, with $\Delta_\nu = \nu_2 - \nu_1$ and $\nu = \sqrt{\nu_1\nu_2}$, and their associated $\mathrm{FWHM}_\nu \sim \frac{\lambda}{\Delta_h(P-1)}$. \jc{Finally, we got} : 
+
+\begin{equation} \label{eq:spectral_resolution}
+    \frac{\Delta_\nu}{\nu} \sim \frac{1}{P-1}.
+\end{equation}
+
+From this, one finds that up to approximately 5 sub-bands can be constructed within the physical frequency bandwidth of QUBIC~\cite{QUBICII,thesislouise}. The splitting is illustrated in the right panel of Figure~\ref{fig:synth_beam_poly}.
+It is important to note that this separation is a post-processing step, performed during data analysis and not during data acquisition, so it can be applied without degrading the data, along with other applications.
 
 \subsection{Interest for foreground separation}
 
 The main interest of reconstructing multiple sub-bands is the same as observing with multiple frequency channels: to use spectral information to separate the contributions from astrophysical foregrounds and the CMB. As explained in Section~\ref{section:foregrounds}, the CMB is distinguishable from foregrounds through their spectral signatures. Increasing the number of frequency bands greatly improves the ability to separate each contribution. However, classical imagers are limited by their intrinsic spectral resolution and cannot identify complex foreground emission. On the other hand, QUBIC will be capable of constraining foregrounds much more accurately and of reconstructing the CMB signal without bias.
+\jc{This improvement comes at a cost, as increasing the number of reconstructed sub-bands reduces the signal-to-noise ratio per band and introduces anti-correlated noise between sub-bands. As a result, a trade-off must be found between improving spectral resolution and maintaining acceptable noise levels. This effect is further discussed in Chapter~\ref{chap:FMM}.}
 
 In the following chapters, we present two algorithms that use spectral imaging to reconstruct the CMB signal: Frequency Map-Making (FMM, Chapter~\ref{chap:FMM}) and Component Map-Making (CMM, Chapter~\ref{chap:CMM}). 
-In FMM, spectral imaging is used to reconstruct multiple frequency maps within QUBIC's physical bandwidth, exploiting the improved spectral resolution to separate foregrounds and the CMB. In CMM, the frequency dependence of the synthesized beam is used to directly reconstruct CMB and foreground maps by exploiting their distinct spectral signatures.
+\sout{In FMM, spectral imaging is used to reconstruct multiple frequency maps within QUBIC's physical bandwidth, exploiting the improved spectral resolution to separate foregrounds and the CMB. In CMM, the frequency dependence of the synthesized beam is used to directly reconstruct CMB and foreground maps by exploiting their distinct spectral signatures.}
+
+\jc{FMM can be viewed as an extension of classical multi-frequency imaging techniques, adapted to the specific case of QUBIC. It exploits the improved spectral resolution provided by spectral imaging to reconstruct multiple frequency maps within the instrument bandwidth, thereby enhancing the separation between astrophysical foregrounds and the CMB.
+In contrast, CMM represents a more direct exploitation of the bolometric interferometry concept. Rather than first reconstructing frequency maps, it uses the frequency dependence of the synthesized beam to incorporate spectral information directly into the map-making operator, enabling a simultaneous reconstruction of astrophysical components and their spectral signatures.}
 
 \end{document}

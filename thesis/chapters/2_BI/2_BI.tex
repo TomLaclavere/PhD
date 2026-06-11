@@ -226,17 +226,21 @@ The motor is placed outside the cryostat, and its rotation is transmitted to the
 
 After the HWP, the signal enters a polariser, which transmits only the component aligned with its axis, effectively selecting a single linear polarisation state. The field becomes:
 \begin{equation}
-\vec{E}' =
-\begin{pmatrix}
-E_x \cos(2\varphi(t)) + E_y \sin(2\varphi(t)) \\
-0
-\end{pmatrix}.
+    \vec{E}' =
+    \begin{pmatrix}
+        E_x \cos(2\varphi(t)) + E_y \sin(2\varphi(t)) \\
+        0
+    \end{pmatrix}.
 \end{equation}
 
-The resulting detected signal mixes intensity and polarisation, allowing reconstruction with intensity-only detectors:
-\begin{equation}
-S = I + Q\cos(4\varphi(t)) + U\sin(4\varphi(t)).
-\end{equation}
+The resulting detected signal mixes intensity and polarisation, allowing reconstruction with intensity-only detectors from trigonometric formula:
+\begin{align}
+    S &= |\vec{E}|^2 \notag \\
+      &= E_x^2 \cos^2(Z\varphi) + E_y^2 \sin^2(2\varphi) + 2E_x E_y \cos(2\varphi)\sin(2\varphi) \notag \\
+      &= E_x^2 \frac{\left(1+\cos(4\varphi)\right)}{2} + E_y^2 \frac{\left(1-\cos(4\varphi)\right)}{2} + E_x E_y \sin(4\varphi) \notag \\
+      &= \frac{1}{2} \left(E_x^2 + E_y^2\right) + \frac{1}{2}\cos(4\varphi) \left(E_x^2 - E_y^2\right) E_x E_y \sin(4\varphi) \notag \\
+    S &= \frac{1}{2} \left(I + Q\cos(4\varphi) + U\sin(4\varphi)\right).
+\end{align}
 
 The fixed $7$ positions for the HWM, separated by $15^{~\circ}$~\cite{QUBICVI}, and associated signals are summarised in Table~\ref{tab:hwp_signal}.
 
@@ -256,11 +260,12 @@ The fixed $7$ positions for the HWM, separated by $15^{~\circ}$~\cite{QUBICVI}, 
 \end{table}
 
 
-Although it may seem wasteful to discard half of the incoming photons with the polariser, this is a key instrumental choice. By selecting a single polarisation axis early in the optical chain and using intensity-only detectors, the instrument becomes less sensitive to internal cross-polarisation effects arising from optical components such as horns and mirrors, as well as from inner reflections within the instrument (e.g. cables and screws) downstream of the polariser. Since mitigating such systematics would otherwise require significant effort, it is more effective to accept the photon loss in exchange for improved control of the polarisation state. In \cite{QUBICIII}, cross-polarisation was measured at a level below 0.4\% at 95\% C.L., showing the effectiveness of such design, to compare to the typical few pourcents for classical imagers. \rmk{Citation missing...}
+Although it may seem wasteful to discard half of the incoming photons with the polariser, this is a key instrumental choice. By selecting a single polarisation state early in the optical chain and using intensity-only detectors, the instrument becomes significantly less sensitive to internal cross-polarisation effects arising from optical components such as horns and mirrors, as well as from reflections within the instrument downstream of the polariser. Since mitigating such systematics would otherwise require substantial effort, it is preferable to sacrifice part of the incoming signal in exchange for improved control of the instrument's polarisation response.
+The effectiveness of this design has been demonstrated in \cite{QUBICIII}, where the instrumental cross-polarisation was measured to be below 0.4\% at the 95\% confidence level. This value is significantly lower than the percent-level cross-polarisation typically reported for many classical CMB imagers, highlighting one of the main advantages of the QUBIC optical architecture.
 
 \subsection{Horns Array}
 
-The next and key part of the interferometric design of QUBIC is the horns array~\cite{QUBICVII}. It constits in 400 back-to-back corrugated horns at $4$ K, separated by $14$ mm. Corrugations are periodic grooves machined inside the horn walls, meant to improve beam symmetry and reduce cross-polarisation systematics, are shown in Figure \ref{fig:horn}. Both back-to-back horns are designed to be identical, to observe the sky and illuminate the optical combiner with a Full-Width at Half-Maximum (FWHM) of 12.9° at $150$ GHz. Between them is a mechanical switch, thought to remotely close or open each horn in the array separately, a mandatory feature to perform self-calibration~\cite{paper_marie_selfcal} (see \ref{sub:selfcal}).
+The next and key part of the interferometric design of QUBIC is the horns array~\cite{QUBICVII}. It consists in 400 back-to-back corrugated horns at $4$ K, separated by $14$ mm. Corrugations are periodic grooves machined inside the horn walls, meant to improve beam symmetry and reduce cross-polarisation systematics, are shown in Figure \ref{fig:horn}. Both back-to-back horns are designed to be identical, to observe the sky and illuminate the optical combiner with a Full-Width at Half-Maximum (FWHM) of 12.9° at $150$ GHz. Between them is a mechanical switch, thought to remotely close or open each horn in the array separately, a mandatory feature to perform self-calibration~\cite{paper_marie_selfcal} (see \ref{sub:selfcal}).
 
 \begin{figure}[!htbp]
     \centering

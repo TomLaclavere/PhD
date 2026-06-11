@@ -80,7 +80,7 @@ To minimise this function, we need to compute the sky for which the derivative o
 
 where we note $\vec{\hat{s}}$ the maximal-likelihood solution of the map-making equation. 
 
-Unfortunately, despite $\vec{\hat{s}}$ having an analytical solution, it requires to compute the inverse of the matrix $M \equiv (H^{~T} N^{-1} H)$. $M$ has a size $(N_{pix} x N_{pix})$, with $N_{pix} \sim 10^7$ for modern experiment. Inversion algorithms, like Cholesky factorisation or LU decomposition, have a computation cost in $\mathcal{O}(N_pix^{~3})$ and a memory usage in $\mathcal{O}(N_pix^{~2})$~\cite{golub13}. It then requires $\sim 10^{21}$~FLOP to invert such a matrix. With the CPU on my laptop\footnote{Intel i7-13850HX}, being able to perform around $100~GFLOP/s$, I would need many years to perform an inversion ($\sim 320$ years with Cholesky decomposition). Even with exascale supercomputer, with $10^{18}~FLOP/s$, $\sim 20$ minutes are still needed. But, the main issue comes from memory, as in double precision\footnote{8 bytes per element}, the computation needs $8 \times (N_{pix})^2 = 800~TB$, just to store the matrix. \\
+Unfortunately, despite $\vec{\hat{s}}$ having an analytical solution, it requires to compute the inverse of the matrix $M \equiv (H^{~T} N^{-1} H)$. $M$ has a size $(N_{pix} x N_{pix})$, with $N_{pix} \sim 10^7$ for modern experiment. Inversion algorithms, like Cholesky factorisation or LU decomposition, have a computation cost in $\mathcal{O}(N_pix^{~3})$ and a memory usage in $\mathcal{O}(N_pix^{~2})$~\cite{golub13}. It then requires $\sim 10^{21}$~FLOP to invert such a matrix. With the CPU on my laptop\footnote{Intel i7-13850HX}, being able to perform around $100$~GFLOP/s, I would need many years to perform an inversion ($\sim 320$ years with Cholesky decomposition). Even with exascale supercomputer, with $10^{18}~\mathrm{FLOP}/s$, $\sim 20$ minutes are still needed. But, the main issue comes from memory, as in double precision\footnote{8 bytes per element}, the computation needs $8 \times (N_{pix})^2 = 800$~TB, just to store the matrix. \\
 From these elements, matrix inversion is not feasible on realistic CMB datasets.
 
 \subsection{Iterative Solver: PCG}
@@ -331,6 +331,8 @@ Figure \ref{fig:sub-bands_correlation} is illustrating these two specificities f
 \end{figure}
 
 Finally, the higher $N_{rec}$ is (so, the more maps we are trying to reconstruct), the closer will be the shape of the beam between all the sub-bands, leading to stronger anti-correlations and a degradation of the noise performance in the reconstructed maps. This is an intrinsic limitation to spectral imaging, when we can't distinguish the signal between too tight sub-bands.
+
+\rmk{Maybe should I compare noise level in reconstructed maps with different Nrec}
 
 \section*{Conclusion}
 

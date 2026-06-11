@@ -54,28 +54,35 @@ mid = n_pts // 2
 #     f"QUBIC Synthesized Beam — {freq / 1e9:.0f} GHz, "
 #     f"N={N_horn}×{N_horn}, Δh={delta_h * 1e3:.0f} mm, Df={D_f * 1e2:.0f} cm"
 # )
-title_base = f"QUBIC Synthesized Beam for central detector ($x_f=y_f=0$) — {freq / 1e9:.0f} GHz"
+title_base = f"QUBIC Synthesized Beam for central detector ($x_f=y_f=0$) - {freq / 1e9:.0f} GHz"
 
-# Figure 1: central detector
-fig1, axes1 = plt.subplots(1, 2, figsize=(12, 5))
+# Figure 1: 2D synthesized beam pattern
+fig1, ax1 = plt.subplots(figsize=(6, 5))
 fig1.suptitle(title_base, fontsize=14)
-im0 = axes1[0].pcolormesh(n_deg, n_deg, np.clip(beam_center, 1e-4, None), **kw2d)
-axes1[0].set_title("Synthesized beam pattern (log scale)")
-axes1[0].set_xlabel("$n_x$ [deg]")
-axes1[0].set_ylabel("$n_y$ [deg]")
-fig1.colorbar(im0, ax=axes1[0], label="Normalized intensity (log)")
-
-prim = B_prim(n_vals, 0.0)
-af = array_factor_1d(0.0 / D_f - n_vals) / N_horn**2
-axes1[1].plot(n_deg, prim, label="$B_{prim}(\\vec{n})$", lw=1.5)
-# axes1[1].plot(n_deg, af, label="Array factor (norm.)", lw=1.5, linestyle="--")
-axes1[1].plot(n_deg, beam_center[mid, :], label="$B_{synth}$", lw=1.5, color="C2")
-axes1[1].set_xlabel("$n_x$ [deg]")
-axes1[1].set_ylabel("Normalized intensity")
-axes1[1].set_title("1D cut along $n_x$ ($n_y=0$)")
-axes1[1].legend()
-axes1[1].grid(True, alpha=0.3)
+im0 = ax1.pcolormesh(n_deg, n_deg, np.clip(beam_center, 1e-4, None), **kw2d)
+ax1.set_title("Synthesized beam pattern (log scale)")
+ax1.set_xlabel("$n_x$ [deg]")
+ax1.set_ylabel("$n_y$ [deg]")
+fig1.colorbar(im0, ax=ax1, label="Normalized intensity (log)")
 
 fig1.tight_layout()
-fig1.savefig("Figures/synthesized_beam.pdf", bbox_inches="tight", dpi=150)
-print("Saved synthesized_beam.pdf")
+fig1.savefig("Figures/synthesized_beam_2d.pdf", bbox_inches="tight", dpi=150)
+print("Saved synthesized_beam_2d.pdf")
+
+# Figure 2: 1D cut along n_x
+fig2, ax2 = plt.subplots(figsize=(6, 5))
+fig2.suptitle(title_base, fontsize=14)
+prim = B_prim(n_vals, 0.0)
+af = array_factor_1d(0.0 / D_f - n_vals) / N_horn**2
+ax2.plot(n_deg, prim, label="$B_{prim}(\\vec{n})$", lw=1.5)
+# ax2.plot(n_deg, af, label="Array factor (norm.)", lw=1.5, linestyle="--")
+ax2.plot(n_deg, beam_center[mid, :], label="$B_{synth}$", lw=1.5, color="C2")
+ax2.set_xlabel("$n_x$ [deg]")
+ax2.set_ylabel("Normalized intensity")
+ax2.set_title("1D cut along $n_x$ ($n_y=0$)")
+ax2.legend()
+ax2.grid(True, alpha=0.3)
+
+fig2.tight_layout()
+fig2.savefig("Figures/synthesized_beam_1d.pdf", bbox_inches="tight", dpi=150)
+print("Saved synthesized_beam_1d.pdf")
