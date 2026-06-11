@@ -69,11 +69,39 @@ Here, we are not considering any parameter for foregrounds, the mixing matrix el
 
 \section{Characterisation}
 
-\subsection{Numerical resources: memory \& parallelisation}
+\subsection{Numerical complexity}
+
+CMM inherits the same fundamental computational limitations as FMM in terms of memory usage and execution time, since both methods rely on the same instrumental model $H$. Consequently, the numerical constraints associated with the storage and manipulation of the acquisition operator are identical to those discussed in subsection \ref{sub:FMM_numerical_limits}. However, the implementation of CMM is significantly more involved than that of FMM because it combines component separation and map-making within a single framework. In addition to the map reconstruction process, the algorithm must handle the estimation of foreground spectral parameters, multiple reconstruction strategies, and various foreground models. As an illustration of this increased implementation complexity, the core CMM software contains approximately 4000 lines of code, compared to about 1600 for the FMM implementation, excluding the simulation of the QUBIC instrument and the acquisition operator $H$.
+
+Beyond software complexity, the main computational challenge of CMM arises from the alternating optimisation procedure used to jointly estimate the component maps and the mixing matrix. This approach is necessary because both quantities are unknown and strongly correlated, preventing the direct application of a linear solver. At each iteration, the estimation of one quantity is performed while keeping the other fixed. Since the fixed quantity generally differs from its true value, the resulting estimate is biased, and the algorithm progresses through a sequence of incremental corrections.
+As a consequence, convergence is typically slower than in FMM, where the PCG algorithm directly minimises a linear objective function. Furthermore, the parameter space explored by CMM is non-linear and may exhibit degeneracies between component maps and spectral parameters. This increases the risk of convergence towards local minima and generally requires a larger number of iterations to reach a stable solution.
+The convergence properties of CMM are also strongly dependent on the initialisation of the reconstruction, particularly on the initial values chosen for the mixing matrix parameters. Poor initialisation may significantly increase the convergence time or lead to suboptimal solutions.
+These limitations motivate the development of non-linear optimisation methods capable of jointly estimating the component maps and spectral parameters. Such approaches could substantially improve both the robustness and efficiency of the reconstruction and represent a promising direction for future developments of the CMM framework.
 
 \subsection{Noise structure}
 
 \subsection{Angular Resolution of components maps}
+
+\rmk{Same remark as for FMM, should this subsection stands here or in TOD realism chapter ?}
+
+Similar to the FMM, the angular resolution of the reconstructed maps is a complicated part. We again explore two approaches : one in which we impose the reconstructed resolution and another one where we let it free.
+
+\subsubsection{Fixed angular resolution reconstruction}
+
+In FMM (see subsection \ref{sub:fmm_convolution}), we fixed the reconstucted resolution at the best resolution per reconstructed sub-bands, to ensure the best possible results. In CMM, we no longer reconstruct frequency maps, but component maps at a reference frequency. Following the same reasoning, we reconstruct the component maps at the best resolution for QUBIC inside its physical band, meaning the resolution at the highest frequency. Following that, during reconstruction, each sub-bands will be convolved at the resolution $\sigma_{\nu_j, best} = \sqrt{\sigma_{\nu_j} - \sigma_{best}}$, with $\sigma_{\nu_j}$ QUBIC's FWHM at frequency $\nu_j$ and $\sigma_{best}$ the smallest FWHM within QUBIC's band. The data acquisition equation is then written :
+
+\begin{equation}
+    \vec{\tilde{d}} = \int_{\nu_{min}}^{\nu_{max}} \mathcal{H}_\nu C_\nu A_{\nu} \vec{\tilde{c}}^{~best} d\nu + \vec{n},
+\end{equation}
+
+with $C_\nu$ the convolution operator at resolution $\sigma_{best}$ and $\vec{\tilde{c}}^{~best}$ the component maps at best resolution.
+
+\rmk{I am not convinced by my notations, it is not very clear.}
+
+\subsubsection{Free angular resolution reconstruction}
+
+In FMM, we were using an averaging weighted by component SED to compute the reconstructed resolution analyticaly, which were shown to be the resolution lowering the residual noise. We tried to apply the same method with CMM. Unfortunately, we saw that this computation was not able to estimate the reconstructed resolution, resulting in a wrongly computed residual maps (because the input, or reference, maps were not consistant with the reconstructed ones). 
+As components are following different SEDs, so different frequency weights, their reconstructed resolution is not the same. 
 
 \section{Comparison : FMM \& CMM}
 
@@ -83,13 +111,13 @@ Here, we are not considering any parameter for foregrounds, the mixing matrix el
 
 This final section presents applying CMM algorithm on more complex foregrounds model. These specific cases are not talking further more outside the section, but emphasise the versatility and efficiency of the CMM for different complexities of astrophysical foregrounds, highlighting the power of this algorithm for component separation, which may be an intrinsic limiting factor for other CMB experiments based on direct imaging. 
 
-\subsection{CO emission line}
-
 \subsection{Spatially varying spectral index}
 
 \subsection{Frequency decorrelation} \label{sub:frequency_decorr}
 
 \subsection{Dust + Sync ??}
+
+\subsection{CO emission line}
 
 \section*{Conclusion}
 

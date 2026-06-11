@@ -186,12 +186,12 @@ where $\nu_j$ denotes the frequencies belonging to the reconstructed band $\nu_i
 
 To verify the validity of this hypothesis, several metrics have been used. The simplest and most satisfaying one consists at running the algorithm without adding the instrumental and photon noises contribution in simulated data. Doing so, with an unbiased method, we are expected to reconstruct perferctly the input maps. Then, any small difference between the true and computed reconstructed resolutions will be visible as noise in the residual. The result is shown in Figure \ref{fig:fmm_convolution_noiseless}.
 
-% \begin{figure}[!htbp]
-%     \centering
-%     \includegraphics[width=1\linewidth]{}
-%     \caption{Placehorld : FMM convolution noiseless.}
-%     \label{fig:fmm_convolution_noiseless}
-% \end{figure}
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{FMM_convolution_noiseless.pdf}
+    \caption{Reconstructed and residual maps in noiseless case. Residual are consistent with $0$, showing that reconstruction is unbiased.}
+    \label{fig:fmm_convolution_noiseless}
+\end{figure}
 
 We can also use the noise profile in residual maps. Indeed, as the number of photons is splited into two maps for polarisation, with respect to intensity one, we expect a noise ratio of $1/\sqrt{2}$ between the two. Observing this ratio between reconstructed maps ensures an unbiased noise repartition. Figure \ref{fig:fmm_noise_profile} exhibits that noise's RMS versus angular distance to the center of the patch in residual maps is identical between $I$ and $QU/\sqrt{2}$. The small fluctuations visible close to the center are due to statistical fluctuation, as RMS is computed along fewer pixels closer to the center than at the border. This result shows a consistent noise distribution between the $3$ Stokes parameters.
 
@@ -221,6 +221,17 @@ The result is presented in Figure \ref{fig:fmm_fit_fwhm}, where the expected com
 
 This approach is currently under investigation and remains less robust than explicitly including the convolution operator in the reconstruction model. Nevertheless, within a controlled simulation framework, it provides a computationally efficient alternative that allows rapid exploration of the QUBIC map-making parameter space. This simplification proved particularly useful for the analyses presented in this thesis. A detailed comparison between reconstructions performed with and without the convolution operator is presented in Chapter \ref{chap:tod}.
 Although the method performs satisfactorily in simulations, its applicability to real data remains uncertain. In particular, instrumental systematics, calibration uncertainties, and imperfect knowledge of the frequency response may alter the effective frequency mixing within reconstructed sub-bands, thereby affecting the predicted angular resolution. Further investigations are therefore required before this approach can be considered for the analysis of observational data.
+
+\subsection{Preconditioning}
+
+\rmk{To be done.}
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{FMM_convergence_precond.pdf}
+    \caption{Comparison between PCG convergence with and without preconditioner.}
+    \label{fig:fmm_precond}
+\end{figure}
 
 \subsection{External data ?}
 
