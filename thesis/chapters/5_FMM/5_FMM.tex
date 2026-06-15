@@ -224,26 +224,36 @@ Although the method performs satisfactorily in simulations, its applicability to
 
 \subsection{Preconditioning}
 
-The main advantage of PCG is the possibility to use a preconditioner to speed up the conjugate Gradient convergence. The preconditioner is a symmetric and posite matrix $M$, which is applied on the equation \ref{eq:mapmaking} :
+The main advantage of the PCG algorithm is the possibility of using a preconditioner to accelerate the convergence of the Conjugate Gradient method. The preconditioner is a symmetric positive-definite matrix $M$, which is applied to Eq.~\ref{eq:mapmaking} as :
 
 \begin{equation}
-    M^{-1} A \vec{x} = M^{-1} \vec{b}.
+M^{-1} A \vec{x} = M^{-1} \vec{b}.
 \end{equation}
 
-M should fullfill two conditions : it has to be cheap to invert, and be a good approximation of A. There is a tradeoff to find between quality of approximation and cost. Indeed, the closer M will be to A, the more expensive it will be to invert it, the pervect preconditioner being A. However, the main reason to use PCG is to avoid inverting A (as discussed in \ref{sub:FMM_numerical_limits}). In our case, we approximate A by : $\mathrm{diag}(H^{~T} H)^{-1}$. While not being satisfying, as it does not include the weighting by the noise and the cross-band correlations, it still provides a visible increasing in convergence speed, as illustrated in Figure~\ref{fig:fmm_precond}. On this figure, convergence at iteration $k$ is defined as : 
+The matrix $M$ should satisfy two requirements: it must not be expensive to invert and provide a good approximation of $A$. These two objectives are generally in competition. Indeed, the closer $M$ is to $A$, the more costly it becomes to apply its inverse. The ideal preconditioner would be $M=A$, for which convergence is achieved in a single iteration.
+
+In our implementation, the preconditioner is chosen as :
 
 \begin{equation}
-    \epsilon_{k} \equiv \frac{||r_k||_2}{||b||_2} = \frac{||b - Ax_k||_2}{||b||_2},
+    M = \mathrm{diag}(H^{T}H),
 \end{equation}
 
-where $r_k$ is the residual map at iteration $k$. A stoping criterium is defined on the convergence metric, to stop the algorithm when $\epsilon_{k} < \mathrm{tol}$. No analysis has been done yet on a proper value for $\mathrm{tol}$, we are using a very value number associated with a resonably large number of iterations, depending on the problem.
+whose inverse can be applied at negligible computational cost. Although this approximation remains simplistic, since it neglects both the noise weighting and the cross-band correlations, it nevertheless provides a noticeable improvement in convergence speed, as illustrated in Figure~\ref{fig:fmm_precond}.
 
-\begin{figure}[!htbp]
-    \centering
-    \includegraphics[width=1\linewidth]{FMM_convergence_precond.pdf}
-    \caption{Comparison between PCG convergence with and without preconditioner.}
-    \label{fig:fmm_precond}
-\end{figure}
+The convergence at iteration $k$ is quantified by the relative residual :
+
+\begin{equation}
+    \epsilon_k \equiv \frac{|r_k|_2}{|b|_2} = \frac{|b-Ax_k|_2}{|b|_2},
+\end{equation}
+
+where $r_k$ denotes the residual vector at iteration $k$. A stopping criterion is defined by requiring :
+
+\begin{equation}
+    \epsilon_k < \mathrm{tol}.
+\end{equation}
+
+No dedicated study has yet been performed to determine an optimal value of $\mathrm{tol}$. In practice, we adopt a sufficiently small tolerance together with a reasonably large maximum number of iterations, depending on the problem under consideration.
+
 
 \subsection{External data ?}
 
