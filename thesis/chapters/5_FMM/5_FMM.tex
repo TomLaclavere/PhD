@@ -224,7 +224,19 @@ Although the method performs satisfactorily in simulations, its applicability to
 
 \subsection{Preconditioning}
 
-\rmk{To be done.}
+The main advantage of PCG is the possibility to use a preconditioner to speed up the conjugate Gradient convergence. The preconditioner is a symmetric and posite matrix $M$, which is applied on the equation \ref{eq:mapmaking} :
+
+\begin{equation}
+    M^{-1} A \vec{x} = M^{-1} \vec{b}.
+\end{equation}
+
+M should fullfill two conditions : it has to be cheap to invert, and be a good approximation of A. There is a tradeoff to find between quality of approximation and cost. Indeed, the closer M will be to A, the more expensive it will be to invert it, the pervect preconditioner being A. However, the main reason to use PCG is to avoid inverting A (as discussed in \ref{sub:FMM_numerical_limits}). In our case, we approximate A by : $\mathrm{diag}(H^{~T} H)^{-1}$. While not being satisfying, as it does not include the weighting by the noise and the cross-band correlations, it still provides a visible increasing in convergence speed, as illustrated in Figure~\ref{fig:fmm_precond}. On this figure, convergence at iteration $k$ is defined as : 
+
+\begin{equation}
+    \epsilon_{k} \equiv \frac{||r_k||_2}{||b||_2} = \frac{||b - Ax_k||_2}{||b||_2},
+\end{equation}
+
+where $r_k$ is the residual map at iteration $k$. A stoping criterium is defined on the convergence metric, to stop the algorithm when $\epsilon_{k} < \mathrm{tol}$. No analysis has been done yet on a proper value for $\mathrm{tol}$, we are using a very value number associated with a resonably large number of iterations, depending on the problem.
 
 \begin{figure}[!htbp]
     \centering
