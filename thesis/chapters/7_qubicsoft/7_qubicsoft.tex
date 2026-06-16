@@ -3,9 +3,21 @@
 \graphicspath{{Figures/}}
 
 \begin{document}
-\chapter{Qubicsoft development} \label{chap:qubicsoft}
 
+\chapter{Qubicsoft development}
+\label{chap:qubicsoft}
+
+\ifSubfilesClassLoaded{
+\tableofcontents
+}{
 \minitoc
+}
+
+The previous two chapters (Chapters~\ref{chap:FMM} and~\ref{chap:CMM}) introduced the FMM and CMM algorithms, together with the simulation framework used throughout this thesis. In particular, both approaches rely on the acquisition operator $H$, which models the response of the instrument, and on simulated noise realizations, denoted by $\vec{n}$.
+
+The purpose of this chapter is to present these elements in greater detail. It describes the construction of the acquisition operator, the modelling of instrumental noise, and the software infrastructure used to perform simulations and data reconstruction. These developments are implemented within the QUBIC simulation and analysis package, \emph{qubicsoft}\footnote{\url{https://github.com/qubicsoft/qubic/tree/master}}. 
+
+\personal{}
 
 \section{Instrumental model}
 
