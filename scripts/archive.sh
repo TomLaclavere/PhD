@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Usage: ./archive_dir.sh <input_dir> <output_dir> [archive_name.tar.xz]
+# Usage: ./archive_dir.sh <input_dir> <output_dir> [archive_name.tar.xz] [extra tar --exclude args...]
 
 INPUT_DIR="${1:?Missing input directory}"
 OUTPUT_DIR="${2:?Missing output directory}"
 ARCHIVE_NAME="${3:-$(basename "$INPUT_DIR").tar.xz}"
+shift 3 || shift $#
+EXTRA_EXCLUDES=("$@")
 
 INPUT_DIR="${INPUT_DIR%/}"
 
@@ -30,4 +32,5 @@ tar -cJf "$OUT_TAR" \
   --exclude="*.synctex.gz" \
   --exclude="*.fdb_latexmk" \
   --exclude="*.fls" \
+  "${EXTRA_EXCLUDES[@]}" \
   "$INPUT_DIR"

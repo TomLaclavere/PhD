@@ -12,7 +12,7 @@ echo "-> Compile LaTeX files"
 # Generate Archives
 # ========================================
 echo "-> Generate archives"
-./scripts/archive.sh thesis/ website/thesis
+./scripts/archive.sh thesis/ website/thesis thesis.tar.xz --exclude="thesis/chapters"
 ./scripts/thesis/archive_chapters.sh
 
 # ========================================
