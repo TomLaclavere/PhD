@@ -318,7 +318,7 @@ Finally, cooling of the detector stage to approximately 320 mK is achieved using
 
 \section{Instrumental Designs}
 
-\subsubsection{Legacy design : Dual Bands}
+\subsection{Legacy design : Dual Bands} \label{sub:DB_design}
 
 \tom{The original QUBIC design, known as Dual Bands (DB), consisted of two focal planes, each composed of 992 detectors. One focal plane was dedicated to the 150 GHz channel, while the other targeted the 220 GHz channel. This configuration, shown in Figure~\ref{fig:DB_design}, incorporated a dichroic filter. The dichroic was designed to be transparent around 150 GHz and reflective around 220 GHz, enabling a clean separation of the two frequency bands.
 This architecture offers the advantage of providing two uncorrelated frequency channels, a feature that can be further enhanced by the spectral imaging capabilities described in Chapter~\ref{chap:spectral_imaging}. However, the implementation of such a dichroic proved challenging: the required $90^\circ$ beam deflection, combined with severe spatial constraints that would have required a non-symmetric dichroic geometry, made fabrication impractical. As a result, this design was eventually abandoned.
@@ -331,7 +331,7 @@ Nevertheless, results based on this instrumental configuration are still present
     \label{fig:DB_design}
 \end{figure}
 
-\subsubsection{Interferometry-oriented design : Ultra Wide Band}
+\subsection{Interferometry-oriented design : Ultra Wide Band} \label{sub:UWB_design}
 
 \tom{The Ultra-Wide Band (UWB) design is based on a single focal plane composed of 992 detectors, which simultaneously observe both the 150 GHz and 220 GHz frequency channels. The corresponding optical configuration is presented in Figure~\ref{fig:UWB_design}. In this approach, spectral imaging is used to separate the contributions from different frequency components by reconstructing sub-bands in post-processing. This removes the need for a dichroic filter, while also reducing the number of detectors by a factor of two, along with their associated cost.
 However, this design introduces several challenges. First, it relies entirely on the performance of the spectral imaging reconstruction, and therefore on the ability of the QUBIC collaboration to accurately disentangle the observed signal, which has its own limitations and requires dedicated development (see Chapter~\ref{chap:spectral_imaging}). Additionally, operating over a broader frequency band increases the thermal loading on the detector array, particularly due to high-frequency contributions dominated by atmospheric emission and astrophysical dust. The extent to which this impacts sensitivity depends on the resulting increase in photon noise and on the efficiency of the filtering strategy implemented at the instrument level.}

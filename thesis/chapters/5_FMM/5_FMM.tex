@@ -227,7 +227,7 @@ The result is presented in Figure \ref{fig:fmm_fit_fwhm}, where the expected com
 This approach is currently under investigation and remains less robust than explicitly including the convolution operator in the reconstruction model. Nevertheless, within a controlled simulation framework, it provides a computationally efficient alternative that allows rapid exploration of the QUBIC map-making parameter space. This simplification proved particularly useful for the analyses presented in this thesis. A detailed comparison between reconstructions performed with and without the convolution operator is presented in Chapter \ref{chap:tod}.
 Although the method performs satisfactorily in simulations, its applicability to real data remains uncertain. In particular, instrumental systematics, calibration uncertainties, and imperfect knowledge of the frequency response may alter the effective frequency mixing within reconstructed sub-bands, thereby affecting the predicted angular resolution. Further investigations are therefore required before this approach can be considered for the analysis of observational data.
 
-\subsection{Preconditioning}
+\subsection{Preconditioning} \label{sub:fmm_precond}
 
 The main advantage of the PCG algorithm is the possibility of using a preconditioner to accelerate the convergence of the Conjugate Gradient method. The preconditioner is a symmetric positive-definite matrix $M$, which is applied to Eq.~\ref{eq:mapmaking} as :
 
@@ -260,9 +260,77 @@ where $r_k$ denotes the residual vector at iteration $k$. A stopping criterion i
 No dedicated study has yet been performed to determine an optimal value of $\mathrm{tol}$. In practice, we adopt a sufficiently small tolerance together with a reasonably large maximum number of iterations, depending on the problem under consideration.
 
 
-\subsection{External data ?}
+\subsection{External data} \label{sub:fmm_external_data}
 
-\rmk{We saw that Planck does not really improve FMM, while it is still useful to add at Xspectra stage. Do we want to add a part on it ? Maybe it can be done in the tod realism chapter as well... What do you think ?}
+
+The map reconstruction performed with the QUBIC synthesized beam suffers from an important edge effect. When observing regions close to the boundary of the patch, some secondary peaks of the synthesized beam fall outside the observed area, while others remain inside the well-sampled region. As a consequence, the signal measured near the edges depends partly on sky regions that are poorly constrained by QUBIC observations. This effect leads to higher degeneracy, and by extension, an increase in the reconstruction noise and a degradation of the map quality near the patch boundaries.
+
+To mitigate this limitation, external observations are incorporated into the reconstruction. In practice, frequency maps from Planck are used to provide additional information outside the QUBIC patch, improving the constraints on emission surrounding the observed region.
+
+The external observations, denoted by $\vec{d}_{\mathrm{ext}}$, are incorporated into the data vector by extending the observation model as :
+
+\begin{equation}
+        \vec{d}_{\mathrm{tot}}=
+        \begin{bmatrix}
+            \vec{d}_{\mathrm{QUBIC}} \\
+            \vec{d}_{\mathrm{ext}}
+    \end{bmatrix}.
+\end{equation}
+
+The main modification concerns the acquisition operator, which must account simultaneously for QUBIC and external observations. The total acquisition operator can be written as
+
+\begin{equation}
+    H_\text{Tot} = \begin{pmatrix}
+        H_{\text{QUBIC}}^{\nu_1} & H_{\text{QUBIC}}^{\nu_2} & \cdots & H_{\text{QUBIC}}^{\nu_{N_\text{rec}}} \\
+        H_{\text{ext}}^{\nu_1} & 0 & 0 & 0 \\
+        0 & H_{\text{ext}}^{\nu_2} & 0 & 0 \\
+        0 & 0 & \ddots & \vdots \\
+        0 & 0 & \cdots & H_{\text{ext}}^{\nu_{N_\text{rec}}} 
+        \end{pmatrix}
+        = \begin{pmatrix}
+            H_{\text{QUBIC}} \\
+            H_{\text{ext}}
+        \end{pmatrix}
+        \label{eq:H_ext}
+\end{equation}
+
+The operators $H^{\mathrm{QUBIC}}_{\nu_i}$ correspond to the QUBIC acquisition model for the reconstructed sub-band centred at frequency $\nu_i$. In contrast, $H^{\mathrm{ext}}_{\nu_i}$ is a much simpler operator that directly reads the corresponding external frequency map. Consequently, the external observations provide an additional constraint on each reconstructed sub-band while preserving the full QUBIC instrumental model.
+In practice, the external information is not taken directly from Planck frequency maps. Instead, we use the component maps obtained from the Planck component-separation analysis~\cite{Planck2018IV}. These maps are combined with the corresponding mixing matrix to reconstruct the expected emission at the QUBIC sub-band frequencies. This procedure ensures that the external information is expressed in the same frequency basis as the QUBIC reconstruction, allowing the two datasets to be combined consistently.
+Particular care is taken to avoid introducing external information within the QUBIC observed region. The external constraints are therefore applied only outside the QUBIC patch, where they compensate for the lack of observational information and mitigate the edge effects induced by the synthesized beam. As a result, the reconstruction inside the observed region remains driven by QUBIC data, while the external maps provide the large-scale information required beyond the patch boundaries.
+
+The inverse noies covariance matrix is also modified to account for noise associated with external data :
+
+\begin{equation}
+    N^{-1} = \begin{bmatrix}
+        N^{-1}_{\text{QUBIC}} & 0 \\
+        0 & N^{-1}_{\text{ext}} \\
+        \end{bmatrix}.
+\end{equation}
+
+According to these modifications, the cost function to minimise can be rewritten as : 
+
+\begin{align*}
+     \chi^2_\text{Tot} &= \left( \vec{d} - \vec{\tilde{d}}\right)^T \cdot \vec{N}^{-1} \cdot \left( \vec{d} - \vec{\tilde{d}}\right) \nonumber \\
+    &= \left( \vec{d} - H_\text{Tot} \vec{\tilde{s}}\right)^T \cdot \vec{N}^{-1} \cdot \left( \vec{d} - H_\text{Tot} \vec{\tilde{s}}\right) \nonumber \\
+    &= 
+    \begin{bmatrix}
+        \vec{d}_\text{QUBIC} - \vec{\tilde{d}}_\text{QUBIC} \\
+        \vec{d}_\text{Ext} - \vec{\tilde{d}}_\text{Ext} \\
+    \end{bmatrix}^T \cdot
+    \begin{bmatrix}
+        N^{-1}_\text{QUBIC} & 0 \\
+        0 &  N^{-1}_\text{Ext} \\
+    \end{bmatrix} \cdot 
+    \begin{bmatrix}
+        \vec{d}_\text{QUBIC} - \vec{\tilde{d}}_\text{QUBIC} \\
+        \vec{d}_\text{Ext} - \vec{\tilde{d}}_\text{Ext} \\
+    \end{bmatrix} \\
+    &= \left( \vec{d}_\text{QUBIC} - H_{\text{QUBIC}} \vec{\tilde{s}}\right)^T \cdot \vec{N}^{-1}_\text{QUBIC} \cdot \left( \vec{d}_\text{QUBIC} - H_{\text{QUBIC}}\vec{\tilde{s}} \right) \\
+    &~~~~~+
+    \left( \vec{d}_\text{Ext} - H_{\text{Ext}} \vec{\tilde{s}}\right)^T \cdot \vec{N}^{-1}_\text{Ext} \cdot \left( \vec{d}_\text{Ext} - H_{\text{Ext}}\vec{\tilde{s}} \right) \\
+    &= \chi^2_\text{QUBIC} + \chi^2_\text{Ext} \\
+\end{align*}
+
 
 \section{Results}
 

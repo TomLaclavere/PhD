@@ -4,8 +4,8 @@
 
 \begin{document}
 
-
 \chapter{Standard Model of Cosmology} \label{chap:cosmo}
+
 \ifSubfilesClassLoaded{
     \tableofcontents
 }{
@@ -343,6 +343,8 @@ which satisfies :
     \langle \hat{C}_{\ell} \rangle = C_{\ell}.
 \end{equation}
 
+\tom{Additionally, we are used to expressing $C_\ell$ in a rescaled form. Indeed, as primordial fluctuations are expected to be scale-invariant, one can show that $C_\ell \propto \frac{1}{\ell(\ell + 1)}$. This motivates the definition of the scale-invariant power spectrum $D\ell = \frac{\ell(\ell + 1)}{2\pi}C_\ell$, which provides a more intuitive representation of the angular power spectrum.} 
+
 \subsubsection{Cosmic variance} 
 
 Unfortunately, we only have access to a single realisation of the sky, and independent modes for each multipole $\ell$. Meaning that there is an intrinsic statistical uncertainty on the estimator $\hat{C}_{\ell}$, which cannot be reduced by improving instrumental sensitivity. This fundamental limitation is known as \emph{cosmic variance}. The variance of the estimator $\hat{C}_{\ell}$ can be computed as :
@@ -377,7 +379,7 @@ where the last two terms use $\langle a_{\ell m}^* a_{\ell m'} \rangle = C_\ell\
 
 Then, cosmic variance can be computed using :
 
-\begin{equation}
+\begin{equation} \label{eq:cosmic_variance}
     \frac{\mathrm{Var}(\hat{C}_{\ell})}{C_{\ell}^2} = \frac{2}{2\ell+1}.
 \end{equation}
 
