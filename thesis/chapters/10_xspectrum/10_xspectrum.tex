@@ -170,6 +170,10 @@ From the set of auto- and cross- spectra, the associated noise estimation from e
 
 During this section, we will use the simulation parameters estimated in the Chapter \ref{chap:tod}. We simulate a full 3 years observation campaign for the QUBIC instrument, using the UWB configuration (see \ref{sub:UWB_design}). QUBIC observes is target patch of $1.5^\circ$, located in $(RA=0^\circ, DEC=57^\circ)$. We consider a sky composed of only CMB and Dust\footnote{It is a reasonable assumption to neglect the contribution from Synchrotron inside the considered frequency range}, and we fix the amplitude of lensing $A_{\text{lens}}$ at $0$. In addition, the $147$, $213$ and $353$ GHz bands from Planck are added during the cross-spectra analysis. 
 
+\rmk{I am running proper simulations at the same time, plots can evolve.}
+
+\rmk{I don't really know what to say about the resulting fit...}
+
 \subsection{FMM cross-spectrum}
 
 \begin{figure}[!htbp]
@@ -182,5 +186,23 @@ During this section, we will use the simulation parameters estimated in the Chap
 \subsection{CMM cross-spectrum}
 
 \subsection{Noise realisations}
+
+A key aspect of the noise debiasing procedure is determining the number of noise realisations required to accurately estimate the noise contribution to the angular power spectra. Since there is no straightforward way to predict this number \emph{a priori}, we performed a series of end-to-end simulations using different numbers of noise realisations. For each configuration, the parameter estimation procedure was repeated, and the resulting constraints were analysed.
+If the number of noise realisations is insufficient, the estimated noise bias may not converge to its true value, potentially leading to biased parameter estimates, including the reconstructed value of $r$. The objective is therefore to determine the minimum number of realisations for which the recovered parameters become stable.
+
+We observed that the number of noise realisations required for convergence appears to depend on the number of frequency maps included in the fit. A possible explanation is that increasing the number of frequency channels provides additional constraints on the model parameters through a larger set of auto- and cross-spectra. As a result, the fit becomes more sensitive to small inaccuracies in the estimated noise bias. For example, using five frequency maps leads to fifteen auto- and cross-spectra\footnote{The number of spectra scales as $N_{\mathrm{freq}}(N_{\mathrm{freq}}+1)/2$.}, while only a few parameters are fitted. In such a highly constrained configuration, residual biases in the estimated spectra are more easily detected by the likelihood than in a fit involving only two frequency maps. Consequently, a larger number of noise realisations may be required to achieve convergence. Further investigation would nevertheless be needed to fully understand and quantify this effect.
+
+To investigate this effect, we performed the analysis on simulations containing only CMB signal, thereby avoiding additional complications related to component separation. The results are summarised in Figure~\ref{fig:Nreal}.
+The upper panel shows the fitted value of the tensor-to-scalar ratio $r$ together with its associated uncertainty, obtained from an MCMC analysis. The fit was repeated using different numbers of noise realisations, $N_{\mathrm{real}} = [50, 100, 200, 500, 1000]$. Triangular markers indicate cases where the recovered value is not statistically compatible with the true input value, $r=0$, revealing a residual bias in the debiasing procedure. The analysis was performed in three different configurations. The blue points correspond to a fit using only the two QUBIC frequency bands, $150$ and $220$,GHz, in the DB configuration. The orange points correspond to the same QUBIC bands supplemented by the Planck $143$, $217$, and $353$,GHz channels. Finally, the green points include the full set of seven Planck frequency channels in addition to the two QUBIC bands. The lower panel displays the corresponding uncertainty on the fitted tensor-to-scalar ratio, $\sigma_r$, as a function of $N_{\mathrm{real}}$. Crosses identify configurations for which the recovered value of $r$ is not compatible with the true input value.
+
+A clear dependence on the number of frequency channels can be observed. The three configurations do not require the same number of noise realisations to achieve a stable and unbiased estimate of $r$. When only the two QUBIC bands are included, approximately $100$ noise realisations are sufficient. Adding the three Planck channels increases this requirement to roughly $300$ realisations. Finally, when all nine frequency channels are considered, more than $500$ realisations are needed before the recovered value becomes compatible with the input one. These results support the hypothesis that increasing the number of frequency channels makes the fit more sensitive to small inaccuracies in the estimated noise bias.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{n_real.png}
+    \caption{Recovered tensor-to-scalar ratio $r$ (top) and corresponding uncertainty $\sigma_r$ (bottom) as a function of the number of noise realisations used in the debiasing procedure. The three colours correspond to different sets of frequency channels included in the fit. Triangles and crosses indicate configurations for which the recovered value of $r$ is not statistically compatible with the input value $r=0$.}
+    \label{fig:Nreal}
+\end{figure}
+
 
 \end{document}
