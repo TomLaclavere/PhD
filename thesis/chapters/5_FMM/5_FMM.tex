@@ -48,10 +48,10 @@ For simplicity, the scanning strategy is included in the acquisition operator. T
 \end{align}
 
 defining $H$ as the acquisition operator integrating into the frequency band. The goal is now to estimate the unknown sky $\vec{s}$ from the data $\vec{d}$ and the instrument model encoded in the acquisition operator $H$.
-Assuming Gaussian noise $\vec{n}$, all the statistical information is stored in the noise covariance matrix $N=\left\langle\vec{n}\vec{n}^{~T}\right\rangle$. Its probability distribution, noting $N_{pointings}$ the number of time sample, is then written :
+Assuming Gaussian noise $\vec{n}$, all the statistical information is stored in the noise covariance matrix $N=\left\langle\vec{n}\vec{n}^{~T}\right\rangle$. Its probability distribution, noting $N_{\text{pointings}}$ the number of time sample, is then written :
 
 \begin{equation}
-    P(\vec{n}) = \frac{1}{\left|(2\pi)^{N_{pointings}}N\right|^{1/2}} \exp\left(-\frac{1}{2}\vec{n}^{~T} N^{-1}\vec{n}\right).
+    P(\vec{n}) = \frac{1}{\left|(2\pi)^{N_{\text{pointings}}}N\right|^{1/2}} \exp\left(-\frac{1}{2}\vec{n}^{~T} N^{-1}\vec{n}\right).
 \end{equation}
 
 The best solution for map-making equation \ref{eq:acquisition} is obtained by maximising the likelihood function giving the probability of getting data $\vec{d}$ from a sky $\vec{s}$, noted $\mathcal{L} \equiv P(\vec{d} | \vec{s})$, as detailed in \cite{wright1996}. Using Bayes theorem~\cite{bayes1763} :
@@ -65,7 +65,7 @@ Since the noise is Gaussian, $\mathcal{L} \propto P(\vec{n})$.
 From equation \ref{eq:acquisition}, $\vec{n} = \vec{d} - H\vec{s}$. The likelihood function can then be written as : 
 
 \begin{equation}
-    \mathcal{L} \propto P(\vec{n}) = \frac{1}{\left|(2\pi)^{N_{pointings}}N\right|^{1/2}} \exp\left(-\frac{1}{2}(\vec{d} - H\vec{s})^{~T} N^{-1}(\vec{d} - H\vec{s})\right).
+    \mathcal{L} \propto P(\vec{n}) = \frac{1}{\left|(2\pi)^{N_{\text{pointings}}}N\right|^{1/2}} \exp\left(-\frac{1}{2}(\vec{d} - H\vec{s})^{~T} N^{-1}(\vec{d} - H\vec{s})\right).
 \end{equation}
 
 Maximising the likelihood $\mathcal{L}$ corresponds to computing the most likely sky $\vec{s}$ to correspond to the data $\vec{d}$ according to the noise $\vec{n}$. Equivalently, we can minimise the $\chi^2$ function associated with this likelihood : 
@@ -373,8 +373,8 @@ One of the main limitation of the Frequency Map-Making algorithm is its memory u
 
 \subsubsection{Memory usage}
 
-The core complexity lives in $H$ operator, which can be seen as a sparse matrix simulating the instrument (a detailed description of this operator is given in Chapter \ref{chap:qubicsoft}). This matrix, for one frequency band, has a shape of $\left(N_{det} x N_{pointings}, N_{peak}\right)$. Considering that the matrix is composed of float64, written $64 bits = 16 bytes$. Thus, for $N_{det} = 992$, $N_{pointing} = 10000$, and $N_{peak} = (2k_{max}+1)^2 = 49$ with $k_{max} = 3$, the resulting memory used is then $10000 x 992 x 49 x 16 = 7.778 x 10^9 bytes = 7.243 GiB$\footnote{$ 1~GiB = 1024~MiB = 1024^{2}~KiB = 1024^{3}~bytes$.}. So, for $N_{sub} = 40$, we need $\sim 289.7~GiB$ of RAM only to store the operator $H$. It is important to note that the value given as an example are far from being extreme. It explains the need for a random scanning strategy, as explained in the part \ref{subsub:scanning_strategy}. Additionally, a complete study of the minimal parameter value is led in Chapter \ref{chap:tod}, to save as much memory as possible. 
-In reality, the reconstruction can't be done with large $N_{sub}$, $N_{pointings}$ or $k_{max}$ values, as a large $H$ results in a very slow reconstruction with PCG. Therefore, it is important for realism to simulate data with the largest value possible (in particular $N_{sub}$ and $k_{max}$, as they are equal to $\infty$ in real acquisition). In order to achieve that, I designed a sequential data simulation, where multiple TOD with small $N_{pointing}$ are created and concatenate into a large one. This method allows for a TOD simulation with large parameters while being still runable with a reasonable amount of memory. 
+The core complexity lives in $H$ operator, which can be seen as a sparse matrix simulating the instrument (a detailed description of this operator is given in Chapter \ref{chap:qubicsoft}). This matrix, for one frequency band, has a shape of $\left(N_{det} x N_{\text{pointings}}, N_{peak}\right)$. Considering that the matrix is composed of float64, written $64 bits = 16 bytes$. Thus, for $N_{det} = 992$, $N_{pointing} = 10000$, and $N_{peak} = (2k_{max}+1)^2 = 49$ with $k_{max} = 3$, the resulting memory used is then $10000 x 992 x 49 x 16 = 7.778 x 10^9 bytes = 7.243 GiB$\footnote{$ 1~GiB = 1024~MiB = 1024^{2}~KiB = 1024^{3}~bytes$.}. So, for $N_{sub} = 40$, we need $\sim 289.7~GiB$ of RAM only to store the operator $H$. It is important to note that the value given as an example are far from being extreme. It explains the need for a random scanning strategy, as explained in the part \ref{subsub:scanning_strategy}. Additionally, a complete study of the minimal parameter value is led in Chapter \ref{chap:tod}, to save as much memory as possible. 
+In reality, the reconstruction can't be done with large $N_{sub}$, $N_{\text{pointings}}$ or $k_{max}$ values, as a large $H$ results in a very slow reconstruction with PCG. Therefore, it is important for realism to simulate data with the largest value possible (in particular $N_{sub}$ and $k_{max}$, as they are equal to $\infty$ in real acquisition). In order to achieve that, I designed a sequential data simulation, where multiple TOD with small $N_{pointing}$ are created and concatenate into a large one. This method allows for a TOD simulation with large parameters while being still runable with a reasonable amount of memory. 
 
 \subsubsection{Computational time}
 
