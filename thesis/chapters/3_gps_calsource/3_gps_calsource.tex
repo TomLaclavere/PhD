@@ -183,9 +183,6 @@ The first data that we can look at is the relative position vector, called rpN, 
 The system does not provide the position of the second antenna directly, but the value of the roll and yaw angles. GNSS stands for Global Navigation Satellite System. It is a more general name to talk about using satellites to compute position on Earth, GPS corresponding in fact to the specific satellite system developed by the USA. \\
 We are used to the names \enquote{roll} and \enquote{yaw} to talk about two of the three rotation axes of an aircraft. They are not defined in the same way in our case: the Roll angle corresponds to the angle between the North axis and the vector formed by the two antennas (from antenna 1 to antenna 2), while the Yaw angle is the angle between the antennas' vectors and the ground. It has been confirmed by the data shown in Figure~\ref{fig:b}.
 
-% . To understand their definitions, we can use the data from the experiment described in the previous subsection. In these data, we can see that the roll angle value evolved by step, with the different positions of the two antennas. Thus, roll angle has to be defined regarding the position of the two antennas. We found that it is defined as the angle between the North axis and the vector formed by the two antennas (from antenna 1 to antenna 2). We ran a more specific test to confirm this hypothesis by aligning the \enquote{antennas vector} at a known angle with the North axis using a compass and observing that we found the same value in the GPS data. \\
-% For the yaw angle, as its value did not change during all the previous tests, we made the hypothesis that it is defined with the vertical plane. Then, we tried to put the antennas at different heights for each other, and then compute the angle between the antennas' vectors and the ground. This angle corresponded to the yaw angle in the GPS data. \\
-
 \subsection{Antennas' Position} \label{section: antennas' position}
 Now that we have validated our understanding of the output data of the GPS, we can discuss how to use it to know the position and orientation of the calibration source in real-time. The first step for this purpose is to be able to compute the position of the two antennas with respect to the base. To summarize what was explained in the previous section, we have drawn a frame where the different data are illustrated, to represent what they correspond to, in Figure~\ref{fig:drawing gps}.
 
@@ -323,7 +320,7 @@ To be able to compute the position and orientation of the calibration source usi
 Section~\ref{section: noise analysis} shows that antennas 1 and 2 should be separated by at least 2 meters. We then need to find a technical solution to ensure rigidity for such a distance between the antennas.
 
 \subsubsection{Rotation around the antennas vector}
-\rmk{Ajouter un dessin  pour montrer le design qu'on envisage (cf notes JC)}
+
 Because we are using only two antennas, it appears that we cannot reconstruct the calibration source's position and orientation in 3 dimensions: we are blind to one of them. Then, even if the system is rigid, we will always be blind to rotation around the antenna's vector. This situation is illustrated in Figure~\ref{fig:drawing GPS issue}. As we are blind to rotation around this axis, and knowing the position of the antennas and the distances d1 and d2 to the source, it happens that the position of the calibration source is degenerated on the blue circle.
 
 \begin{figure}[!htbp]
@@ -423,7 +420,7 @@ At initial position, as described in this introduction, the vector between the c
 where $d_{cal}$ is the distance between the calibration source and QUBIC. As said in the Section~\ref{cal tower}, the calibration source will be placed at 48.6 m height, the distance on the ground between the tower and QUBIC is 38.44 m while the height of QUBIC from the ground is approximatively 4 m. By simple trigonometry, we can set that $d_{cal}= 58.88$ m from these values.
 
 \subsection{Uncertainties from GPS data}
-In a previous Section (~\ref{Section: PS analysis}), we presented an analysis of the power spectrum of the GPS data, for different antenna configurations. We want to use this information on the noise to compute the error on the GPS data, and by extension on the calibration source position and orientation. To do this, we use the noise model \ref{eq: noise model} as before. To compute the error on the data, we have to integrate the power spectra over all the frequency range, where $f_{max}$ is given by the sampling rate and $f_{min}$ is as close as possible to 0 :
+In a previous Section~\ref{Section: PS analysis}, we presented an analysis of the power spectrum of the GPS data, for different antenna configurations. We want to use this information on the noise to compute the error on the GPS data, and by extension on the calibration source position and orientation. To do this, we use the noise model \ref{eq: noise model} as before. To compute the error on the data, we have to integrate the power spectra over all the frequency range, where $f_{max}$ is given by the sampling rate and $f_{min}$ is as close as possible to 0 :
 
 \begin{equation}
     \sigma^2 = \int^{f_{max}}_{f_{min}} P(f) df.
@@ -505,7 +502,7 @@ where $S_{data}(f)$ is the target PSD for the given GPS data. By using the corre
     S(f) = D(f) \cdot C \cdot D(f).
 \end{equation}
 
-We perform an eigendecomposition on this matrix :
+We perform an eigen-decomposition on this matrix :
 
 \begin{equation}
     S(f) = V \cdot \Lambda \cdot V^T,

@@ -74,7 +74,7 @@ Figure~\ref{fig:cmm_parametric_maps} presents an example of the result of recons
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=1\linewidth]{d0_component_maps.png}
-    \caption{CMB and Dust reconstructed and residual maps with Parameteric CMM. \rmk{Temporary}}
+    \caption{CMB and Dust reconstructed and residual maps with Parametric CMM. \rmk{Temporary}}
     \label{fig:cmm_parametric_maps}
 \end{figure}
 
@@ -100,7 +100,7 @@ Here, we are not considering any parameter for foregrounds, the mixing matrix el
 
 \subsection{Results}
 
-In Blind CMM, we are no longer reconstructing foregrounds' parameters, but directly the mixing matrix element. Figure~\ref{fig:cmm_blind_mm_d0} shows an example of such reconstruction for the simple $d_0$ model. Here, the true value used to simulate the sky are the dots with $N_{frec, data} = 12$, while the model law is the blue line. The crosses are the fitted mixing matrix elements with $N_{frec, rec} = 6$. We can see that the crosses are averaging the constribution of each pair of dots. We are using $N_{frec, data} > N_{frec, rec}$ to describe a more realistic situation. Indeed, with real observation, $N_{frec, data}$ will be $\infty$, while $N_{frec, rec}$ needs to remain small to allow the reconstruction.
+In Blind CMM, we are no longer reconstructing foregrounds' parameters, but directly the mixing matrix element. Figure~\ref{fig:cmm_blind_mm_d0} shows an example of such reconstruction for the simple $d_0$ model. Here, the true value used to simulate the sky are the dots with $N_{frec, data} = 12$, while the model law is the blue line. The crosses are the fitted mixing matrix elements with $N_{frec, rec} = 6$. We can see that the crosses are averaging the contribution of each pair of dots. We are using $N_{frec, data} > N_{frec, rec}$ to describe a more realistic situation. Indeed, with real observation, $N_{frec, data}$ will be $\infty$, while $N_{frec, rec}$ needs to remain small to allow the reconstruction.
 
 \begin{figure}[!htbp]
     \centering
@@ -109,12 +109,12 @@ In Blind CMM, we are no longer reconstructing foregrounds' parameters, but direc
     \label{fig:cmm_blind_mm_d0}
 \end{figure}
 
-This example does not do justice to the method, as this simple law does not requiere a thin spectral resolution to be properly reconstructed. The blind approach is better suited for a complex model which varies signigicantly acros the frequency bandwidth, where standard method will fail to properly separate the contributions. The best model to illustrate this purpose is the $d_6$ dust model~\cite{vansyngel2018}. Under $d_6$, each pixel is described by a $d_0$ model modified by adding a frequency decorrelation. The decorrelation, parametrise by the parameter $l_{corr}$, is assumed constant across the sky. The resulting SED for the dust exhibits a random dispersion around the modified blackbody model, whose increase when $l_{corr}$ decreases. Figure~\ref{fig:cmm_blind_mm_d6} shows the reconstruction result for both $d_0$ and $d_6$ models. For $d_0$, red line and dots, having at least two points is enough to perfectly reconstruct the model, and to perform an unbiased component separation. While for $d_6$ in orange bins and blue dots, a high spectral sensitivity is needed to reconstruct the dust SED. Without spectral imaging, an effective power law would have been fitted, which would not have accounted for the variation inside the bandwidth, leading to a biased component seperation and by extension, wrong cosmological parameters' estimation. \cite{regnier2024} provides a more detailed description of this example, along with estimation of this bias on the tensor-to-scalar ratio $r$ between classical imagery and bolometric interferometery.
+This example does not do justice to the method, as this simple law does not require a thin spectral resolution to be properly reconstructed. The blind approach is better suited for a complex model which varies significantly acros the frequency bandwidth, where standard method will fail to properly separate the contributions. The best model to illustrate this purpose is the $d_6$ dust model~\cite{vansyngel2018}. Under $d_6$, each pixel is described by a $d_0$ model modified by adding a frequency decorrelation. The decorrelation, parametrise by the parameter $l_{corr}$, is assumed constant across the sky. The resulting SED for the dust exhibits a random dispersion around the modified blackbody model, whose increase when $l_{corr}$ decreases. Figure~\ref{fig:cmm_blind_mm_d6} shows the reconstruction result for both $d_0$ and $d_6$ models. For $d_0$, red line and dots, having at least two points is enough to perfectly reconstruct the model, and to perform an unbiased component separation. While for $d_6$ in orange bins and blue dots, a high spectral sensitivity is needed to reconstruct the dust SED. Without spectral imaging, an effective power law would have been fitted, which would not have accounted for the variation inside the bandwidth, leading to a biased component separation and by extension, wrong cosmological parameters' estimation. \cite{regnier2024} provides a more detailed description of this example, along with estimation of this bias on the tensor-to-scalar ratio $r$ between classical imagery and bolometric interferometry.
 
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=1\linewidth]{SED_blind.pdf}
-    \caption{Mixing Matrix elements' reconstruction in Blind CMM for $d_0$ and $d_6$ models. Red line and red dot are the input and reconstructed $d_0$ model, whille orange bins and blue point represent the input and reconstructed $d_6$ model. Taken from \cite{CMM}.}
+    \caption{Mixing Matrix elements' reconstruction in Blind CMM for $d_0$ and $d_6$ models. Red line and red dot are the input and reconstructed $d_0$ model, while orange bins and blue point represent the input and reconstructed $d_6$ model. Taken from \cite{CMM}.}
     \label{fig:cmm_blind_mm_d6}
 \end{figure}
 
@@ -143,7 +143,7 @@ Similar to the FMM, the angular resolution of the reconstructed maps is a compli
 
 \subsubsection{Fixed angular resolution reconstruction}
 
-In FMM (see subsection \ref{sub:fmm_convolution}), we fixed the reconstucted resolution at the best resolution per reconstructed sub-bands, to ensure the best possible results. In CMM, we no longer reconstruct frequency maps, but component maps at a reference frequency. Following the same reasoning, we reconstruct the component maps at the best resolution for QUBIC inside its physical band, meaning the resolution at the highest frequency. Following that, during reconstruction, each sub-bands will be convolved at the resolution $\sigma_{\nu_j, best} = \sqrt{\sigma_{\nu_j} - \sigma_{best}}$, with $\sigma_{\nu_j}$ QUBIC's FWHM at frequency $\nu_j$ and $\sigma_{best}$ the smallest FWHM within QUBIC's band. The data acquisition equation is then written :
+In FMM (see subsection \ref{sub:fmm_convolution}), we fixed the reconstructed resolution at the best resolution per reconstructed sub-bands, to ensure the best possible results. In CMM, we no longer reconstruct frequency maps, but component maps at a reference frequency. Following the same reasoning, we reconstruct the component maps at the best resolution for QUBIC inside its physical band, meaning the resolution at the highest frequency. Following that, during reconstruction, each sub-bands will be convolved at the resolution $\sigma_{\nu_j, best} = \sqrt{\sigma_{\nu_j} - \sigma_{best}}$, with $\sigma_{\nu_j}$ QUBIC's FWHM at frequency $\nu_j$ and $\sigma_{best}$ the smallest FWHM within QUBIC's band. The data acquisition equation is then written :
 
 \begin{equation}
     \vec{\tilde{d}} = \int_{\nu_{min}}^{\nu_{max}} \mathcal{H}_\nu C_\nu A_{\nu} \vec{\tilde{c}}^{~best} d\nu + \vec{n},
@@ -206,7 +206,7 @@ The spectral imaging capability of QUBIC provides a natural way to isolate such 
 
 These modifications allow the CO contribution to be separated from the CMB and dust components while simultaneously reconstructing the CO emission itself.
 
-Examples of the reconstructed CO intensity and polarisation maps are shown in Figures~\ref{fig:CO_int} and~\ref{fig:CO_pol}, taken from~\cite{CMM}. In these simulations, the observed patch was centered on the Galactic plane, at $(\mathrm{RA}=100^\circ,\ \mathrm{Dec}=-157^\circ)$, in order to maximise the CO signal. These simulations were produced by Mathias Regnier during his PhD work. Although the reconstruction principle has been successfully demonstrated, the CO component is not yet fully implemented in the current simulation pipeline.
+Examples of the reconstructed CO intensity and polarisation maps are shown in Figures~\ref{fig:CO_int} and~\ref{fig:CO_pol}, taken from~\cite{CMM}. In these simulations, the observed patch was centred on the Galactic plane, at $(\mathrm{RA}=100^\circ,\ \mathrm{Dec}=-157^\circ)$, in order to maximise the CO signal. These simulations were produced by Mathias Regnier during his PhD work. Although the reconstruction principle has been successfully demonstrated, the CO component is not yet fully implemented in the current simulation pipeline.
 
 \begin{figure}[!htbp]
     \centering

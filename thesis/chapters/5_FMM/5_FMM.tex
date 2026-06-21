@@ -189,7 +189,7 @@ The reconstruction converges towards a map characterized by an effective angular
 
 where $\nu_j$ denotes the frequencies belonging to the reconstructed band $\nu_i$, $\alpha_{\nu_j}$ is the effective coverage, $w_{\nu_j}$ is a weighting factor, and $\sigma_{\nu_j}$ is the beam width associated with frequency $\nu_j$. The weighting factor depends on the sky emission model, since the relative contribution of the different sky components varies across the frequency band. For instance, thermal dust emission increases with frequency, giving a larger weight to the highest-frequency sub-bands when averaging the angular resolution. The weights are therefore derived from the spectral energy distributions (SEDs) of the considered sky components.
 
-To verify the validity of this hypothesis, several metrics have been used. The simplest and most satisfaying one consists at running the algorithm without adding the instrumental and photon noises contribution in simulated data. Doing so, with an unbiased method, we are expected to reconstruct perferctly the input maps. Then, any small difference between the true and computed reconstructed resolutions will be visible as noise in the residual. The result is shown in Figure \ref{fig:fmm_convolution_noiseless}.
+To verify the validity of this hypothesis, several metrics have been used. The simplest and most satisfying one consists at running the algorithm without adding the instrumental and photon noises contribution in simulated data. Doing so, with an unbiased method, we are expected to reconstruct perfectly the input maps. Then, any small difference between the true and computed reconstructed resolutions will be visible as noise in the residual. The result is shown in Figure \ref{fig:fmm_convolution_noiseless}.
 
 \begin{figure}[!htbp]
     \centering
@@ -198,16 +198,16 @@ To verify the validity of this hypothesis, several metrics have been used. The s
     \label{fig:fmm_convolution_noiseless}
 \end{figure}
 
-We can also use the noise profile in residual maps. Indeed, as the number of photons is splited into two maps for polarisation, with respect to intensity one, we expect a noise ratio of $1/\sqrt{2}$ between the two. Observing this ratio between reconstructed maps ensures an unbiased noise repartition. Figure \ref{fig:fmm_noise_profile} exhibits that noise's RMS versus angular distance to the center of the patch in residual maps is identical between $I$ and $QU/\sqrt{2}$. The small fluctuations visible close to the center are due to statistical fluctuation, as RMS is computed along fewer pixels closer to the center than at the border. This result shows a consistent noise distribution between the $3$ Stokes parameters.
+We can also use the noise profile in residual maps. Indeed, as the number of photons is split into two maps for polarisation, with respect to intensity one, we expect a noise ratio of $1/\sqrt{2}$ between the two. Observing this ratio between reconstructed maps ensures an unbiased noise repartition. Figure \ref{fig:fmm_noise_profile} exhibits that noise's RMS versus angular distance to the centre of the patch in residual maps is identical between $I$ and $QU/\sqrt{2}$. The small fluctuations visible close to the centre are due to statistical fluctuation, as RMS is computed along fewer pixels closer to the centre than at the border. This result shows a consistent noise distribution between the $3$ Stokes parameters.
 
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=1\linewidth]{noise_profile_150_GHz.pdf}
-    \caption{RMS of noise in the residual maps depending on their angular distance to the center of the patch.}
+    \caption{RMS of noise in the residual maps depending on their angular distance to the centre of the patch.}
     \label{fig:fmm_noise_profile}
 \end{figure}
 
-Finally, we can manualy fit the resolution for which the difference between the reconstructed maps and the true maps at infinite resolution, convolved at this resolution, is the lowest. This is equivalent as minimising the function :
+Finally, we can manually fit the resolution for which the difference between the reconstructed maps and the true maps at infinite resolution, convolved at this resolution, is the lowest. This is equivalent as minimising the function :
 
 \begin{equation}
     \chi^2(\sigma_{rec}) \propto \left(s_{rec} - C(\sigma_{rec})s^{~\infty}_{true}\right)^2,
@@ -298,7 +298,7 @@ The operators $H^{\mathrm{QUBIC}}_{\nu_i}$ correspond to the QUBIC acquisition m
 In practice, the external information is not taken directly from Planck frequency maps. Instead, we use the component maps obtained from the Planck component-separation analysis~\cite{Planck2018IV}. These maps are combined with the corresponding mixing matrix to reconstruct the expected emission at the QUBIC sub-band frequencies. This procedure ensures that the external information is expressed in the same frequency basis as the QUBIC reconstruction, allowing the two datasets to be combined consistently.
 Particular care is taken to avoid introducing external information within the QUBIC observed region. The external constraints are therefore applied only outside the QUBIC patch, where they compensate for the lack of observational information and mitigate the edge effects induced by the synthesized beam. As a result, the reconstruction inside the observed region remains driven by QUBIC data, while the external maps provide the large-scale information required beyond the patch boundaries.
 
-The inverse noies covariance matrix is also modified to account for noise associated with external data :
+The inverse noise covariance matrix is also modified to account for noise associated with external data :
 
 \begin{equation}
     N^{-1} = \begin{bmatrix}
@@ -374,7 +374,7 @@ One of the main limitation of the Frequency Map-Making algorithm is its memory u
 \subsubsection{Memory usage}
 
 The core complexity lives in $H$ operator, which can be seen as a sparse matrix simulating the instrument (a detailed description of this operator is given in Chapter \ref{chap:qubicsoft}). This matrix, for one frequency band, has a shape of $\left(N_{det} x N_{\text{pointings}}, N_{peak}\right)$. Considering that the matrix is composed of float64, written $64 bits = 16 bytes$. Thus, for $N_{det} = 992$, $N_{pointing} = 10000$, and $N_{peak} = (2k_{max}+1)^2 = 49$ with $k_{max} = 3$, the resulting memory used is then $10000 x 992 x 49 x 16 = 7.778 x 10^9 bytes = 7.243 GiB$\footnote{$ 1~GiB = 1024~MiB = 1024^{2}~KiB = 1024^{3}~bytes$.}. So, for $N_{sub} = 40$, we need $\sim 289.7~GiB$ of RAM only to store the operator $H$. It is important to note that the value given as an example are far from being extreme. It explains the need for a random scanning strategy, as explained in the part \ref{subsub:scanning_strategy}. Additionally, a complete study of the minimal parameter value is led in Chapter \ref{chap:tod}, to save as much memory as possible. 
-In reality, the reconstruction can't be done with large $N_{sub}$, $N_{\text{pointings}}$ or $k_{max}$ values, as a large $H$ results in a very slow reconstruction with PCG. Therefore, it is important for realism to simulate data with the largest value possible (in particular $N_{sub}$ and $k_{max}$, as they are equal to $\infty$ in real acquisition). In order to achieve that, I designed a sequential data simulation, where multiple TOD with small $N_{pointing}$ are created and concatenate into a large one. This method allows for a TOD simulation with large parameters while being still runable with a reasonable amount of memory. 
+In reality, the reconstruction can't be done with large $N_{sub}$, $N_{\text{pointings}}$ or $k_{max}$ values, as a large $H$ results in a very slow reconstruction with PCG. Therefore, it is important for realism to simulate data with the largest value possible (in particular $N_{sub}$ and $k_{max}$, as they are equal to $\infty$ in real acquisition). In order to achieve that, I designed a sequential data simulation, where multiple TOD with small $N_{pointing}$ are created and concatenate into a large one. This method allows for a TOD simulation with large parameters while being still runnable with a reasonable amount of memory. 
 
 \subsubsection{Computational time}
 

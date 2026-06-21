@@ -15,9 +15,9 @@
 
 \section*{Introduction}
 
-The previous two chapters (Chapters~\ref{chap:FMM} and~\ref{chap:CMM}) introduced the FMM and CMM algorithms, together with the simulation framework used throughout this thesis. In particular, both approaches rely on the acquisition operator $H$, which models the instrument response, and on simulated noise realisations, denoted by $\vec{n}$.
+The previous two chapters (Chapters~\ref{chap:FMM} and~\ref{chap:CMM}) introduced the FMM and CMM algorithms, together with the simulation framework used throughout this thesis. In particular, both approaches rely on the acquisition operator $H$, which models the instrument response.
 
-The purpose of this chapter is to present these elements in greater detail, describing the construction of the acquisition operator, the modelling of instrumental noise, and the software infrastructure used for simulations and data reconstruction. These developments are implemented within the QUBIC simulation and analysis package, \emph{qubicsoft}\footnote{\url{https://github.com/qubicsoft/qubic/tree/master}}.
+The purpose of this chapter is to present this element in greater detail, describing the construction of the acquisition operator, and the software infrastructure used for simulations and data reconstruction. These developments are implemented within the QUBIC simulation and analysis package, \emph{qubicsoft}\footnote{\url{https://github.com/qubicsoft/qubic/tree/master}}.
 Particular emphasis is placed on the architecture of \emph{qubicsoft} and on the design of the simulation, reconstruction, and analysis pipeline. The development of a user-friendly framework integrating these different stages constitutes a major part of the work carried out during this thesis. 
 The chapter also presents the implemented simulation and reconstruction capabilities, discusses the currently known issues and limitations, and outlines the most important developments planned for future releases of the framework.
 
@@ -65,13 +65,13 @@ The Filter Operator integrates the signal over the considered frequency bandwidt
 
 The Projection Operator is the central operator of $\mathcal{H}_{\nu}$, and also the most complicated one. It consists at a coordinate rotation between the instrument frame to the galactic one, which is used to compute the position and amplitude of each peak of the synthesized beam for each detector and for each time sample. The input shape of this operator is the one of HEALPix map $\left(N_{\text{pix}}, N_{\text{stk}}\right)$, with $N_{\text{STK}}=3$, the Stokes parameters, and returns TOD with dimension $\left(N_{\text{det}}, N_{\text{pointings}}, N_{\text{STK}}\right)$
 
-This operator is responsible for the memory needed by the simulation algorithm, described in subsection \ref{sub:FMM_numerical_limits}, as well as the majority of the computation time. For these reasons, this part of the code relies on Fortran\footnote{With Pierre Chanial, the author and maintainor of PyOperators and PySimulators, we moved the Fortran part from the qubicsoft to PyOperators, to simplify the installation and compilation process for QUBIC software.}, to handle properly memory and improve efficiency through multiprocessing via OpenMP.
+This operator is responsible for the memory needed by the simulation algorithm, described in subsection \ref{sub:FMM_numerical_limits}, as well as the majority of the computation time. For these reasons, this part of the code relies on Fortran\footnote{With Pierre Chanial, the author and maintainer of PyOperators and PySimulators, we moved the Fortran part from the qubicsoft to PyOperators, to simplify the installation and compilation process for QUBIC software.}, to handle properly memory and improve efficiency through multiprocessing via OpenMP.
 
 \rmk{Should I describe mathematically this operator ? It is quiet complicated...}
 
 \subsubsection{HWP Operator}
 
-The Half-Wave Plate operator appplies a rotation of angle $\varphi$ for each pointing position to the polariation components, corresponding to the Q and U maps. It again uses Fortran routines to efficiently perform the matrix product : 
+The Half-Wave Plate operator applies a rotation of angle $\varphi$ for each pointing position to the polarisation components, corresponding to the Q and U maps. It again uses Fortran routines to efficiently perform the matrix product : 
 
 \begin{eqnarray}
 \begin{bmatrix}  \tilde{I}^{\rm det}(t) \\ \tilde{Q}^{\rm det}(t) \\ \tilde{U}^{\rm det}(t) \end{bmatrix}= {\cal H}_{\rm WP}(t) \begin{bmatrix}  I^{\rm det}(t) \\ Q^{\rm det}(t) \\ U^{\rm det}(t) \end{bmatrix},
@@ -97,7 +97,7 @@ with :
 
 \subsubsection{Polariser Operator}
 
-The Polariser operator is selecting a polarisation component. It takes a $(N_{\text{det}}, N_{\text{pointings}}, N_{\text{STK}})$ array and project it to a $(\text{det}, N_{\text{pointings}})$ array by selecting a polarisation component, essentialy :
+The Polariser operator is selecting a polarisation component. It takes a $(N_{\text{det}}, N_{\text{pointings}}, N_{\text{STK}})$ array and project it to a $(\text{det}, N_{\text{pointings}})$ array by selecting a polarisation component, essentially :
 \begin{eqnarray}
 {\cal P}^{\rm det}_{\rm ol} (t)= 0.5 \begin{bmatrix} 1 \ 1 \ 0 \end{bmatrix}.
 \end{eqnarray}
@@ -106,7 +106,7 @@ In this convention it will only select the $\tilde{Q}^{\rm det}(t)$ component. T
 
 \subsubsection{Detector Integration Operator}
 
-The Dector Integration operator integrates the flux in the detector solid angles, accounting for the secondary beam profile (described in Chapter \ref{chap:spectral_imaging}). Such operator is defined by : 
+The Detector Integration operator integrates the flux in the detector solid angles, accounting for the secondary beam profile (described in Chapter \ref{chap:spectral_imaging}). Such operator is defined by : 
 
 \begin{equation}
     {\cal I}_{\rm det}= \frac{\Omega_{\rm det}}{\Omega_{\rm beam}} B^{\rm sec}(\phi_{\rm det}, \theta_{\rm det}).
@@ -126,16 +126,115 @@ with $\rho_{\text{det}}$ is the detector efficiency and $\eta_i$ the transmissio
 
 \subsubsection{Detector Response Operator}
 
-The Detector Response operator accounts for the time constrant introduced by the Electro-Thermal Feedback (see \ref{sub:TES}), of the order $\sim 0.01$ sec, by convolving the signal by a troncated exponential.
-
-
-\section{Noise model}
-
-% Description of QubicNoise
+The Detector Response operator accounts for the time constant introduced by the Electro-Thermal Feedback (see \ref{sub:TES}), of the order $\sim 0.01$ sec, by convolving the signal by a truncated exponential.
 
 \section{qubicsoft framework}
 
-\subsection{Softaware Architecture}
+In this section, we aim at defining the software architecture of the simulation and reconstruction pipeline. It is followed by a description of the available features, and the not-working or missing features.
+
+\subsection{Software Architecture}
+
+qubicsoft is written mainly in Python~\footnote{\url{https://www.python.org/}}, with some key parts written in Fortran~\footnote{\url{https://fortran-lang.org/}} for computation efficiency. The main advantages of Python are to be a simple language to use and learn, as well as being majority within the scientific community. It is an object-oriented programming language, feature widely used across the qubicsoft for its practicality, as well as its ability to simplify the overall organisation of the code.
+
+\subsubsection{Fundamental classes}
+
+The fundamental class in the qubicsoft is \texttt{QubicInstrument}, which defines all the physical elements of QUBIC instrument : detectors, horns, optics, beams, filters. It includes the methods to build all the operator described in the previous section, as well as the instrumental and photon noise properties. The class only depends on a parameter file defining all the instrumental properties of QUBIC, allowing to easily modify characteristic (to simulate either the TD of the FI for example). \texttt{QubicInstrument} is a subclass of \texttt{Instrument} from PySimulators.
+
+Then, \texttt{QubicAcquisition}, a subclass of \texttt{Acquisition} from PySimulators, combines an instrument, a scanning strategy and a sky scene to assemble the instrument's individual operators into the full measurement chain. The operator $\mathcal{H_\nu}$ is build from this class.
+
+These two objects form the core of the simulation and reconstruction pipeline, but are limited to a single frequency range. We denote them as monochromatic instrument and monochromatic acquisition operator.
+
+\subsubsection{Polychromatic classes}
+
+To describe the frequency capabilities of QUBIC, in particular regarding its beam, we define the \texttt{QubicMultibandInstrument}. This class holds an array of \texttt{QubicInstrument} instances, one per frequency sub-bands. It also includes method to define properly the bandwidth of each of them. 
+
+Based on this extension, \texttt{QubicMultiAcquisitions} build one \texttt{QubicAcquisition} object per sub-bands from \texttt{QubicMultibandInstrument}. This class builds the multifrequency operator $H$.
+
+\subsubsection{Map-Making classes}
+
+As discussed during the map-making chapters (\ref{chap:FMM} and \ref{chap:CMM}), we explored the addition of external data during reconstruction. For the addition of Planck, we created the class \texttt{PlanckAcquisition}, which contains methods to build the acquisition operator, the noise and the inverse covariance matrix $N^{-1}$ for Planck. 
+
+Additionally, we defined the class \texttt{QubicInstrumentType}, a subclass of \texttt{QubicMultiAcquisitions}. Its purpose is to handle the various instrumental design of QUBIC (Ultra Wide Band, Dual Bands and Mono Band), which necessitate extra care regarding the shape of the operators.
+
+Finally, these two classes are joint in two classes : \texttt{JointAcquisitionFrequencyMapMaking} and \texttt{JointAcquisitionComponentsMapMaking}, which build all the operators, based on their subclasses, for the FMM and CMM.
+
+\begin{center}
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+  x=1cm, y=1cm,
+  classnode/.style = {draw, rounded corners, fill=blue!6, align=center,
+                       inner sep=4pt, font=\footnotesize\ttfamily},
+  extnode/.style    = {draw, dashed, rounded corners, fill=gray!4, align=center,
+                        inner sep=4pt, font=\footnotesize\ttfamily\itshape},
+  inherit/.style = {-{Triangle[open, length=3mm, width=2.5mm]}, thick},
+  compose/.style = {-{Diamond[length=2.5mm, width=2mm]}, dashed, thick},
+]
+
+% --- external pysimulators base classes ---
+\node[extnode] (Instrument) at (0, 14) {pysimulators.\\Instrument};
+\node[extnode] (Acquisition) at (9, 14) {pysimulators.\\Acquisition};
+
+% --- single-band layer ---
+\node[classnode] (QubicInstrument) at (0, 11.5)
+  {QubicInstrument\\\scriptsize Qinstrument.py};
+\node[classnode] (QubicAcquisition) at (9, 11.5)
+  {QubicAcquisition\\\scriptsize Qacquisition.py};
+
+% --- multiband instrument layer ---
+\node[classnode] (MultiInst) at (0, 8.5)
+  {QubicMultibandInstrument\\\scriptsize Qinstrument.py};
+
+% --- multi-acquisitions layer ---
+\node[classnode] (MultiAcq) at (4.5, 5.5)
+  {QubicMultiAcquisitions\\\scriptsize Qacquisition.py};
+
+% --- instrument type layer ---
+\node[classnode] (InstType) at (4.5, 2.5)
+  {QubicInstrumentType\\\scriptsize Qacquisition.py};
+
+% --- Planck (standalone), placed next to QubicInstrumentType ---
+\node[classnode] (Planck) at (9, 2.5)
+  {PlanckAcquisition\\\scriptsize Qacquisition.py};
+
+% --- Joint acquisitions ---
+\node[classnode] (JointFMM) at (0.5, -1)
+  {JointAcquisitionFrequency-\\MapMaking\\\scriptsize Qacquisition.py};
+\node[classnode] (JointCMM) at (8.5, -1)
+  {JointAcquisitionComponents-\\MapMaking\\\scriptsize Qacquisition.py};
+
+% ===================== edges =====================
+
+% inheritance
+\draw[inherit] (Instrument) -- (QubicInstrument);
+\draw[inherit] (Acquisition) -- (QubicAcquisition);
+\draw[inherit] (InstType) -- (MultiAcq);
+
+% composition: QubicAcquisition holds a QubicInstrument
+\draw[compose] (QubicInstrument) -- (QubicAcquisition);
+
+% composition: QubicMultibandInstrument holds an array of QubicInstrument
+\draw[compose] (QubicInstrument) -- (MultiInst);
+
+% composition: QubicMultiAcquisitions holds a QubicMultibandInstrument
+% and a list of QubicAcquisition
+\draw[compose] (MultiInst) -- (MultiAcq);
+\draw[compose] (QubicAcquisition) -- (MultiAcq);
+
+% composition: Joint* classes hold a QubicInstrumentType and PlanckAcquisition(s)
+\draw[compose] (InstType) -- (JointFMM);
+\draw[compose] (InstType) -- (JointCMM);
+\draw[compose] (Planck) -- (JointFMM);
+\draw[compose] (Planck) -- (JointCMM);
+
+% ===================== legend =====================
+\node[extnode, anchor=west] at (11, 13.6) {external base class};
+\node[classnode, anchor=west] at (11, 12.6) {Qubic class};
+\draw[inherit] (11, 11.6) -- (12, 11.6) node[right, font=\scriptsize] {inherits};
+\draw[compose] (11, 10.8) -- (12, 10.8) node[right, font=\scriptsize] {composes / holds};
+
+\end{tikzpicture}%
+}
+\end{center}
 
 \subsection{Features}
 
@@ -143,7 +242,7 @@ Non-exhaustive list, not in order :
 
 \subsubsection{PEP8 refactoring}
 
-\subsubsection{General cleaning (variables names + unused, importation, comments, dockstrings, ...)}
+\subsubsection{General cleaning (variables names + unused, importation, comments, docstrings, ...)}
 
 \subsubsection{Full architecture rewritting (explain classes hierarchy)}
 
