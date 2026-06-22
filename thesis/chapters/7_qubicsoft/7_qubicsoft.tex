@@ -132,7 +132,7 @@ The Detector Response operator accounts for the time constant introduced by the 
 
 In this section, we aim at defining the software architecture of the simulation and reconstruction pipeline. It is followed by a description of the available features, and the not-working or missing features.
 
-\subsection{Software Architecture}
+\subsection{Software Architecture - Instrument Simulation}
 
 qubicsoft is written mainly in Python~\footnote{\url{https://www.python.org/}}, with some key parts written in Fortran~\footnote{\url{https://fortran-lang.org/}} for computation efficiency. The main advantages of Python are to be a simple language to use and learn, as well as being majority within the scientific community. It is an object-oriented programming language, feature widely used across the qubicsoft for its practicality, as well as its ability to simplify the overall organisation of the code.
 
@@ -158,7 +158,10 @@ Additionally, we defined the class \texttt{QubicInstrumentType}, a subclass of \
 
 Finally, these two classes are joint in two classes : \texttt{JointAcquisitionFrequencyMapMaking} and \texttt{JointAcquisitionComponentsMapMaking}, which build all the operators, based on their subclasses, for the FMM and CMM.
 
-\begin{center}
+The complete software architecture of the qubicsoft's instrument simulation is resumed in Figure~\ref{fig:diagram_qubicsoft}
+
+\begin{figure}[htbp]
+\centering
 \resizebox{\textwidth}{!}{%
 \begin{tikzpicture}[
   x=1cm, y=1cm,
@@ -167,7 +170,7 @@ Finally, these two classes are joint in two classes : \texttt{JointAcquisitionFr
   extnode/.style    = {draw, dashed, rounded corners, fill=gray!4, align=center,
                         inner sep=4pt, font=\footnotesize\ttfamily\itshape},
   inherit/.style = {-{Triangle[open, length=3mm, width=2.5mm]}, thick},
-  compose/.style = {-{Diamond[length=2.5mm, width=2mm]}, dashed, thick},
+  compose/.style = {-{Triangle[length=2.5mm, width=2mm]}, dashed, thick},
 ]
 
 % --- external pysimulators base classes ---
@@ -207,7 +210,7 @@ Finally, these two classes are joint in two classes : \texttt{JointAcquisitionFr
 % inheritance
 \draw[inherit] (Instrument) -- (QubicInstrument);
 \draw[inherit] (Acquisition) -- (QubicAcquisition);
-\draw[inherit] (InstType) -- (MultiAcq);
+\draw[inherit] (MultiAcq) -- (InstType);
 
 % composition: QubicAcquisition holds a QubicInstrument
 \draw[compose] (QubicInstrument) -- (QubicAcquisition);
@@ -228,15 +231,310 @@ Finally, these two classes are joint in two classes : \texttt{JointAcquisitionFr
 
 % ===================== legend =====================
 \node[extnode, anchor=west] at (11, 13.6) {external base class};
-\node[classnode, anchor=west] at (11, 12.6) {Qubic class};
+\node[classnode, anchor=west] at (11, 12.6) {QUBIC class};
 \draw[inherit] (11, 11.6) -- (12, 11.6) node[right, font=\scriptsize] {inherits};
-\draw[compose] (11, 10.8) -- (12, 10.8) node[right, font=\scriptsize] {composes / holds};
+\draw[compose] (11, 10.8) -- (12, 10.8) node[right, font=\scriptsize] {composes};
 
 \end{tikzpicture}%
 }
-\end{center}
+\caption{Diagram of the software architecture for the simulation of the QUBIC instrument in qubicsoft.}
+\label{fig:diagram_qubicsoft}
+\end{figure}
 
-\subsection{Features}
+\subsection{Software Architecture - Frequency Map-Making}
+
+Within this thesis framework, the pipeline to use the FMM has been fundamentaly simplified. It only necessitates to modify a parameters file, in YAML\footnote{\url{https://yaml.org/}} format, to describe the simulation. Then, the simulation and reconstruction can be run with only one command line. 
+The configuration file allows to set the physical context of the simulation (composition of the sky, instrumental configuration), as well as the numerical parameters (number of subbands, number of iterations, ...). The FMM is mainly written within one file, where the simulation, the reconstruction, and the computation of the angular power spectra (if asked, see Chapter~\ref{chap:xspectrum}) are performed.
+
+\subsubsection{Algorithm}
+
+The architecture of the FMM, resumed in Figure~\ref{fig:diagram_fmm}, is the following. First, the parameters file is read and checked for wrong values, to avoid un-implemented cases (for example, wrong instrument configuration), or inconsistent parameters, (for example, if the number of integration sub-bands $N_{\text{sub}}$ is not a multiple of the number of reconstructed sub-bands $N_{\text{rec}}$). This prevents running the code with parameters out of its scope, and gives a message to user with feedback of the issue, instead of a raw Python error.
+If the tests pass, all the necessary objects and variables are created, based on the parameters file. In particular, the class \texttt{JointAcquisitionFrequencyMapMaking} is built, which is used to define all the parameters. In the code, a disctinction is made between the simulation and the reconstruction, the two not sharing the same parameters to improve realism (this case is discussed in details in Chapter~\ref{chap:tod}). The input maps are also created, based on PySM3~\cite{PySM}, using a wrapper shared between FMM and CMM.
+Once all necessary objects initialised, the simulated TOD are created, and the PCG algorithm is used to reconstruct the associated frequency maps. If asked by the user, the cross angular power spectra of the reconstructed maps are computed after the map-making process. The code to compute cross-spectra is designed to run in the same way for both FMM and CMM.
+All the relevants information are stored using HDF5\footnote{\url{https://www.hdfgroup.org/solutions/hdf5/}} format, including TOD, parameters, input and reconstructed maps, coverage map, resolutions, noise and sky cross-spectra with their associated parameters. 
+Automated plots are also run at the same time, to allow quick visualisation of the reconstruction results.
+
+Finally, a dedicated script can be run separately to perform a fit through MCMC on the reconstruction results, to estimate the cosmological parameters such as the tensor-to-scalar ratio $r$. This script necessitates multiple noise realisation  of the simulation, as described in Chapter~\ref{chap:xspectrum}, to run.
+
+\begin{figure}[htbp]
+\centering
+\resizebox{!}{0.78\textheight}{%
+\begin{tikzpicture}[
+  x=1cm, y=1cm,
+  procnode/.style  = {draw, rounded corners, fill=blue!6, align=center,
+                       inner sep=4pt, font=\footnotesize},
+  ionode/.style    = {draw, trapezium, trapezium left angle=70, trapezium right angle=110,
+                       fill=gray!8, align=center, inner sep=4pt, font=\footnotesize},
+  decnode/.style   = {draw, diamond, aspect=2, fill=orange!8, align=center,
+                       inner sep=2pt, font=\footnotesize},
+  errnode/.style   = {draw, rounded corners, fill=red!8, align=center,
+                       inner sep=4pt, font=\footnotesize},
+  optnode/.style   = {draw, dashed, rounded corners, fill=blue!6, align=center,
+                       inner sep=4pt, font=\footnotesize},
+  flow/.style      = {-{Triangle[length=2.5mm, width=2mm]}, thick},
+]
+
+\node[ionode]  (Params)   at (0, 15)   {Parameters file};
+\node[decnode] (Check)    at (0, 12.5) {Parameters\\valid ?};
+\node[errnode] (Error)    at (4.5, 12.5) {Error message\\to user};
+\node[procnode] (Build)   at (0, 9.5)  {Build \texttt{JointAcquisitionFrequency-}\\\texttt{MapMaking} + input sky maps\\(PySM3)};
+\node[procnode] (Sim)     at (0, 7)    {Simulate TOD};
+\node[procnode] (Recon)   at (0, 4.5)  {PCG reconstruction\\$\rightarrow$ frequency maps};
+\node[decnode] (DecSpec)  at (0, 2)    {Power spectra ?};
+\node[optnode] (Spectra)  at (4.5, 2)  {Cross angular\\power spectra};
+\node[ionode]  (Store)    at (0, -1)   {Store outputs :\\TOD, maps, params,\\coverage, noise, spectra};
+\node[optnode] (Plots)    at (4.5, -1) {Automated plots};
+\node[optnode] (Fit)      at (0, -4)   {MCMC to\\estimate $r$};
+
+\draw[flow] (Params) -- (Check);
+\draw[flow] (Check) -- node[above, font=\scriptsize] {no} (Error);
+\draw[flow] (Check) -- node[left, font=\scriptsize] {yes} (Build);
+\draw[flow] (Build) -- (Sim);
+\draw[flow] (Sim) -- (Recon);
+\draw[flow] (Recon) -- (DecSpec);
+\draw[flow] (DecSpec) -- node[above, font=\scriptsize] {yes} (Spectra);
+\draw[flow] (DecSpec) -- node[left, font=\scriptsize] {no} (Store);
+\draw[flow] (Spectra.south) to[out=270, in=90] (Store.north east);
+\draw[flow] (Store) -- node[above, font=\scriptsize] {} (Plots);
+\draw[flow, dashed] (Store) -- (Fit);
+
+\end{tikzpicture}%
+}
+\caption{Diagram of the FMM pipeline.
+\rmk{Is it useful ?}}
+\label{fig:diagram_fmm}
+\end{figure}
+
+\subsection{Software Architecture - Component Map-Making}
+
+The CMM is very similar to FMM algorithm, and therefore, shares the same general steps. But, its programming complexity is much higher, mainly because the component separation is done alongside the maps' reconstruction. CMM holds the exact same parameters than FMM, but with additional ones : to describe the foregrounds models, to describe the fitting of the mixing matrix (Parametric or Blind reconstruction) and to handle the alternate fitting.
+The result is a much more complicated algorithm, in particular regarding the mixing matrix. Therefore, a different architecture has been adopted for the CMM.
+
+First, the check of parameters and the initialisation of all the requiered objects and variables is done in a serie of $8$ files, called \texttt{Preset}, as summarised in Figure~\ref{fig:diagram_preset} :
+
+\begin{itemize}
+  \item \texttt{PresetTools} : reads and checks the parameters file and initialises the MPI tools.
+  \item \texttt{PresetExternal} : selects the Planck frequency bands used as external data.
+  \item \texttt{PresetQubic} : builds the QUBIC dictionary and the \texttt{JointAcquisitionComponentsMapMaking} object, for both simulation and reconstruction.
+  \item \texttt{PresetComponents} : sets the sky configuration and builds the component models and true maps, based on PySM3.
+  \item \texttt{PresetSky} : defines the patch center, the coverage, the seen pixels, and the NaMaster objects.
+  \item \texttt{PresetGain} : initialises the input and iterated detector gains (optional).
+  \item \texttt{PresetMixingMatrix} : initialises the mixing matrix $A$.
+  \item \texttt{PresetAcquisition} : builds the noise covariance and the preconditioner and simulates the TOD. This last preset combines all the previous preset objects.
+\end{itemize}
+
+After the initialisation through these files, all quantities are accessible through the object-oriented architecture across the pipeline.
+
+\begin{figure}[htbp]
+\centering
+\resizebox{!}{0.95\textheight}{%
+\begin{tikzpicture}[
+  x=1cm, y=1cm,
+  procnode/.style  = {draw, rounded corners, fill=blue!6, align=center,
+                       inner sep=4pt, font=\footnotesize},
+  ionode/.style    = {draw, trapezium, trapezium left angle=70, trapezium right angle=110,
+                       fill=gray!8, align=center, inner sep=4pt, font=\footnotesize},
+  decnode/.style   = {draw, diamond, aspect=2, fill=orange!8, align=center,
+                       inner sep=2pt, font=\footnotesize},
+  errnode/.style   = {draw, rounded corners, fill=red!8, align=center,
+                       inner sep=4pt, font=\footnotesize},
+  flow/.style      = {-{Triangle[length=2.5mm, width=2mm]}, thick},
+]
+
+\node[ionode]   (Params) at (0, 25)    {Parameters file};
+\node[procnode] (Tools)  at (0, 22.5)  {\texttt{PresetTools} :\\read parameters,\\init.\ MPI tools};
+\node[decnode]  (Check)  at (0, 20)    {Parameters\\valid ?};
+\node[errnode]  (Error)  at (4.5, 20)  {Error message\\to user};
+\node[procnode] (External) at (0, 17.5) {\texttt{PresetExternal} :\\select Planck\\frequency bands};
+\node[procnode] (Qubic)  at (0, 15)    {\texttt{PresetQubic} :\\build QUBIC dict +\\\texttt{JointAcquisitionComponents-}\\\texttt{MapMaking}};
+
+\node[procnode] (Comp) at (-6, 11)  {\texttt{PresetComponents} :\\sky config, component\\models \& true maps};
+\node[procnode] (Sky)  at (0, 11)   {\texttt{PresetSky} :\\patch center, coverage,\\seen pixels, NaMaster};
+\node[procnode] (Gain) at (6, 11)   {\texttt{PresetGain} :\\detector gains};
+
+\node[procnode] (MM) at (-3, 7)  {\texttt{PresetMixingMatrix} :\\ mixing matrix};
+
+\node[procnode] (Acq) at (0, 3) {\texttt{PresetAcquisition} :\\noise covariance, preconditioner,\\simulate TOD \\(combines all preset objects)};
+\node[ionode]   (Return) at (0, 0)  {Preset object returned to\\\texttt{PipelineComponentMapMaking}};
+
+\draw[flow] (Params) -- (Tools);
+\draw[flow] (Tools) -- (Check);
+\draw[flow] (Check) -- node[above, font=\scriptsize] {no} (Error);
+\draw[flow] (Check) -- node[left, font=\scriptsize] {yes} (External);
+\draw[flow] (External) -- (Qubic);
+
+% fork: Qubic feeds three independent branches
+\draw[flow] (Qubic) -- (0, 13);
+\draw[ultra thick] (-6, 13) -- (6, 13);
+\draw[flow] (-6, 13) -- (Comp);
+\draw[flow] (0, 13) -- (Sky);
+\draw[flow] (6, 13) -- (Gain);
+
+% extra dependency: MixingMatrix also needs Components
+\draw[flow] (Comp) -- (MM);
+
+% join: all four branch outputs feed Acquisition
+\draw[flow] (Comp) -- (-6, 5);
+\draw[flow] (Sky) -- (0, 5);
+\draw[flow] (Gain) -- (6, 5);
+\draw[flow] (MM) -- (-3, 5);
+\draw[ultra thick] (-6, 5) -- (6, 5);
+\draw[flow] (0, 5) -- (Acq);
+
+\draw[flow] (Acq) -- (Return);
+
+\end{tikzpicture}%
+}
+\caption{Diagram of the \texttt{Preset} initialisation used by the CMM pipeline.
+\rmk{Is it useful ?}}
+\label{fig:diagram_preset}
+\end{figure}
+
+The algorithm steps of the CMM are very similar with the FMM ones, we are not describing them again. The main difference stands with the alternate fitting of the mixing matrix and component maps. This extra operation is done within a loop, where both are fitted. 
+We found empirically that the best way to quickly reconstruct the mixing matrix is to perform a lot of iterations within this loop. To keep reasonable computation time, very few PCG iterations to reconstruct component pixels are performed. To ensure  correctly reconstructed component maps, we add an extra PCG with a large iterations number once outside the loop. This stage is optional, but still included in the diagram resuming the complete CMM algorithm in Figure~\ref{fig:diagram_cmm}. 
+
+
+\begin{figure}[htbp]
+\centering
+\resizebox{!}{0.9\textheight}{%
+\begin{tikzpicture}[
+  x=1cm, y=1cm,
+  procnode/.style  = {draw, rounded corners, fill=blue!6, align=center,
+                       inner sep=4pt, font=\footnotesize},
+  ionode/.style    = {draw, trapezium, trapezium left angle=70, trapezium right angle=110,
+                       fill=gray!8, align=center, inner sep=4pt, font=\footnotesize},
+  decnode/.style   = {draw, diamond, aspect=2, fill=orange!8, align=center,
+                       inner sep=2pt, font=\footnotesize},
+  errnode/.style   = {draw, rounded corners, fill=red!8, align=center,
+                       inner sep=4pt, font=\footnotesize},
+  optnode/.style   = {draw, dashed, rounded corners, fill=blue!6, align=center,
+                       inner sep=4pt, font=\footnotesize},
+  flow/.style      = {-{Triangle[length=2.5mm, width=2mm]}, thick},
+]
+
+\node[ionode]  (Params)   at (0, 18)   {Parameters file};
+\node[procnode] (Preset)    at (0, 16) {\texttt{Preset}\\Pipeline initialisation};
+\node[procnode] (Build)   at (0, 14)  {Build \texttt{JointAcquisition-}\\\texttt{ComponentsMapMaking}\\+ input sky maps\\+ init.\ components \& mixing matrix};
+\node[procnode] (Sim)     at (0, 12)    {Simulate TOD};
+\node[procnode] (Solve)   at (0, 9)  {Solve map-making equation\\(PCG)\\$\rightarrow$ update component maps};
+\node[procnode] (FitMM)   at (0, 6)    {Fit mixing matrix};
+\node[optnode] (FitGain)  at (4.5, 6)  {Update detector\\gains (optional)};
+\node[decnode] (StopCond) at (0, 3)    {Converged or\\max.\ iterations ?};
+\node[procnode] (FinalPCG) at (0, 0)  {Final PCG\\(extra iterations)};
+\node[decnode] (DecSpec)  at (0, -3)   {Power spectra ?};
+\node[optnode] (Spectra)  at (4.5, -3) {Cross angular\\power spectra};
+\node[ionode]  (Store)    at (0, -6)   {Store outputs :\\TOD, maps, mixing matrix,\\spectral indices, gains, spectra};
+\node[optnode] (Plots)    at (6, -6) {Automated plots};
+\node[optnode] (Fit)      at (0, -9)   {MCMC to\\estimate $r$};
+
+\draw[flow] (Params) -- (Preset);
+\draw[flow] (Preset) -- (Build);
+\draw[flow] (Build) -- (Sim);
+\draw[flow] (Sim) -- (Solve);
+\draw[flow] (Solve) -- (FitMM);
+\draw[flow, dashed] (FitMM) -- (FitGain);
+\draw[flow] (FitMM) -- (StopCond);
+\draw[flow] (StopCond) -- node[left, font=\scriptsize] {yes} (FinalPCG);
+\draw[flow] (StopCond.west) to[out=180, in=180] node[left, font=\scriptsize] {no} (Solve.west);
+\draw[flow] (FinalPCG) -- (DecSpec);
+\draw[flow] (DecSpec) -- node[above, font=\scriptsize] {yes} (Spectra);
+\draw[flow] (DecSpec) -- node[left, font=\scriptsize] {no} (Store);
+\draw[flow] (Spectra.south) to[out=270, in=90] (Store.north east);
+\draw[flow] (Store) -- node[above, font=\scriptsize] {} (Plots);
+\draw[flow, dashed] (Store) -- (Fit);
+
+\end{tikzpicture}%
+}
+\caption{Diagram of the CMM pipeline.
+\rmk{Is it useful ?}}
+\label{fig:diagram_cmm}
+\end{figure}
+
+Finally, we detail the complicated framework to reconstruct the mixing matrix. The complication comes from the necessity to handle very different foregrounds models and fitting methods. The Figure~\ref{fig:diagram_mixingmatrix} is resuming the architecture of such algorithm, assuming that the sky is composed only of CMB and Dust. In reality, it also checks for Synchrotron and Carbon Monoxyde emission line, going through the same steps for each.
+For each fitted method, a specific class handles all necessary functions : fitting, updating, plotting and printing methods. \texttt{ParametricMM} and \texttt{BlindMM} rely on the same general custom class \texttt{Chi2} to build the cost function used to fit the mixing-matrix. The Mixed fitting case, written under the class \texttt{MixedMM}, is using a specific $\texttt{MixedChi2}$ class to build its cost function. It comes from a shape limitation preventing the fit of an array containing a float on one row (parametric case, where one spectral index is fitted) and multiple value on another one (blind case, where multiple mixing matrix elements are fitter). To overcome this issue, an intermediate mapping $\texttt{MMLayout}$ is used.
+
+\begin{figure}[htbp]
+\centering
+\resizebox{!}{0.95\textheight}{%
+\begin{tikzpicture}[
+  x=1cm, y=1cm,
+  procnode/.style  = {draw, rounded corners, fill=blue!6, align=center,
+                       inner sep=4pt, font=\footnotesize},
+  ionode/.style    = {draw, trapezium, trapezium left angle=70, trapezium right angle=110,
+                       fill=gray!8, align=center, inner sep=4pt, font=\footnotesize},
+  decnode/.style   = {draw, diamond, aspect=2, fill=orange!8, align=center,
+                       inner sep=2pt, font=\footnotesize},
+  objnode/.style   = {draw, rounded corners, fill=green!8, align=center,
+                       inner sep=4pt, font=\footnotesize},
+  optnode/.style   = {draw, dashed, rounded corners, fill=blue!6, align=center,
+                       inner sep=4pt, font=\footnotesize},
+  flow/.style      = {-{Triangle[length=2.5mm, width=2mm]}, thick},
+]
+
+\node[ionode]   (Entry)     at (0, 17)    {\texttt{fit\_mixing\_matrix()}\\called each CMM\\main-loop iteration};
+\node[decnode]  (DustModel) at (0, 14.5)  {Dust model\\= d1 ?};
+\node[procnode] (TodSuper)  at (-5, 11.5) {Simulate component TOD\\per super-pixel};
+\node[procnode] (TodFlat)   at (5, 11.5)  {Simulate component TOD\\per pixel};
+\node[decnode]  (Method)    at (0, 8.5)   {Fit method ?};
+
+\node[procnode] (Param) at (-6, 5) {\texttt{ParametricMM}\\\texttt{Chi2} : $\chi^2$ function\\over spectral index};
+\node[procnode] (Mixed) at (0, 5)  {\texttt{MixedMM}\\\texttt{MixedChi2} : mixed $\chi^2$ function,\\ based on the mapping \\\texttt{MMLayout}};
+\node[procnode] (Blind) at (6, 5)  {\texttt{BlindMM}\\\texttt{Chi2} : $\chi^2$ function\\over mixing matrix elements};
+
+\node[procnode] (Finalize) at (0, 2) {Minimise cost function with \textbf{scipy.optimize.minimize}\\$\rightarrow$ update mixing matrix in the main loop};
+\node[ionode]  (Return) at (0, -1) {Updated $\beta_\mathrm{iter}$, $A_\mathrm{iter}$\\returned to CMM\\main loop};
+
+\draw[flow] (Entry) -- (DustModel);
+\draw[flow] (DustModel) -- node[above, font=\scriptsize] {yes} (TodSuper);
+\draw[flow] (DustModel) -- node[above, font=\scriptsize] {no} (TodFlat);
+\draw[flow] (TodSuper.south) to[out=270, in=180] (Method.west);
+\draw[flow] (TodFlat.south) to[out=270, in=0] (Method.east);
+\draw[flow] (Method) -- node[left, font=\scriptsize] {parametric} (Param);
+\draw[flow] (Method) -- node[right, font=\scriptsize] {mixed} (Mixed);
+\draw[flow] (Method) -- node[right, font=\scriptsize] {blind} (Blind);
+
+\draw[flow] (Param.south) to[out=270, in=180] (Finalize.west);
+\draw[flow] (Mixed) -- (Finalize);
+\draw[flow] (Blind.south) to[out=270, in=0] (Finalize.east);
+
+\draw[flow] (Finalize) -- (Return);
+
+\end{tikzpicture}%
+}
+\caption{Diagram of the mixing-matrix fitting dispatch.
+\rmk{Is it useful ?}}
+\label{fig:diagram_mixingmatrix}
+\end{figure}
+
+\subsection{Advanced features}
+
+\subsubsection{Storage}
+
+Previously, simulation outputs were stored using the standard Python Pickle format\footnote{\url{https://docs.python.org/3/library/pickle.html}}. However, memory limitations were encountered when saving end-to-end simulation results. For this reason, the storage format was changed to HDF5, which is widely used in astrophysics for large-scale data handling.
+This transition led to a reduction of approximately 60\% in memory usage\footnote{from 587 MB with Pickle to 240 MB with HDF5 for a representative end-to-end simulation}, with increasingly significant gains for larger simulations. To integrate HDF5 within the framework, a wrapper based on the h5py package\footnote{\url{https://pypi.org/project/h5py/}} was developed. Indeed, h5py does not natively support direct conversion between Python dictionaries containing heterogeneous types (e.g. \texttt{numpy arrays}, floats, nested dictionaries, and strings) and HDF5 datasets, both for writing and reading. The implemented wrapper addresses this limitation while preserving reliability and consistency of the data conversion process.
+
+\subsubsection{Testing notebooks}
+
+A set of testing notebooks was developed to quickly validate simulation outputs. Each notebook targets a specific component of the pipeline: maps, noise, cross-spectra, parameter fitting, and noise realisations, and provides dedicated plotting tools to verify each stage. Most figures presented in this thesis are generated or adapted from these routines.
+
+\subsubsection{Computation Center}
+
+Given the memory requirements of the map-making algorithms, their computational cost, and the need for a large number of noise realisations, it became necessary to run the pipeline on a computing cluster, in particular the Centre de Calcul de l'IN2P3\footnote{\url{https://cc.in2p3.fr/}}. The code was therefore adapted to this environment by developing dedicated submission scripts and implementing data management tools to handle large-scale parallel simulations.
+
+\subsubsection{Map-Making and Cross-Power Spectra}
+
+Although map-making reconstruction and cross-spectrum computation are conceptually distinct steps, both were integrated into a single pipeline for simplicity. Computing cross-spectra immediately after each reconstruction avoids introducing an additional post-processing step for the user. Nevertheless, the framework still allows users to perform map-making independently or to compute cross-spectra from pre-existing reconstructions when required.
+
+\subsubsection{Simulation and Reconstruction}
+
+In addition, since both data simulation and reconstruction are performed within the same pipeline, a functionality was introduced to bypass the simulation step when a time-ordered data (TOD) file is provided by the user. This extension enables two important use cases. First, it constitutes a necessary step towards applying the reconstruction algorithms to real data once the QUBIC instrument becomes operational. Second, from a simulation standpoint, it allows the generation of simulated datasets independently of the reconstruction step.
+
+To support this workflow, a chunk-based simulation strategy was implemented for generating time-ordered data. This approach addresses the primary limitation of full-scale simulations, namely memory usage, which becomes critical for realistic configurations. The TOD is generated iteratively in small chunks, each of manageable size, allowing the construction of large datasets without exceeding memory constraints. Once a simulated TOD is produced, multiple noise realisations can be generated efficiently by adding random noise, avoiding repeated full simulation runs.
+
+This approach enables the use of more realistic simulation parameters while maintaining computational feasibility, and provides a flexible framework to study the impact of different instrumental and analysis choices. This analysis is presented in Chapter~\ref{chap:tod}.
+It should be noted that this functionality was developed during the writing of this thesis and therefore required continuous testing and refinement. Nevertheless, it has already been used in some of the cases discussed in Chapter~\ref{chap:tod}.
+
+\subsection{General Features}
 
 Non-exhaustive list, not in order : 
 
@@ -290,419 +588,4 @@ Run + reconstruct, but not fully understood
 Should work but not tested and characterised
 
 \subsubsection{CMM convolution}
-
-\section{Scope of this chapter}
-\begin{itemize}
-  \item The instrumental model: \texttt{QubicInstrument} and the operators built
-        on top of it to simulate the instrument (\texttt{Qacquisition.py}).
-  \item The detector/photon noise model: \texttt{QubicNoise} / \texttt{QubicTotNoise}.
-  \item The global software architecture, in particular the class hierarchies
-        behind Component Map-Making (CMM) and Frequency Map-Making (FMM).
-  \item The features already implemented in the simulation and reconstruction
-        framework, for both CMM and FMM.
-  \item The analysis notebooks associated with each pipeline.
-\end{itemize}
-
-% =====================================================================
-\section{Instrumental model}
-
-\subsection{\texttt{QubicInstrument} (\texttt{lib/Instrument/Qinstrument.py})}
-\begin{description}
-  \item[Base class] subclasses \texttt{pysimulators.Instrument}; composes
-        \texttt{QubicCalibration}, detector layout, horn array, beams.
-  \item[Detector layout] \texttt{\_get\_detector\_layout()} -- builds the
-        focal-plane \texttt{pysimulators.Layout}: detector shape/vertices,
-        quadrant assignment, $\theta,\phi$ angles, and per-detector noise
-        parameters (\texttt{nep}, \texttt{fknee}, \texttt{fslope}, \texttt{ncorr},
-        \texttt{tau}); \texttt{ngrids} (1 or 2) selects mono- vs dual-polarizer
-        focal plane.
-  \item[Synthetic beam] \texttt{\_init\_synthbeam()}, \texttt{\_peak\_angles\_kmax()},
-        \texttt{\_peak\_angles()}, \texttt{\_get\_synthbeam()} -- diffraction-peak
-        model of the multi-horn synthesized beam; number of peaks
-        $=(2\,\texttt{kmax}+1)^2$; supports a Gaussian beam or a rippled Gaussian
-        (\texttt{BeamGaussianRippled}, \texttt{nripples}).
-  \item[Horn array / primary-secondary beams] \texttt{\_init\_horns()},
-        \texttt{\_init\_beams()} -- effective horn radius from single-mode
-        coupling at 150\,GHz; beam models: \texttt{"gaussian"},
-        \texttt{"fitted\_beam"}, \texttt{"multi\_freq"}.
-  \item[Polarizer / optics / filter] \texttt{get\_polarizer\_operator()} (grid
-        present $\rightarrow$ 50/50 split, absent $\rightarrow$ single grid),
-        \texttt{\_init\_optics()} (transmissions, emissivities, temperatures per
-        optical component, focal length), \texttt{Filter} (central frequency,
-        relative/absolute bandwidth).
-  \item[Band \& config selection] 150 vs 220\,GHz from \texttt{filter\_nu};
-        \texttt{config} = \texttt{"TD"} (150\,GHz only) or \texttt{"FI"} (both
-        bands); \texttt{compute\_freq()} builds the log- or linear-spaced
-        sub-frequency grid (\texttt{nf\_sub}).
-  \item[Companion classes in this file]
-    \begin{itemize}
-      \item \texttt{QubicScene} -- sky-side companion (nside, temperature,
-            unit-conversion operator).
-      \item \texttt{QubicMultibandInstrument} -- array of one
-            \texttt{QubicInstrument} per sub-band; bandwidth-weighted
-            \texttt{get\_synthbeam()}.
-      \item \texttt{QubicMultibandInstrumentTrapezoidalIntegration} -- same role,
-            trapezoidal frequency-integration weights instead of flat sums.
-    \end{itemize}
-\end{description}
-
-\subsubsection{Key instrument-level configuration parameters}
-\begin{description}
-  \item[Geometry/optics] \texttt{filter\_nu}, \texttt{filter\_relative\_bandwidth},
-        \texttt{focal\_length}, \texttt{polarizer}, \texttt{detector\_ngrids}.
-  \item[Frequency structure] \texttt{nf\_sub}, \texttt{nf\_recon},
-        \texttt{instrument\_type} (\texttt{MB}/\texttt{DB}/\texttt{UWB}),
-        \texttt{config} (\texttt{TD}/\texttt{FI}), \texttt{FRBW}.
-  \item[Synthetic beam] \texttt{synthbeam\_kmax}, \texttt{synthbeam\_fraction},
-        \texttt{synthbeam\_peak150\_fwhm}, \texttt{beam\_shape}, \texttt{ripples},
-        \texttt{nripples}.
-  \item[Detector noise] \texttt{detector\_nep}, \texttt{detector\_fknee},
-        \texttt{detector\_fslope}, \texttt{detector\_ncorr}, \texttt{detector\_tau}.
-  \item[Execution] \texttt{max\_nbytes}, \texttt{nprocs\_instrument},
-        \texttt{nprocs\_sampling}, \texttt{comm} (MPI).
-\end{description}
-
-\subsection{Operators simulating the instrument (\texttt{lib/Instrument/Qacquisition.py})}
-
-\subsubsection{\texttt{QubicAcquisition} -- single-band forward model}
-Builds the full TOD operator $H$ and its noise covariance for one frequency band.
-\begin{itemize}
-  \item \texttt{get\_operator()} composes, in order:
-  \[
-    H = \text{Response} \cdot \text{TransInst} \cdot \text{Integration} \cdot
-        \text{Polarizer} \cdot (\text{HWP}\cdot\text{Projection}) \cdot
-        \text{Filter} \cdot \text{Aperture} \cdot \text{TransAtm} \cdot
-        \text{UnitConversion} \cdot \text{Distribution}
-  \]
-  \item \texttt{get\_invntt\_operator()} -- white noise diagonal $1/\sigma^2$, or
-        a Toeplitz $1/f$ operator built from the PSD via FFT.
-  \item \texttt{get\_noise()} -- noise realization, scaled by
-        \texttt{effective\_duration}.
-  \item Projection operator (\S\,1.2.4 of \texttt{Qinstrument.py}) supports
-        nearest-neighbour or bilinear sky interpolation
-        (\texttt{interp\_projection}), and scene kinds \texttt{I}/\texttt{QU}/\texttt{IQU}
-        via \texttt{FSRMatrix} / \texttt{FSRRotation2dMatrix} /
-        \texttt{FSRRotation3dMatrix}.
-\end{itemize}
-
-\subsubsection{\texttt{QubicMultiAcquisitions} -- multi-sub-band layer}
-Array of \texttt{QubicAcquisition} (\texttt{subacqs}), one per sub-band; tracks
-\texttt{allnus}/\texttt{allnus\_rec}, coverage, and the per-pixel \textbf{mixing
-matrix} machinery used by CMM:
-\begin{itemize}
-  \item \texttt{\_get\_mixing\_matrix()} -- evaluates an \texttt{fgbuster} mixing
-        matrix (constant or spatially-varying spectral index).
-  \item \texttt{\_get\_mixing\_operator()} -- wraps it as a pyoperators operator
-        applied to component maps.
-\end{itemize}
-
-\subsubsection{\texttt{QubicInstrumentType} -- DB/UWB/MB dispatch}
-Subclasses \texttt{QubicMultiAcquisitions}; this is where the instrument
-"flavour" is enforced:
-\begin{itemize}
-  \item \texttt{"DB"} (dual-band): 150 \& 220\,GHz on separate focal planes
-        $\rightarrow$ \texttt{BlockDiagonalOperator} of the two bands.
-  \item \texttt{"UWB"} (ultra-wide-band): both bands on one focal plane
-        $\rightarrow$ coadded noise, $\sigma^2_{\rm tot}=\sigma^2_{\rm det}+
-        \sigma^2_{\rm pho,150}+\sigma^2_{\rm pho,220}$.
-  \item \texttt{"MB"} (mono-band / TD): 150\,GHz only.
-  \item \texttt{sum\_over\_band()} -- aggregates sub-band operators
-        \emph{differently} for FMM (sum within each reconstructed frequency) and
-        CMM (gain-weighted coaddition per focal plane).
-  \item \texttt{get\_operator(A, gain, fwhm)} -- builds
-        $H_i = \text{Proj}_i\cdot\text{Convolution}_i\cdot\text{Mixing}_i$ per
-        sub-band, then sums/blocks depending on FMM vs CMM.
-\end{itemize}
-
-\subsubsection{External-data and joint acquisitions}
-\begin{description}
-  \item[\texttt{PlanckAcquisition}] wraps external Planck maps (e.g.\ 143/217/353\,GHz);
-        per-pixel noise covariance, optional beam correction, QUBIC-patch
-        down-weighting (\texttt{weight\_planck}).
-  \item[\texttt{JointAcquisitionFrequencyMapMaking}] $H=$
-        \texttt{BlockColumnOperator}$[H_{\rm qubic}, H_{\rm planck}]$,
-        block-diagonal joint $N^{-1}$ -- used by FMM.
-  \item[\texttt{JointAcquisitionComponentsMapMaking}] same idea, with the mixing
-        matrix folded in for both instruments -- used by CMM.
-\end{description}
-
-\subsection{Noise model}
-
-\subsubsection{Photon-noise budget (computed inside \texttt{Qinstrument.py})}
-\texttt{get\_noise\_photon()} $\rightarrow$ \texttt{\_get\_noise\_photon\_nep()}
-$\rightarrow$ \texttt{load\_NEP\_parameters()} builds a per-optical-component
-table (temperatures, transmissions, emissivities, polarization states) and sums
-$\mathrm{NEP}^2$ contributions from:
-\begin{itemize}
-  \item \texttt{NEP\_before\_horns()} -- CMB + atmosphere.
-  \item \texttt{NEP\_horns()} -- back-to-back horn array.
-  \item \texttt{NEP\_environment()}, \texttt{NEP\_combiner()},
-        \texttt{NEP\_coldstop()}, \texttt{NEP\_dichroic()} (FI only),
-        \texttt{NEP\_neutraldensityfilter()}, \texttt{NEP\_lowpassedge()}
-        (LPE1/LPE2), \texttt{NEP\_lpefilter\_220()}, \texttt{NEP\_lastfilter()}.
-  \item Uses Planck-integral helpers (\texttt{\_planck\_integrals}) for
-        blackbody/bunching terms; total
-        $\mathrm{NEP}_{\rm tot}=\sqrt{\sum \mathrm{NEP}_{\rm phot}^2 +
-        \mathrm{NEP}_{\rm env}^2}$.
-\end{itemize}
-
-\subsubsection{Noise realization wrappers (\texttt{lib/Instrument/Qnoise.py})}
-\begin{description}
-  \item[\texttt{QubicNoise}] single-band noise: \texttt{photon\_noise(wpho)} and
-        \texttt{detector\_noise(wdet)}, each delegating to
-        \texttt{QubicAcquisition.get\_noise()} with independent RNG seeds;
-        \texttt{get\_noise()} combines both.
-  \item[\texttt{QubicTotNoise}] all-band wrapper, dispatches on
-        \texttt{instrument\_type} (\texttt{DB}/\texttt{UWB}/\texttt{MB}); builds
-        one \texttt{QubicNoise} per band and combines with per-band weights
-        (\texttt{wdet}, \texttt{wpho150}, \texttt{wpho220}); MPI-safe seed
-        spawning across ranks.
-\end{description}
-Detector $1/f$ noise is described by \texttt{detector\_fknee},
-\texttt{detector\_fslope}, \texttt{detector\_ncorr} and enters
-\texttt{get\_invntt\_operator()} as a Toeplitz operator; white/photon noise enters
-as a diagonal.
-
-% =====================================================================
-\section{Software architecture}
-
-\subsection{Top-level layout (\texttt{qubic/lib/})}
-\begin{itemize}
-  \item \texttt{Instrument/} -- \texttt{Qinstrument.py}, \texttt{Qacquisition.py},
-        \texttt{Qnoise.py} (\S\,2 above).
-  \item \texttt{MapMaking/} -- shared base layer (below) +
-        \texttt{ComponentMapMaking/} (CMM) and \texttt{FrequencyMapMaking/}
-        (FMM).
-  \item \texttt{Calibration/}, \texttt{Fitting/}, \texttt{scanning\_strategy/} --
-        supporting instrument calibration data and pointing strategies (out of
-        scope for this chapter).
-  \item \texttt{obsolete/} -- superseded pre-refactor code, kept for reference.
-\end{itemize}
-
-\subsection{Shared map-making base layer (\texttt{lib/MapMaking/})}
-\begin{description}
-  \item[\texttt{Qcg.py}] \texttt{PCGAlgorithm} / \texttt{pcg()} -- the
-        preconditioned conjugate-gradient solver used by \emph{both} CMM and
-        FMM to solve the normal equations
-        $(H^T N^{-1} H)\,x = H^T N^{-1} d$; MPI-aware dot products/norms,
-        optional preconditioner, convergence history, optional per-iteration
-        GIF export.
-  \item[\texttt{Qmaps.py}] \texttt{Maps}, \texttt{InputMaps}, \texttt{PlanckMaps}
-        -- sky-map containers (PySM3-based truth generation, Planck reference
-        maps).
-  \item[\texttt{Qmap\_plotter.py}] plotting utilities (\texttt{PlotsCMM} and
-        generic map/spectrum plots) used by both pipelines for diagnostics.
-  \item[\texttt{Qatmosphere.py}] atmospheric noise model -- present but
-        \emph{not currently wired into} either CMM or FMM's default
-        configuration (flag as a known gap below).
-\end{description}
-
-\subsection{CMM class hierarchy (\texttt{lib/MapMaking/ComponentMapMaking/})}
-\begin{verbatim}
-PipelineComponentMapMaking (Qcmm.py)
- |-- PresetInitialisation (preset/preset.py)
- |     |-- PresetTools             (yaml I/O, MPI, error checks)
- |     |-- PresetQubic              (instrument dict, joint_in/joint_out acqs)
- |     |-- PresetComponents         (PySM3 truth components_in/out)
- |     |-- PresetSky                (seenpix, coverage, NaMaster setup)
- |     |-- PresetGain                (detector gains -- update_gain() incomplete)
- |     |-- PresetMixingMatrix        (true Amm_in, beta_in)
- |     |-- PresetExternal            (Planck frequencies/noise)
- |     `-- PresetAcquisition         (TOD sim, convolution branches, GLS x0)
- |-- call_pcg() --> Qcg.pcg() / PCGAlgorithm
- |-- fit_mixing_matrix() --> dispatch on method:
- |     |-- ParametricMM  (mixing_matrix/parametricMM.py) -- d0/d1/d6 SEDs
- |     |-- BlindMM       (mixing_matrix/blindMM.py)       -- column-wise A fit
- |     `-- MixedMM       (mixing_matrix/mixedMM.py)        -- parametric+blind
- |       (all extend FittingMM, mixing_matrix/fittingMM.py)
- |       (all driven by Chi2 / MixedChi2, Qchi2MM.py, via AbstractChi2)
- `-- PipelineEnd2End -- wraps map-making + power-spectrum stage
-\end{verbatim}
-\begin{description}
-  \item[\texttt{Qchi2MM.py}] \texttt{AbstractChi2} (base likelihood layout),
-        \texttt{Chi2} (parametric/blind chi-square: \texttt{compute\_mixing\_matrix\_parametric/blind()},
-        \texttt{compute\_chi\_square\_fix/varying\_beta()}), \texttt{MixedChi2}
-        (hybrid parametric+blind unpacking).
-  \item[\texttt{Qcomponent\_model.py}] component SED model glue (e.g.\
-        monochromatic/CO line), on top of \texttt{fgbuster.component\_model}.
-\end{description}
-
-\subsection{FMM class hierarchy (\texttt{lib/MapMaking/FrequencyMapMaking/})}
-\begin{verbatim}
-PipelineFrequencyMapMaking (Qfmm.py)
- |-- JointAcquisitionFrequencyMapMaking  (Instrument/Qacquisition.py)
- |     |-- QubicInstrumentType -- QubicMultibandInstrument (Nsub sub-bands)
- |     `-- PlanckAcquisition x2 (143, 217 GHz)
- |-- InputMaps / PlanckMaps              (lib/MapMaking/Qmaps.py)
- |-- ErrorChecking                        (FMM_errors_checking.py)
- |-- CMBModel / SkySpectra                 (Qspectra_component.py)
- |-- call_pcg() --> Qcg.pcg()
- `-- PipelineEnd2End -- wraps map-making + NaMaster spectrum stage
-\end{verbatim}
-\begin{description}
-  \item[\texttt{Qspectra\_component.py}] \texttt{CMBModel} (Planck-2018
-        theoretical $C_\ell$ reference), \texttt{SkySpectra} (multi-component
-        spectral model for post-hoc fitting).
-  \item[\texttt{FMM\_errors\_checking.py}] \texttt{ErrorChecking} -- validates
-        \texttt{instrument\_type}, \texttt{nrec}/\texttt{nsub} consistency,
-        Planck-compatibility constraints before a run starts.
-\end{description}
-
-\subsection{CMM vs.\ FMM -- structural comparison}
-\begin{center}
-\begin{tabular}{lll}
-\hline
- & \textbf{FMM} & \textbf{CMM} \\
-\hline
-Output & per-(sub-)frequency maps & per-component maps (CMB/dust/sync) \\
-Spectral model in solver & none (post-hoc) & mixing matrix in $H$ \\
-Sky parameterization & frequency band average & component amplitude per pixel \\
-Planck integration & direct-space band-avg.\ maps & frequency-resolved, via $A(\nu)$ \\
-Spectrum role & measurement (post-hoc fit) & model (constrains $A$ during solve) \\
-Preconditioner & per-frequency block-diagonal & per-component block-diagonal \\
-\hline
-\end{tabular}
-\end{center}
-
-% =====================================================================
-\section{Implemented features}
-
-\subsection{Common to both pipelines}
-\begin{itemize}
-  \item Instrument flavours \texttt{MB}/\texttt{DB}/\texttt{UWB}, configurable
-        sub-band count (\texttt{nsub\_in} for TOD simulation,
-        \texttt{nsub\_out}/\texttt{nrec} for reconstruction).
-  \item Optional joint reconstruction with Planck (\texttt{external\_data},
-        \texttt{weight\_planck}, \texttt{level\_noise\_planck}).
-  \item PCG solver with optional diagonal preconditioner, configurable
-        iteration counts/tolerance, optional per-iteration GIF export.
-  \item MPI parallelization (instrument and/or sampling distribution).
-  \item HDF5 output of maps, convergence history, coverage, FWHMs, parameters.
-\end{itemize}
-
-\subsection{FMM-specific features (\texttt{Qfmm.py})}
-\begin{itemize}
-  \item Four convolution branches controlled by
-        (\texttt{convolution\_in}, \texttt{convolution\_out}):
-    \begin{enumerate}
-      \item (T,T): per-sub-band real beam in, differential deconvolution beam
-            out, $\mathrm{fwhm\_rec}=\min$ over the band.
-      \item (T,F): signal-weighted effective resolution -- SED-weighted average
-            FWHM via scalar acquisition operators, frequency-shift correction
-            by minimizing $|\text{fraction}-\text{SED}(\nu)|$.
-      \item (F,T): not physically guarded (flagged as a gap, see below).
-      \item (F,F): no convolution anywhere.
-    \end{enumerate}
-  \item Boundary-bleed fix: solves for $\delta m = \hat m - m_{\rm conv}$ using
-        the \emph{full unmasked} convolved-truth map on the RHS, then adds it
-        back only inside \texttt{seenpix} -- avoids a discontinuity at the
-        patch edge.
-  \item Power-spectrum estimation via NaMaster on both signal and
-        noise-residual maps, with QUBIC$\times$QUBIC, QUBIC$\times$Planck and
-        Planck$\times$Planck cross-spectra.
-\end{itemize}
-
-\subsection{CMM-specific features (\texttt{Qcmm.py} + \texttt{preset/} + \texttt{mixing\_matrix/})}
-\begin{itemize}
-  \item Three mixing-matrix fitting strategies: parametric (dust
-        \texttt{d0}/\texttt{d1}/\texttt{d6}, synchrotron \texttt{s0}), blind
-        (column-wise, monotonic-SED constrained), mixed (parametric + blind
-        simultaneously via a single L-BFGS-B call).
-  \item GLS-weighted cross-component leakage prediction for
-        \texttt{components\_in\_convolved} when (conv\_in, conv\_out) = (T,F):
-        $W=(A^TN^{-1}A)^{-1}A^TN^{-1}$ instead of a single Gaussian guess.
-  \item Reference (noiseless) PCG pass to correct for synthesized-beam harmonic
-        cross-pixel terms when \texttt{synthbeam\_kmax}$>0$
-        (\texttt{compute\_reference\_components\_in\_convolved()}).
-  \item Post-processing spectral/parameter fitting via MCMC
-        (\texttt{fit\_params.yml}: walkers, steps, per-component bounds/priors).
-  \item \textbf{Known limitation}: gain fitting (\texttt{PresetGain},
-        \texttt{update\_gain()}) is scaffolded but currently raises
-        \texttt{ValueError} -- not yet implemented end-to-end.
-\end{itemize}
-
-\subsection{Configuration surface (selected keys)}
-\begin{description}
-  \item[FMM (\texttt{scripts/MapMaking/src/FMM/params.yaml})]
-        \texttt{instrument}, \texttt{configuration}, \texttt{npointings},
-        \texttt{nsub\_in/out}, \texttt{nrec}, \texttt{convolution\_in/out},
-        \texttt{synthbeam\_kmax(\_out)}, \texttt{ndet/npho150/npho220},
-        \texttt{weight\_planck}, \texttt{n\_iter\_pcg}, \texttt{tol\_pcg},
-        \texttt{nside}, \texttt{coverage\_cut}, \texttt{lmin/lmax/dl},
-        \texttt{aposize}.
-  \item[CMM (\texttt{scripts/MapMaking/src/CMM/params.yml} +
-        \texttt{fit\_params.yml})] \texttt{nsub\_in/out},
-        \texttt{convolution\_in/out}, \texttt{use\_reference\_pcg},
-        \texttt{preconditioner}, \texttt{n\_init\_iter\_pcg}/\texttt{n\_iter\_pcg}/\texttt{iter\_end}/\texttt{n\_iter\_loop},
-        \texttt{fit\_components}/\texttt{fit\_mixing\_matrix}, dust
-        \texttt{type}/\texttt{model}/\texttt{beta\_init}, \texttt{weight\_planck},
-        \texttt{level\_noise\_planck}; \texttt{fit\_params.yml}: MCMC
-        \texttt{nwalkers}/\texttt{nsteps}/\texttt{discard}, per-component
-        bounds/priors.
-\end{description}
-
-% =====================================================================
-\section{Analysis notebooks}
-
-\subsection{FMM notebooks (\texttt{scripts/MapMaking/src/FMM/})}
-\begin{description}
-  \item[\texttt{test\_maps.ipynb}] reconstructed vs.\ input maps, PCG
-        convergence with/without preconditioner, residual-noise structure.
-  \item[\texttt{test\_spectrum.ipynb}] frequency$\times$frequency cross-spectra,
-        validation against the input sky model.
-  \item[\texttt{test\_noise.ipynb}] TOD-level noise comparison across
-        convolution/Planck settings.
-  \item[\texttt{test\_planck.ipynb}] Planck-only residual RMS, joint
-        reconstruction bias/variance vs.\ \texttt{weight\_planck}.
-  \item[\texttt{test\_fit.ipynb}] MCMC fit of $r$, lensing amplitude,
-        dust/sync amplitudes and spectral indices on reconstructed spectra.
-  \item[\texttt{test\_all\_realisation.ipynb}] multi-realization noise/spectrum
-        statistics, ensemble convergence checks.
-\end{description}
-
-\subsection{CMM notebooks (\texttt{scripts/MapMaking/src/CMM/})}
-\begin{description}
-  \item[\texttt{test\_convolution.ipynb}] component-map residuals across the
-        four convolution branches -- checks branch-independence of the result.
-  \item[\texttt{test\_d1.ipynb}] PCG convergence trace and spatial
-        (near/far-from-patch) behaviour for the \texttt{d1} dust model.
-  \item[\texttt{test\_fit.ipynb}] MCMC fit of component amplitudes/spectral
-        parameters from reconstructed component spectra.
-  \item[\texttt{test\_maps.ipynb}] component-map visualization vs.\ truth,
-        per-component noise residuals.
-  \item[\texttt{test\_planck\_acq.ipynb}] Planck frequency resolution, noise
-        covariance and weight scaling within CMM.
-  \item[\texttt{test\_spectrum.ipynb}] component-by-component cross-spectra
-        (CMB$\times$CMB, dust$\times$dust, CMB$\times$dust) for separation
-        validation.
-\end{description}
-
-\subsection{Common analysis pattern}
-\begin{enumerate}
-  \item Load the HDF5 run output.
-  \item Extract maps / spectra / noise residuals.
-  \item Plot validation (maps, PCG convergence, cross-spectra).
-  \item Compute summary statistics (RMS, correlation, error bars).
-  \item Optionally fit parameters (MCMC) or compare against alternative runs.
-\end{enumerate}
-
-% =====================================================================
-\section{Open points to address explicitly in the chapter}
-\begin{itemize}
-  \item Gain fitting in CMM is present in the class hierarchy
-        (\texttt{PresetGain}) but not functional -- worth stating as a
-        roadmap item rather than a finished feature.
-  \item The (conv\_in=F, conv\_out=T) branch in FMM's \texttt{get\_convolution()}
-        is not guarded against -- mention as a known edge case.
-  \item \texttt{Qatmosphere.py} exists at the shared \texttt{MapMaking} level but
-        is not wired into either pipeline's default path -- worth a one-line
-        mention as future work, not a current feature.
-  \item Several NEP/UWB-noise and convolution bugs were fixed recently per
-        \texttt{ComponentMapMaking/convolution\_changes\_report.md} and
-        \texttt{FrequencyMapMaking/convolution\_report.md} -- worth citing if the
-        chapter discusses the current beam-handling design rationale.
-\end{itemize}
-
-
-
 \end{document}
