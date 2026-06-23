@@ -160,6 +160,11 @@ Finally, these two classes are joint in two classes : \texttt{JointAcquisitionFr
 
 The complete software architecture of the qubicsoft's instrument simulation is resumed in Figure~\ref{fig:diagram_qubicsoft}
 
+\vspace{10pt}
+
+\textbf{Remark:} An important remark can be made regarding this architecture. At the beginning of this thesis, the software was still at an R\&D stage, meaning that many methods had been implemented without an overarching design perspective. As a result, the codebase became highly complex, with numerous special cases and nearly duplicated code to handle the various simulation configurations (instrumental designs, reconstruction methods, sky models, etc.).
+A significant part of the software development effort that led to the present architecture was therefore devoted to simplifying and generalising the existing structure, while reducing code duplication and eliminating the need for multiple disjoint implementations.
+
 \begin{figure}[htbp]
 \centering
 \resizebox{\textwidth}{!}{%
@@ -250,7 +255,7 @@ The configuration file allows to set the physical context of the simulation (com
 
 The architecture of the FMM, resumed in Figure~\ref{fig:diagram_fmm}, is the following. First, the parameters file is read and checked for wrong values, to avoid un-implemented cases (for example, wrong instrument configuration), or inconsistent parameters, (for example, if the number of integration sub-bands $N_{\text{sub}}$ is not a multiple of the number of reconstructed sub-bands $N_{\text{rec}}$). This prevents running the code with parameters out of its scope, and gives a message to user with feedback of the issue, instead of a raw Python error.
 If the tests pass, all the necessary objects and variables are created, based on the parameters file. In particular, the class \texttt{JointAcquisitionFrequencyMapMaking} is built, which is used to define all the parameters. In the code, a disctinction is made between the simulation and the reconstruction, the two not sharing the same parameters to improve realism (this case is discussed in details in Chapter~\ref{chap:tod}). The input maps are also created, based on PySM3~\cite{PySM}, using a wrapper shared between FMM and CMM.
-Once all necessary objects initialised, the simulated TOD are created, and the PCG algorithm is used to reconstruct the associated frequency maps. If asked by the user, the cross angular power spectra of the reconstructed maps are computed after the map-making process. The code to compute cross-spectra is designed to run in the same way for both FMM and CMM.
+Once all necessary objects initialised, the simulated TOD are created, and the PCG algorithm is used to reconstruct the associated frequency maps. If asked by the user, the cross angular power spectra of the reconstructed maps are computed after the map-making process. The code to compute cross-spectra is designed to run for both FMM and CMM.
 All the relevants information are stored using HDF5\footnote{\url{https://www.hdfgroup.org/solutions/hdf5/}} format, including TOD, parameters, input and reconstructed maps, coverage map, resolutions, noise and sky cross-spectra with their associated parameters. 
 Automated plots are also run at the same time, to allow quick visualisation of the reconstruction results.
 
@@ -532,60 +537,51 @@ In addition, since both data simulation and reconstruction are performed within 
 To support this workflow, a chunk-based simulation strategy was implemented for generating time-ordered data. This approach addresses the primary limitation of full-scale simulations, namely memory usage, which becomes critical for realistic configurations. The TOD is generated iteratively in small chunks, each of manageable size, allowing the construction of large datasets without exceeding memory constraints. Once a simulated TOD is produced, multiple noise realisations can be generated efficiently by adding random noise, avoiding repeated full simulation runs.
 
 This approach enables the use of more realistic simulation parameters while maintaining computational feasibility, and provides a flexible framework to study the impact of different instrumental and analysis choices. This analysis is presented in Chapter~\ref{chap:tod}.
-It should be noted that this functionality was developed during the writing of this thesis and therefore required continuous testing and refinement. Nevertheless, it has already been used in some of the cases discussed in Chapter~\ref{chap:tod}.
+It should be noted that this functionality was developed during the writing of this thesis and therefore required continuous testing and refinement. Nevertheless, it has already been used in some cases discussed in Chapter~\ref{chap:tod}.
 
-\subsection{General Features}
+\subsection{Additional improvements}
 
-Non-exhaustive list, not in order : 
+To conclude this chapter, we briefly discuss additional software improvements made to \emph{qubicsoft}, as well as unfinished or unverified features and remaining developments.
 
-\subsubsection{PEP8 refactoring}
+\subsubsection{Global refactoring}
 
-\subsubsection{General cleaning (variables names + unused, importation, comments, docstrings, ...)}
+\emph{qubicsoft} has been developed over many years by several generations of students and researchers. As a consequence, the codebase accumulated heterogeneous coding practices and varying software engineering standards, motivating a substantial refactoring effort. A significant amount of time was dedicated to cleaning the entire software ($\sim 30$k lines of code).
+This global refactoring includes the adoption of a uniform coding style following PEP8\footnote{\url{https://peps.python.org/pep-0008/}}, a standard established in 2001 based on the principle that \enquote{readability counts}. The PEP8 guidelines are complemented by PEP328\footnote{\url{https://peps.python.org/pep-0328/}}, which addresses import conventions.
+To enforce these conventions, a general cleaning of the codebase was performed, including the removal of unused variables and code snippets, the renaming of variables and classes, the addition of comments and docstrings (only in the files I contributed to), and improvements to import statements by importing only the required methods rather than entire modules. This refactoring effort was complemented by the use of automated formatters such as Black\footnote{\url{https://github.com/psf/black}} and isort\footnote{\url{https://github.com/PyCQA/isort/}}, used respectively to enforce code style and sort imports. These tools were later replaced by Ruff\footnote{\url{https://github.com/astral-sh/ruff}}, a faster linter combining their functionality.
 
-\subsubsection{Full architecture rewritting (explain classes hierarchy)}
+\subsubsection{Automated documentation}
 
-\subsubsection{Sanity parameters checks}
+An automated documentation system for \emph{qubicsoft} was implemented using Sphinx\footnote{\url{https://github.com/sphinx-doc/sphinx}}. It parses code docstrings to generate a complete documentation, relying on their clarity and completeness. A continuous integration pipeline ensures that the documentation is updated after each pull request on the \emph{qubicsoft} GitHub repository. The documentation is available at: \url{https://qubicsoft.github.io/qubic/}. No specific effort has yet been made to improve the documentation structure or style; this remains a potential area for future improvement.
 
-\subsubsection{Improve preconditionning}
-\rmk{Maybe in tod realism}  
+\subsubsection{Compatibility with Python 3.12}
+\label{subsub:installation}
 
-\subsubsection{Standard saving format}
+The installation pipeline of \emph{qubicsoft} was initially limited by its dependency on the no-longer-maintained packages PyOperators and PySimulators. As a result, installation was not compatible with recent Python versions ($> 3.10$). This limitation became increasingly problematic due to version incompatibilities between dependencies used within the codebase.
+In collaboration with Pierre Chanial, the maintainer of PyOperators and PySimulators, the installation of both packages was modernised. The new build system now relies on Meson\footnote{\url{https://github.com/mesonbuild/meson}} instead of the previous legacy approach.
 
-\subsubsection{Wrapper for hdf5py}
+In addition, the Fortran parts were integrated directly into PySimulators. This modification was motivated by the need to simplify installation for users, as the previous setup required compiling Fortran code during installation. This made editable installations difficult and often required full reinstallations after modifications, which was inefficient. The new architecture resolves this issue and provides a more robust and user-friendly installation workflow.
 
-\subsubsection{Improve, refactor + generalisation of Amm fitting}
+For stability and security reasons, Python 3.12 was not used in this thesis. Although initial tests were successful, further validation is still required. Since these tests were not completed at the time of writing, Python $3.10$ was used for all simulations presented.
 
-\subsubsection{Sphinx documentation + CI}
+\subsubsection{Unfinished features}
 
-\subsubsection{Merge H and Planck code for FMM + CMM}
+Several developments initiated during this thesis could not be completed within the available timeframe and remain topics for future work.
 
-\subsubsection{Add SMB case}
+\textbf{d1 reconstruction:} The reconstruction of the d1 dust model (or equivalently, the s1 model for synchrotron emission) corresponds to the case where the spectral index varies spatially across the sky (see Subsection~\ref{sub:cmm_d1}). This specific case is not yet functioning correctly in the CMM algorithm. The code runs and successfully reconstructs all spectral indices across the QUBIC patch, but the fitting procedure diverges when noise is included, even when initialised with the true maps. At the time of writing, it remains unclear whether this issue originates from a bug in the implementation or from an intrinsic limitation in reconstructing spatially varying indices in the presence of noise. Further work is required to clarify this point.
 
-\subsubsection{Nrec=1 case}
+\textbf{CO reconstruction:} The reconstruction of the carbon monoxide emission line (described in Subsection~\ref{sub:cmm_co}) is not fully implemented. No fundamental limitation prevents its inclusion, and only minimal effort would be required to restore this functionality. However, for prioritisation reasons, this case was deferred to future work, as it is not directly relevant to the primary scientific goal of QUBIC, namely the observation of primordial CMB B-modes.
 
-\subsubsection{Plotting pipeline}
+\textbf{CMM convolution:} The final and most significant unfinished aspect concerns the understanding of the free convolution treatment in CMM. This issue is discussed in Subsection~\ref{sub:cmm_free_convo}.
 
-\subsubsection{Testing notebooks}
+\subsubsection{Further developments}
 
-\subsubsection{Xspectra pipeline}
+Several ideas emerged during this thesis that could significantly improve the methods presented here but could not be implemented within the available timeframe.
 
-\subsubsection{Fitting pipeline}
+The most important one is the implementation of a non-linear PCG solver. Such an approach would remove the need for the alternating fitting scheme currently used in CMM and would considerably improve the prospects for atmospheric mitigation discussed in Chapter~\ref{chap:atm}. More importantly, it would provide an optimal convergence to the non-linear nature of the problem, whereas the current alternating fitting procedure can only offer an approximate (and slow) solution. This idea was initially explored by a former internship student, Victor Charbirand, but the limited duration of the internship did not allow for an implementation. We therefore strongly recommend dedicating future development efforts to this topic, as it could represent a major step forward for QUBIC spectral imaging reconstruction.
 
-\subsubsection{Bash scripts for simulation (CC)}
+An alternative to a non-linear PCG approach would be the use of a Gibbs sampling algorithm. Gibbs sampling is a Markov Chain Monte Carlo (MCMC) method that samples the joint posterior distribution of all model parameters, including the angular power spectra $C_\ell$, by iteratively drawing samples from their conditional distributions. This approach is notably employed by the Commander framework~\cite{Commander2008}. Its main advantage is the rigorous statistical treatment of uncertainties, allowing for automatic marginalisation over systematics while providing full posterior distributions for all quantities of interest, including sky maps, foreground parameters, noise properties, and power spectra. The main drawbacks are the computational cost associated with MCMC methods, their potentially slow convergence, the difficulty of assessing convergence diagnostics, and a substantially more complex implementation compared to the current PCG.
 
-\subsubsection{Write new installation compatible with Python3.12} \label{subsub:installation}
+A more modest improvement concerns FMM and the possibility of reconstructing a different number of sub-bands within the $150$ and $220$ GHz frequency channels. For example, one could reconstruct several sub-bands within the $220$ GHz channel, where thermal dust emission is dominant, while reconstructing only a single map within the $150$ GHz channel, where the CMB signal dominates. Such an approach would exploit the spectral imaging capabilities of QUBIC where they are most beneficial for component separation, while limiting the increase in anti-correlated noise associated with a large number of reconstructed sub-bands where little additional information is gained.
+This idea can be further extended by introducing a non-uniform distribution of sub-band bandwidths. In the current implementation, the bandwidth of each reconstructed sub-band is determined only by the total number of reconstructed maps, $N_{\text{rec}}$, resulting in uniform bandwidths across the frequency range. However, wider sub-bands at lower frequencies and narrower sub-bands at higher frequencies could potentially improve both map reconstruction and component separation by better matching the spectral complexity of the observed sky. A similar strategy could also be applied to the reconstruction of the mixing matrix within the CMM framework.
 
-\subsubsection{A lot of smaller fixes...}
-
-\subsection{Unfinished Work}
-
-\subsubsection{CMM d1 reconstruction}
-
-Run + reconstruct, but not fully understood
-
-\subsubsection{CO reconstruction}
-
-Should work but not tested and characterised
-
-\subsubsection{CMM convolution}
 \end{document}
