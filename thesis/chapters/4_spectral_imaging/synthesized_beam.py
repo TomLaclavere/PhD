@@ -50,10 +50,6 @@ log_norm = LogNorm(vmin=1e-3, vmax=1)
 kw2d = dict(cmap="jet", norm=log_norm)  # , shading="auto")
 mid = n_pts // 2
 
-# title_base = (
-#     f"QUBIC Synthesized Beam — {freq / 1e9:.0f} GHz, "
-#     f"N={N_horn}×{N_horn}, Δh={delta_h * 1e3:.0f} mm, Df={D_f * 1e2:.0f} cm"
-# )
 title_base = f"QUBIC Synthesized Beam for central detector ($x_f=y_f=0$) - {freq / 1e9:.0f} GHz"
 
 # Figure 1: 2D synthesized beam pattern

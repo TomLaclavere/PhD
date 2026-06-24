@@ -88,7 +88,7 @@ I_ML, _, _, TEMP_ML, _, _, BETA_ML, _, _ = maps_256
 I_353_rj = I_ML * mbb_rj_ratio(545e9, 353e9, TEMP_ML, BETA_ML)
 I_353_cmb = I_353_rj * rj_to_cmb(353e9)
 
-save_log(I_353_cmb, "dust_I_353GHz_commander.pdf", r"Dust $I$ — 353 GHz")
+save_log(I_353_cmb, "dust_I_353GHz_commander.pdf", r"Dust $I$ - 353 GHz")
 
 # Q and U at 353 GHz: convert µK_RJ → µK_CMB
 print("Loading QU-thermaldust-commander Nside=2048 (353 GHz)...")
@@ -98,8 +98,8 @@ conv = rj_to_cmb(353e9)
 Q_cmb = Q_STOKES * conv
 U_cmb = U_STOKES * conv
 
-save_symlog(Q_cmb, "dust_Q_353GHz_commander.pdf", r"Dust $Q$ — 353 GHz")
-save_symlog(U_cmb, "dust_U_353GHz_commander.pdf", r"Dust $U$ — 353 GHz")
+save_symlog(Q_cmb, "dust_Q_353GHz_commander.pdf", r"Dust $Q$ - 353 GHz")
+save_symlog(U_cmb, "dust_U_353GHz_commander.pdf", r"Dust $U$ - 353 GHz")
 
 # Synchrotron I at 30 GHz: extrapolate from 408 MHz ref with power law (β_s = -3)
 print("Loading synchrotron-commander Nside=256 (408 MHz ref)...")
@@ -108,17 +108,14 @@ sync_I_ML, _, _ = hp.read_map(FITS_SYNC_I, field=None)
 sync_I_30_rj = sync_I_ML * powerlaw_rj_ratio(408e6, 30e9)
 sync_I_30_cmb = sync_I_30_rj * rj_to_cmb(30e9)
 
-save_log(sync_I_30_cmb, "sync_I_30GHz_commander.pdf",
-         r"Synchrotron $I$ — 30 GHz")
+save_log(sync_I_30_cmb, "sync_I_30GHz_commander.pdf", r"Synchrotron $I$ - 30 GHz")
 
 # Synchrotron Q and U at 30 GHz: convert µK_RJ → µK_CMB
 print("Loading QU-synchrotron-commander Nside=2048 (30 GHz)...")
 sync_Q, sync_U = hp.read_map(FITS_SYNC_QU, field=None)
 
 sync_conv_30 = rj_to_cmb(30e9)
-save_symlog(sync_Q * sync_conv_30, "sync_Q_30GHz_commander.pdf",
-            r"Synchrotron $Q$ — 30 GHz")
-save_symlog(sync_U * sync_conv_30, "sync_U_30GHz_commander.pdf",
-            r"Synchrotron $U$ — 30 GHz")
+save_symlog(sync_Q * sync_conv_30, "sync_Q_30GHz_commander.pdf", r"Synchrotron $Q$ - 30 GHz")
+save_symlog(sync_U * sync_conv_30, "sync_U_30GHz_commander.pdf", r"Synchrotron $U$ - 30 GHz")
 
 print(f"\nAll PDFs written to {OUTPUT_DIR}/")

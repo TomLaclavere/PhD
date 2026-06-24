@@ -3,7 +3,7 @@
 \graphicspath{{Figures/}}
 
 \begin{document}
-\chapter{Realistic TOD} \label{chap:tod}
+\chapter{Realistic simulation and accurate sky reconstruction} \label{chap:tod}
 
 \ifSubfilesClassLoaded{
     \tableofcontents
@@ -11,31 +11,104 @@
     \minitoc
 }
 
-\section{How to define Realistic TOD}
+\section*{Introduction}
 
-\section{TOD convergence problem: Pixelisation vs Number of Frequency}
+The primary goal of the simulation and reconstruction pipeline is to provide a realistic estimate of the capabilities of the QUBIC instrument. However, increasing the realism of the simulations comes at a significant computational cost. In this chapter, we therefore analyse the impact of the main simulation parameters and their associated trade-offs.
 
-\section{Correct convolution implementation} \label{sec:convolution}
+The study is divided into two parts. First, we investigate the balance between simulation realism and computational resources. Second, we identify the parameter choices that maximise the sensitivity of the instrument to the tensor-to-scalar ratio, as quantified by the uncertainty $\sigma_r$.
 
-% Comparison between free and imposed convolutions
-\subsection{FMM}
+\section{Realistic simulation}
 
-\subsection{CMM}
+\subsection{TOD convergence problem}
 
-\section{External data addition effect (Planck)}
+\subsection{Number of sub-bands} \label{sub:nsub}
 
-\section{Simulation hyperparameters optimisation: $N_{\text{sub}}$, $N_{\text{pointings}}$, $N_{\text{iter}}$, $N_{\text{loop}}$ (CMM), \dots}
+\rmk{Should be in the second section ?}
 
-\subsection{Nrealisation}
+\subsection{Maximum diffraction order}
 
-\subsection{Npointings}
+\section{Simulation hyperparameters optimisation}
 
-\subsection{Nsub} \label{sub:nsub}
+\subsection{Number of time samples : $N_\text{pointings}$}
 
-\subsection{Cov cut}
+The parameter $N_{\text{pointings}}$ corresponds to the number of sky observations, or equivalently the number of time samples acquired during an observation. For a real instrument acquiring data at 100 Hz, a 10-hour observation corresponds to approximately $3.6\times10^6$ pointings. As explained in Sections~\ref{subsub:fmm_memory} and~\ref{subsub:fmm_computation}, running simulations with such a large value of $N_{\text{pointings}}$ is computationally prohibitive.
 
-\subsection{$k_{max}$}
+To overcome this limitation, we adopt a random-pointing scanning strategy, in which the instrument points randomly within the observed patch of radius $15^\circ$. Compared to a realistic scanning strategy, this approach requires significantly fewer time samples to achieve a homogeneous angular coverage of the observed region. Consequently, a much smaller number of pointings can be used while preserving the statistical properties of the observation, resulting in simulations that remain computationally feasible. The noise level is then rescaled to match the expected observation time by defining an effective observation duration. Nevertheless, it remains necessary to determine an appropriate value for $N_{\text{pointings}}$, even within this random pointing framework.
 
-\subsection{Spectrum parameters}
+To do so, two complementary tests were performed. The first consists of studying the evolution of the coverage as a function of $N_{\text{pointings}}$. The objective is to obtain a sufficiently uniform coverage of the observed patch. In practice, we seek the value of $N_{\text{pointings}}$ beyond which the normalised coverage no longer changes significantly, indicating convergence.
+
+To illustrate the influence of the number of pointings on the coverage, Figure~\ref{fig:coverage_pointings} shows gnomonic projections of the QUBIC patch coverage for $N_{\text{pointings}}=100$ and $N_{\text{pointings}}=10000$. The left panel corresponds to 100 time samples and exhibits a highly inhomogeneous and asymmetric coverage pattern. In contrast, the right panel, obtained with 10000 time samples, displays a broad Gaussian-like shape with a symmetric pattern and an approximately uniform coverage at a given angular distance from the centre of the patch. This angular uniformity is particularly important, as it ensures that the coverage, and therefore the reconstruction noise, depends only on the angular distance from the patch centre.
+
+\begin{figure}[!htbp]
+    \begin{minipage}{0.5\linewidth}    
+        \centerline{\includegraphics[width=1\linewidth]{coverage_100.png}}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.5\linewidth}
+        \centerline{\includegraphics[width=1\linewidth]{coverage_10000.png}}
+    \end{minipage}
+    \caption{Gnomview of the normalised coverage of the observing patch for $N_\text{pointings} = 100$ (left) and $N_\text{pointings} = 10000$.}
+    \label{fig:coverage_pointings}
+\end{figure}
+
+The coverage was then computed for various values of $N_{\text{pointings}}$, together with its angular profile and the corresponding angular RMS profile. The objective of this analysis, presented in Figure~\ref{fig:coverage_ang_profile}, is to determine the number of time samples required for convergence. The left panel shows the angular profile of the normalised coverage. One can observe that its shape converges for approximately $N_{\text{pointings}} \sim 6000$. This result is confirmed by the right panel, which displays the RMS of the normalised coverage as a function of angular distance. The RMS profile stabilises for roughly the same number of time samples, indicating that the coverage has reached convergence.
+
+\textbf{Remark:} One may notice that the maximum value of the angular profile shown in the left panel is not equal to unity, despite the coverage being normalised. This is because each point corresponds to an average within an angular bin. For low values of $N_{\text{pointings}}$, the coverage is highly inhomogeneous, causing the bin-averaged value to differ significantly from one. The progressive convergence of the peak value towards unity therefore provides an additional indicator of convergence with increasing $N_{\text{pointings}}$.
+
+\begin{figure}[!htbp]
+    \begin{minipage}{0.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{coverage_angular_profile.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{coverage_rms_angular_profile.png}
+    \end{minipage}
+    \caption{Angular profile (left) and RMS of the angular profile (right) of the normalised coverage for various values of $N_{\text{pointings}}$.}
+    \label{fig:coverage_ang_profile}
+\end{figure}
+
+A complementary approach consists of studying the convergence of $\sigma_r$, the uncertainty on the tensor-to-scalar ratio $r$, as a function of $N_{\text{pointings}}$. This analysis is performed by running end-to-end simulations for several values of $N_{\text{pointings}}$ and fitting the resulting power spectra (see Chapter~\ref{chap:xspectrum}). The results are shown in Figure~\ref{fig:pointing_sigma_r}. The lower panel clearly shows that $\sigma_r$ converges for approximately $N_{\text{pointings}} \gtrsim 3000$.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{sigma_r_pointings.png}
+    \caption{Top: fitted value of the tensor-to-scalar ratio $r$ as a function of the number of pointings $N_{\text{pointings}}$. Error bars correspond to the MCMC uncertainty $\sigma_r$. Bottom: evolution of $\sigma_r$ as a function of $N_{\text{pointings}}$.}
+    \label{fig:pointing_sigma_r}
+\end{figure}
+
+In light of these two analyses, we adopt $N_{\text{pointings}} = 5000$ for all subsequent simulations. This value provides a reasonable compromise between accuracy, memory consumption, and computational cost.
+
+\subsection{Coverage cut}
+
+To improve the signal-to-noise ratio, the outer pixels of the QUBIC sky patch, where the coverage is the lowest, can be excluded from the analysis. This selection is controlled by the \emph{coverage cut} parameter. Defined between 0 and 1, it corresponds to the minimum accepted coverage fraction. All pixels whose coverage fraction, defined as the coverage value at the pixel position divided by the maximum coverage over the patch, is below the chosen coverage cut are removed from the reconstruction.
+
+Applying a coverage cut generally improves the signal-to-noise ratio by discarding poorly observed regions. However, the value should remain as small as possible in order to preserve the largest possible sky area and therefore the available statistical information. To determine an appropriate value, we follow the same procedure as in the previous section: we perform simulations for some coverage cut values and study the resulting behaviour of $\sigma_r$.
+
+\rmk{Still miss some values for the plot.}
+
+\subsection{Spectrum parameter : $\Delta_\ell$}
+
+As discussed in Chapter~\ref{chap:xspectrum}, the angular power spectra are computed from $\ell_\text{min} = 40$ to $\ell_\text{max} = 2 \times N_\text{side} - 1 = 511$, with a binning given by the parameter $\Delta_\ell$.
+While $\ell_\text{max}$ is limited by NaMaster, and $\ell_\text{min}$ by the size of the observing patch, it is still necessary to optimise the size of the bins.
+The binning of the spectra is done for multiple purposes. The main one is to improve the signal-to-noise ratio. Indeed, when we are binning, we are averaging multiple modes into one, leading to a smaller covariance (it is divided by $\Delta_\ell$, see equation \ref{eq:xspec_noise_cov_matrix}). It also leads to a less costly fitting procedure, as we have to compute less cross-spectra value, leading to a runnable MCMC. More importantly, as we observe a small fraction of the sky, NaMaster~\cite{alonso2019} computes the spectra on a mask map. Doing so, it breaks the orthogonality of the spherical harmonics, mixing power between neighbours modes. Therefore, averaging close modes is a way to have uncorrelated power spectra with masked sky. One can note that binning is possible only because foregrounds' models evolve smoothly in $\ell$. 
+
+As an empirical and extensive analysis was performed on the spectra parameters by Jean-Christophe Hamilton and Louise Mousset for \cite{QUBICI, QUBICII}, we decided to only test few values to compare with $\Delta_\ell = 30$ they found. We only ran simulations for $\Delta_\ell = \left[20, 30, 40, 50\right]$. The result is visible in Figure~\ref{fig:delta_ell_sigma_r}.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{sigma_r_delta_ell.png}
+    \caption{Top: fitted value of the tensor-to-scalar ratio $r$ as a function of $\Delta_\ell$. Error bars correspond to the MCMC uncertainty $\sigma_r$. Bottom: evolution of $\sigma_r$ as a function of $\Delta_\ell$.}
+    \label{fig:delta_ell_sigma_r}
+\end{figure}
+
+If we look only at fit with only QUBIC (blue points), the result are very close. On the other hand, looking at the fit where high frequency bands from Planck are added (orange points), we see that the lower $\sigma_r$ is achieved with $\Delta_\ell = 30$, which confirms the previous estimation. But, we see that the fit for $\Delta_\ell = 20$ fails. This behaviour can be understood by recalling the cross-spectrum debiasing procedure described in Chapter~\ref{chap:xspectrum}. For smaller bin widths, the covariance is reduced less efficiently, increasing the sensitivity to residual noise bias. Consequently, a larger number of noise realisations is required to accurately estimate and remove this bias.
+
+Therefore, to avoid the need to increase the already large number of realisations, and as it already shows that best performance is achieved with only QUBIC information, we decided to keep $\Delta_\ell = 30$ for our end-to-end simulations. 
+
+\rmk{It would be good if I can add few other values (25, 35, ...), I will see if I have the time.}
+
+\subsection{CMM convergence parameters : $N_\text{iter}$ \& $N_\text{loop}$}
 
 \end{document}
