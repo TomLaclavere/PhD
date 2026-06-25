@@ -17,13 +17,66 @@ The primary goal of the simulation and reconstruction pipeline is to provide a r
 
 The study is divided into two parts. First, we investigate the balance between simulation realism and computational resources. Second, we identify the parameter choices that maximise the sensitivity of the instrument to the tensor-to-scalar ratio, as quantified by the uncertainty $\sigma_r$.
 
+\personal{Even though parameter studies have been performed in the past, notably by Louise Mousset on $N_{\text{sub}}$ and $k_{\text{max}}$ during her PhD, no significant results or comprehensive analysis of the full set of simulation and reconstruction parameters had been reported. Performing such a study became an important step once the simulation and reconstruction pipeline reached a sufficiently mature and realistic state. In this context, I led the analysis of these parameters, starting in my second year with a study of the convergence of TODs with respect to $N_{\text{sub}}$. The absence of clear convergence, discussed in this chapter, was a major issue over several months and motivated a thorough review of the entire codebase in an attempt to understand its origin, representing a significant fraction of my work during this period. An explanation was eventually found through multiple discussions with the APC team working on QUBIC, and the underlying effect was independently demonstrated by Alexandre Huchet using the qubicsoft framework, as well as by myself through the development of a toy simulation model. During my third year, once the software had reached a more stable state, I performed a new analysis of $N_{\text{sub}}$ for both simulation and reconstruction, based on the $\sigma_r$ convergence. A similar study was then conducted for the maximum diffraction order $k_{\text{max}}$, together with an optimisation of the reconstruction hyperparameters.}
+
 \section{Realistic simulation}
 
-\subsection{TOD convergence problem}
+The realism of the simulated data depends primarily on two parameters: the number of integrated sub-bands $N_{\text{sub}}$ and the maximum diffraction order $k_{\text{max}}$. In reality, during data acquisition with the QUBIC instrument, both quantities are effectively infinite, which cannot be reproduced numerically. We therefore seek an optimal choice for these parameters, corresponding to a regime in which the simulated TOD no longer varies when they are further increased.
+It is important to note that this analysis concerns only the simulation framework: it does not reflect a limitation of the real data acquisition process.
 
 \subsection{Number of sub-bands} \label{sub:nsub}
 
-\rmk{Should be in the second section ?}
+The integration sub-bands number was implemented to approximate the frequency integration in QUBIC bandwidth, as shown in equation \ref{eq:nsub_acq}. This approximation is : 
+
+\begin{align} 
+    \vec{d} &= \int_{\nu_{min}}^{\nu_{max}}\mathcal{H}_\nu\vec{s_\nu}d\nu \notag \\
+    & \approx \sum_{i = 1}^{N_{sub}} \mathcal{H}_{\nu_i} \vec{s_{\nu_i}}\Delta_{\nu_i}.
+\end{align}
+
+To be accurate, $N_\text{sub}$ needs to be high enough to properly describe the continuous integration. An effective method to verify that is to observe how the simulated TOD evolves with $N_\text{sub}$. When we found a value after which TOD has converged, we have the value which properly approximate the integration. 
+
+\subsubsection{TOD convergence}
+
+The first quantity we investigate is the convergence of the TOD, that is, the value of $N_{\text{sub}}$ beyond which the TOD no longer changes significantly. A first approach consists of directly comparing the TOD generated with different values of $N_{\text{sub}}$. For simplicity, we consider a sky containing only CMB emission. We then simulate several instrumental operators $H$ corresponding to different values of $N_{\text{sub}}$. To limit the computational cost, only a few time samples are considered. The TOD is computed as :
+
+\begin{equation}
+    \mathrm{TOD}*{N*{\text{sub}}} = H_{N_{\text{sub}}}, s_{\text{CMB}}.
+\end{equation}
+
+Selecting a detector at random on the focal plane and plotting its TOD for different values of $N_{\text{sub}}$, we observe that each configuration produces slightly different values at each time sample, as shown in Figure~\ref{fig:tod_one_det}. This first result indicates that the TOD is indeed affected by the choice of $N_{\text{sub}}$. A convergence trend can nevertheless be observed: the TOD obtained with $N_{\text{sub}} = 4$ differs significantly from the others, whereas those obtained with $N_{\text{sub}} = 64$ and $84$ are nearly indistinguishable visually.
+
+    \begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{tod_conv_one_det.png}
+    \caption{TOD for a single detector of the focal plane obtained with different values of $N_{\text{sub}}$.}
+    \label{fig:tod_one_det}
+\end{figure}
+
+For a more accurate characterisation, we consider a set of $N_{\text{sub}}$ values and compute the corresponding TOD for each case. From these, we define the metric :
+
+\begin{equation}
+    \delta_i = \frac{\left\| H(\mathrm{map})^{i} - H(\mathrm{map})^{\mathrm{max}} \right\|_2}{\left\| H(\mathrm{map})^{\mathrm{max}} \right\|_2},
+\end{equation}
+
+which quantifies the relative difference between the TOD obtained with a given $N_{\text{sub},i}$ and the TOD computed with the largest value $N_{\text{sub}}^{\mathrm{max}}$. The normalisation by the norm of $H(\mathrm{map})^{\mathrm{max}}$ provides a dimensionless estimate of the fractional deviation.
+
+\subsubsection{Optimal sub-bands number for simulation and reconstruction}
+
+Following the results obtained on the influence of $N_{\text{sub}}$ on the TOD, we consider an alternative test based on the effect of $N_{\text{sub}}$ on $\sigma_r$, the uncertainty on the tensor-to-scalar ratio $r$.
+This test is, by construction, more involved, as it aims at identifying a realistic value of $N_{\text{sub}}$ for TOD generation by studying the behaviour of the uncertainty on a fitted parameter at the end of the reconstruction pipeline. We consider this metric to be particularly relevant, as it directly reflects the final objective of the simulation and reconstruction framework.
+To perform this analysis, special care must be taken to distinguish the value of $N_{\text{sub}}$ used in the simulation from the one used in the reconstruction. In the following, these quantities are denoted respectively by $N_{\text{sub}}^{\mathrm{in}}$ and $N_{\text{sub}}^{\mathrm{out}}$. It is therefore necessary to investigate their respective impact on $\sigma_r$, leading to a more complete two-dimensional parameter study.
+
+In many previous simulations (prior to this work), the same value of $N_{\text{sub}}$ was used for both simulation and reconstruction, which can introduce an artificial self-consistency between the simulated data and the reconstruction algorithm. In the present work, we avoid this condition in order to improve realism.
+This study thus provides an opportunity to determine an optimal pair of parameters, both in terms of convergence of $\sigma_r$ and computational efficiency, including memory usage.
+
+The result of the test are shown in Figure~\ref{fig:nsub_sigma_r}.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{sigma_r_nsub.png}
+    \caption{}
+    \label{fig:nsub_sigma_r}
+\end{figure}
 
 \subsection{Maximum diffraction order}
 
@@ -110,5 +163,14 @@ Therefore, to avoid the need to increase the already large number of realisation
 \rmk{It would be good if I can add few other values (25, 35, ...), I will see if I have the time.}
 
 \subsection{CMM convergence parameters : $N_\text{iter}$ \& $N_\text{loop}$}
+
+In the CMM Chapter~\ref{chap:CMM}, we discussed in detail the issues related to the alternating convergence scheme used to reconstruct both the component maps and the mixing matrix (through either blind or parametric models).
+This algorithm is governed by two parameters: the number of PCG iterations $N_{\mathrm{iter}}$ used to reconstruct the component maps, and the number of outer loops $N_{\mathrm{loop}}$. These two parameters must be tuned to achieve optimal convergence in the smallest possible number of steps.
+
+The key parameter is $N_{\mathrm{iter}}$, which largely determines the convergence rate. Indeed, it controls the reconstruction accuracy of the component maps at each iteration of the outer loop. If it is too small, the maps are poorly reconstructed, and the estimation of the mixing matrix becomes biased. If it is too large, the computational cost becomes inefficient. Moreover, in the most critical case, when the mixing matrix is itself incorrectly estimated (at the beginning of the reconstruction), a large value of $N_{\mathrm{iter}}$ can lead the maps to converge towards an incorrect solution, which in turn biases the subsequent estimation of the mixing matrix. Finding the appropriate trade-off is therefore delicate and may depend on the assumed physical model of the sky.
+
+To estimate the proper couple for these parameters, we are looking at two elements : the convergence of the spectral index, which determine the reconstruction of the mixing matrix, and the noise profile in residual component maps. 
+
+\rmk{Still ongoing, I am doing empirical tests to understand what is the best combinaison between $N_\text{iter}$ \& $N_\text{loop}$. I made a mistake, so I have to redo simulation, but only one per case instead of 300...}
 
 \end{document}
