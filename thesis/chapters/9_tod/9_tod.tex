@@ -69,16 +69,36 @@ To perform this analysis, special care must be taken to distinguish the value of
 In many previous simulations (prior to this work), the same value of $N_{\text{sub}}$ was used for both simulation and reconstruction, which can introduce an artificial self-consistency between the simulated data and the reconstruction algorithm. In the present work, we avoid this condition in order to improve realism.
 This study thus provides an opportunity to determine an optimal pair of parameters, both in terms of convergence of $\sigma_r$ and computational efficiency, including memory usage.
 
-The result of the test are shown in Figure~\ref{fig:nsub_sigma_r}.
+The results of this study are presented in Figure~\ref{fig:nsub_sigma_r}. The left panel shows the fit using only the two QUBIC frequency bands, while the right panel combines the QUBIC data with the $143$, $217$, and $353$ GHz frequency bands from Planck. In both cases, the figure shows the value of $\sigma_r$ for each combination of $N_{\text{sub}}^{\mathrm{in}}$ and $N_{\text{sub}}^{\mathrm{out}}$. It is reassuring to observe a similar behaviour in the two configurations.
+As expected, the cases where $N_{\text{sub}}^{\mathrm{in}} = N_{\text{sub}}^{\mathrm{out}}$ yield the lowest values of $\sigma_r$, as the simulation and reconstruction are self-consistent. However, this configuration is not representative of real observations and is therefore not considered further. Excluding these cases, convergence begins to be observed for $N_{\text{sub}}^{\mathrm{in}} \gtrsim 40$ and $N_{\text{sub}}^{\mathrm{out}} \gtrsim 12$. For computational reasons, using $N_{\text{sub}}^{\mathrm{in}} = 80$ is challenging because of the memory requirements. We therefore adopt the combination $N_{\text{sub}}^{\mathrm{in}} = 40$ and $N_{\text{sub}}^{\mathrm{out}} = 16$ for all subsequent end-to-end simulations.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=1\linewidth]{sigma_r_nsub.png}
+\caption{Uncertainty on the tensor-to-scalar ratio $r$, $\sigma_r$, for different values of $N_{\text{sub}}^{\mathrm{in}}$ used during the simulation and $N_{\text{sub}}^{\mathrm{out}}$ used during the reconstruction. Left: fit using only the two QUBIC frequency bands. Right: fit combining the QUBIC data with the $143$, $217$, and $353$ GHz Planck frequency bands.}
+\label{fig:nsub_sigma_r}
+\end{figure}
+
+An additional simulation was performed for $N_{\text{sub}}^{\mathrm{in}} = 120$, which was close to the memory limit of the computing centre used for this work. This extra point confirms that the convergence observed for $N_{\text{sub}}^{\mathrm{in}} \geq 40$ is maintained at higher values.
+
+\rmk{I still miss the point 80/38, I will run it in the following days (I had it but made a mistake...)}
+
+\subsection{Maximum diffraction order}
+
+The other parameter determining the realism of the simulated TOD is the maximum diffraction order $k_\text{max}$. This parameter characterises the number of peaks computed within the simulation, following $N_\text{peak} = \left(2k_\text{max} + 1\right)^2$. It is not straightforward to visualise the effect of $k_\text{max}$, which is a bit deeper than what it looks like. Given all the figures of the synthesized beam we have shown through this thesis, one can easily talk about \enquote{central peak} and \enquote{secondary peaks} to describe its structure. But, there is no such things, as the \enquote{central peak} appears only for a detector aligned with the optical axis of the instrument. In this very specific case, the order 0 peak (when $k_\text{max} = 0$, $N_\text{peak} = 1$) is located exactly at the center of the focal plane, where the primary beam is at its maximum. This situation does not happen which the real instrument, because no detector is located at the center. For an off-axis detector, the brightest peak is not located at the maximum of the primary beam, and is not necessary the order 0 peak. This situation is illustrated in Figure~\ref{fig:synth_beam_off_centre_bis}, taken from Chapter~\ref{chap:spectral_imaging}. This can be expanded further : for detectors located far from the center, an order $2$ peaks can have a higher amplitude than an order $1$ peak. For this reason, it is necessary for the realism to have a $k_\text{max}$ parameter as high as possible. 
 
 \begin{figure}[!htbp]
     \centering
-    \includegraphics[width=1\linewidth]{sigma_r_nsub.png}
-    \caption{}
-    \label{fig:nsub_sigma_r}
+    \includegraphics[width=1\linewidth]{synth_beam_off_centre.pdf}
+    \caption{1D cut of the synthesized beam for two detectors: one centred on the optical axis and one off-centre by $12~\mathrm{mm}$. Taken from \cite{QUBICII}.}
+    \label{fig:synth_beam_off_centre_bis}
 \end{figure}
 
-\subsection{Maximum diffraction order}
+Unfortunatly, $k_\text{max}$ is a very costly parameter, the memory increasing quadratically with it. For $k_\text{max} = 1$ and $N_\text{sub} = 40$, the simulation costs already $\sim 40-50$ GB. So, it meams complicated to have a high $k_\text{max}$ while keeping a realistic $N_\text{sub}$. Therefore, we led a similar analysis to show the effect of $k_\text{max}$ on convegergence of $\sigma_r$. 
+To avoid using too much memory, a parameter called \emph{synth\_beam\_fraction} was implemented. This parameter, contains between $0$ and $1$, corresponds to the fraction of the total synthesized beam amplitude we keep. To give a more practical example, the simulation is computing the amplitude associated with each peak, sort them, and keep the first ones until it reaches the \emph{synth\_beam\_fraction} value. This method allows to consider each peak, while saving memory by conserving only the ones contributing the most. This parameter is also included in our analysis.
+In addition, and similarly as $N_\text{sub}$, we have to define the $k_\text{max}$ used to simulate data, noted $k_{\text{max}}^{\mathrm{in}}$, and the one used for the reconstruction $k_{\text{max}}^{\mathrm{out}}$. For realism, we impose that the \emph{synth\_beam\_fraction} associated with $k_{\text{max}}^{\mathrm{out}}$ is always equal at $1$, while the one for reconstruction can vary.
+
+\rmk{I am still running simulation with $k_\text{max}$, it takes a lot of time, and there is a lot of things to understand that nobody did.}
 
 \section{Simulation hyperparameters optimisation}
 
