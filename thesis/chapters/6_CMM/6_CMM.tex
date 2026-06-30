@@ -14,7 +14,7 @@
 
 This chapter introduces an innovative algorithm that performs astrophysical component separation simultaneously with map-making by exploiting the frequency information contained in QUBIC Time-Ordered-Data. Although applicable to any CMB experiment, this method is particularly effective when combined with the spectral imaging capabilities enabled by bolometric interferometry, which allows for an increased spectral resolution. We refer to this approach as \emph{Component Map-Making} (CMM).
 
-The first section presents the general principles of CMM and highlights its differences with Frequency Map-Making (FMM). We then discuss the component-separation formalism, for which two solutions have been implemented: one based on parametric models of foreground emission and another independent of any specific assumptions on foregrounds' spectrum. The chapter concludes with a discussion of the numerical properties of CMM and the statistical properties of the reconstructed maps. This chapter focuses on the methodology; detailed developments and results are presented in the following chapters.
+The first section presents the general principles of CMM and highlights its differences with Frequency Map-Making (FMM). We then discuss the component-separation formalism, for which two solutions have been implemented: one based on parametric models of foreground emission and another independent of any specific assumptions on foregrounds' spectrum. The chapter concludes with a discussion of the numerical properties of CMM and the statistical properties of the reconstructed maps. This chapter focuses on the methodology; detailed developments and results are presented in the following chapters. \\
 
 \personal{The concept and implementation of CMM were initially developed during the PhD thesis of Mathias Regnier~\cite{mathiasthesis}. During my first year, I contributed to the development and validation of the algorithm alongside Mathias, leading to the publication of \cite{CMM}. During my second year, I refactored the CMM software and developed a user-friendly pipeline driven by configuration files, while improving the overall architecture and reducing architecture complexity. During my third year, I focused on the characterization and validation of the method, studying its dependence on the various reconstruction parameters and preparing the software for forecasting applications. My contributions are detailed in Chapters \ref{chap:qubicsoft}, \ref{chap:tod}, \ref{chap:atm}, and \ref{chap:forecast}.}
 
@@ -33,7 +33,6 @@ This conceptual modification of the map-making formalism leads to the following 
 \begin{equation} \label{eq:cmm}
     \vec{d} = H A \vec{c} + \vec{n},
 \end{equation}
-
 where we introduce $A$, the mixing matrix and $\vec{c}$, the component maps, with dimensions $(N_{\mathrm{comp}}, N_{\mathrm{pix}}, N_{\mathrm{stokes}})$. This equation is equivalent to equation \ref{eq:acquisition}, with $\vec{s} \equiv A\vec{c}$.
 
 The mixing matrix $A$, of dimensions $(N_{\mathrm{freq}}, N_{\mathrm{comp}})$, provides the link between astrophysical components and frequency channels, each element of the matrix describing the spectral evolution of the foreground emission. This formalism relies on the assumption that each astrophysical component can be described by a template whose amplitude varies with frequency according to a spectral law. Although this assumption is restrictive, it is necessary to make the problem realisable. In this model, $N_{freq}$ is the number of frequency bins within the physical bandwidth of QUBIC. The same way as with $N_{rec}$ in FMM, increasing $N_{freq}$ will improve the component separation capabilities (in particular in case of complex foregrounds), but will also increase the reconstruction noise because of the anti-correlation between sub-bands. This parameter needs to be chosen wisely, depending on the model considered for foregrounds. With component maps expressed in $K_{CMB}$, the CMB column in the mixing matrix is filled with $1$.
@@ -60,7 +59,6 @@ The parametric reconstruction of the mixing matrix relies on the foregrounds' mo
 \begin{equation}
     \chi^2(\theta_{comp}) = \left(\vec{d}-HA\left(\theta_{comp}\right)\vec{c}\right)^{~T} N^{-1} \left(\vec{d}-HA\left(\theta_{comp}\right)\vec{c}\right),
 \end{equation}
-
 where $\vec{d}$ is the observed TOD, $H$ the instrument simulation model and $\vec{c}$ the component maps estimated through PCG (but fixed here). The function is minimised using simple gradient descent with the \emph{minimize} function of SciPy library\footnote{\url{https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html}}. This corresponds to the \emph{Parametric CMM}.
 
 \subsection{Foregrounds models}
@@ -150,7 +148,6 @@ In FMM (see subsection \ref{sub:fmm_convolution}), we fixed the reconstructed re
 \begin{equation}
     \vec{\tilde{d}} = \int_{\nu_{min}}^{\nu_{max}} \mathcal{H}_\nu C_\nu A_{\nu} \vec{\tilde{c}}^{~best} d\nu + \vec{n},
 \end{equation}
-
 with $C_\nu$ the convolution operator at resolution $\sigma_{best}$ and $\vec{\tilde{c}}^{~best}$ the component maps at best resolution.
 
 \rmk{I am not convinced by my notations, it is not very clear.}

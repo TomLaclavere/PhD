@@ -16,7 +16,7 @@
 
 Minimizing the impact of instrumental effects is one of the most challenging goals, with the reduction of foreground contamination, of experiments targeting B-mode patterns in the CMB. Calibrating the instrument is required to reduce systematics, necessary to achieve high sensitivity. In addition to classical calibration, an innovative method used in radio-interferometry~\cite{paper_selfcal_1,paper_selfcal_2}, called self-calibration\footnote{See Cornwell \& Fomalont~\cite{selfcal_overview} for a detailed overview}, was shown to apply to QUBIC. This method relies on comparing the different baselines of an interferometer to characterize its systematic effects. In this context, accurate knowledge of the position and orientation of the calibration source, placed on a 50 m tower where the wind can induce motion, is needed. A differential GPS will be used for this purpose. Various people have contributed to this work: Claude Boutonnet, who integrated the integration of electronics, as well as planning the location of each subsystem in the calibration box; Manuel Gonzalez who studied commercially available GPS systems and made the first tests with the system; Jean Lesrel who did the integration of surge protection components; Steve Torchinsky, who wrote the software to communicate with the GPS and worked on the testing and the analysis; Eda Atav, a first year engineering student that I surveyed to help me to do experiment on the GPS and who started the noise analysis of the data.
 
-In this chapter, our aim is to explain the calibration method for the QUBIC Instrument, particularly the differential GPS associated with the calibration source, its characteristics, and its use within the calibration procedure, including a study of the noise of this system. 
+In this chapter, our aim is to explain the calibration method for the QUBIC Instrument, particularly the differential GPS associated with the calibration source, its characteristics, and its use within the calibration procedure, including a study of the noise of this system. \\
 
 \personal{My contributions are related to the study of differential GPS. I ran tests to understand its functioning and the meaning of the output data. I also analysed the noise of this system, which will be used to choose the best configuration to install at the observation site, as presented in section~\ref{section: gps}. Then, I wrote a software adapted to our specific use that is detailed in Section~\ref{section: calsource pos & orientation}. This software can be found in the qubicsoft GitHub repository : \url{https://github.com/qubicsoft/qubic/blob/master/qubic/lib/Qgps.py}}
 
@@ -30,7 +30,6 @@ Bolometric Interferometry differs from other CMB instruments by its interferomet
 \begin{equation}
     \vec{u} = \frac{\vec{d_2} - \vec{d_1}}{\lambda},
 \end{equation}
-
 where $\vec{d_1}$ and $\vec{d_2}$ are the position vectors of antennas 1 and 2, and $\lambda$ is the wavelength.
 
 The simplest case of self-calibration is to compare redundant baselines, for example, two pairs of horns separated by the same distance with baselines oriented toward the same direction, as shown in Figure~\ref{fig:redundant baseline}~\footnote{Note that self-calibration also works for non-redundant baselines. The redundant baseline case is used for the sake of pedagogy~\cite{paper_marie_selfcal}}. In this case, we should observe the same interference pattern for both baselines for an ideal instrument. In a realistic case, we observe differences between the two patterns, due to systematic effects (size of horns, position of horns, mirror misalignment, ...). However, we are not limited to redundant baselines and can use any baseline of the instrument in this method\cite{paper_marie_selfcal}. By comparing all the different baselines of the interferometer, we then have information from each detector and each horn on the systematic effects (horn radius, distance between horns, optical aberration, mirror misalignment, detector position and orientation, etc.), allowing us to characterize and reduce them.
@@ -140,7 +139,7 @@ The position of the receivers is computed by communicating with geostationary sa
 \end{figure}
 
 \subsection{GPS Data}
-After describing the GPS, we will focus on understanding the data it provides. Figure~\ref{fig:GPS data table} shows a resume of the data given by the system. This information will be described in the following sections.
+After describing the GPS, we will focus on understanding the data it provides. Figure~\ref{fig:GPS data table} shows a summary of the data given by the system. This information will be described in the following sections.
 
 \begin{figure}[!htbp]
     \centering
@@ -285,7 +284,7 @@ The idea of this model is to have a low-frequency white noise, with the amplitud
     \label{fig:ps_fit}
 \end{figure}
 
-We need to perform this fit on the 41 different configurations for each five GPS data. These results are resume in the Figure~\ref{fig:power_spectrum_gps}. We will describe this figure part by part to extract all the relevant information.
+We need to perform this fit on the 41 different configurations for each five GPS data. These results are summary in the Figure~\ref{fig:power_spectrum_gps}. We will describe this figure part by part to extract all the relevant information.
 
 \begin{figure}[!htbp]
     \centering
@@ -416,7 +415,6 @@ At initial position, as described in this introduction, the vector between the c
 \begin{equation}
     \vec{v_{cal}} = (d_{cal}, 0, 0),
 \end{equation}
-
 where $d_{cal}$ is the distance between the calibration source and QUBIC. As said in the Section~\ref{cal tower}, the calibration source will be placed at 48.6 m height, the distance on the ground between the tower and QUBIC is 38.44 m while the height of QUBIC from the ground is approximatively 4 m. By simple trigonometry, we can set that $d_{cal}= 58.88$ m from these values.
 
 \subsection{Uncertainties from GPS data}
@@ -457,7 +455,6 @@ The intensity of a Gaussian beam follows this formula :
 \begin{equation}
     I(r, x) = I_0 (\frac{w_0}{w(r)})^2 exp(-\frac{2x^2}{w^2(r)}),
 \end{equation}
-
 where r is the radial distance from the centre (m), x is the distance from the beam waist (m), $w_0$ is the beam waist radius (m) and $I_0$ is the peak intensity at the beam waist ($W/m^2$). The beam waist radius can be computed from :
 
 \begin{equation}
@@ -469,7 +466,6 @@ Also, $w_R$, the Rayleigh range, is defined as :
 \begin{equation}
     z_R = \frac{\pi w_0^2}{c},
 \end{equation}
-
 while $w(x)$ is the beam radius at distance x, given by:
 
 \begin{equation}
@@ -482,7 +478,7 @@ We can divide the uncertainties in two categories : uncertainties on position, $
 \subsubsection{Correlated noise simulation}
 To simulate the noise, we have to use the noise model\ref{eq: noise model}, with the parameters fitted in section\ref{Section: PS analysis}. Additionally, we want to take into account the correlation between the different GPS data. We describe here the method used to simulate the noise. \\
 First, we generate white noise for each GPS data, with a standard deviation of 1. Then, we apply a Fourier transform to these data using Fast Fourier Transform from NumPy\footnote{\url{https://numpy.org/doc/stable/reference/routines.fft.html}}, to work in the frequency domain. \\
-Then, we build the target power spectrum density (PSD) for the noise model\ref{eq: noise model}, using the parameters value fitted for each of the three configurations (optimistic, realistic and pessimistic). After that, we need to normalise this PSD according to the standard deviation measured on the GPS data for each configuration, resumed in Table\ref{tab: data error}. We compute the scale factor from the ratio between the standard deviation measured and the standard deviation of the simulated noise. We then multiply the target PSD by this scale factor.
+Then, we build the target power spectrum density (PSD) for the noise model\ref{eq: noise model}, using the parameters value fitted for each of the three configurations (optimistic, realistic and pessimistic). After that, we need to normalise this PSD according to the standard deviation measured on the GPS data for each configuration, summerised in Table\ref{tab: data error}. We compute the scale factor from the ratio between the standard deviation measured and the standard deviation of the simulated noise. We then multiply the target PSD by this scale factor.
 We now have to impose the spectral shape and the correlation between the GPS data. We use the matrix D, encoding the spectral amplitude for each mode, defined as :
 
 \begin{equation}
@@ -495,7 +491,6 @@ We now have to impose the spectral shape and the correlation between the GPS dat
         0                 & 0                 & 0                 & 0                  & \sqrt{S_{yaw}(f)} \\
     \end{pmatrix}
 \end{equation}
-
 where $S_{data}(f)$ is the target PSD for the given GPS data. By using the correlation matrix C, we can compute the cross-spectral density matrix S from:
 
 \begin{equation}
@@ -507,7 +502,6 @@ We perform an eigen-decomposition on this matrix :
 \begin{equation}
     S(f) = V \cdot \Lambda \cdot V^T,
 \end{equation}
-
 where V is the matrix of eigenvectors and $\Lambda$ is the diagonal matrix of eigenvalues. We can then compute the square root of S to obtain a frequency-domain mixing matrix M :
 
 \begin{equation}

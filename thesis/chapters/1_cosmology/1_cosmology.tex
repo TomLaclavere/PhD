@@ -185,9 +185,9 @@ This raises a fundamental question: why do causally disconnected regions have th
 \textbf{Flatness problem : Why is the Universe flat ?} In general relativity~\cite{einstein1916_general_relativity}, the geometry of spacetime is determined by its energy content. In a homogeneous and isotropic Universe, this relation is encoded in the Friedmann equations~\cite{friedmann1922}, which relate the expansion rate to the total energy density and spatial curvature. From these equations, one defines the critical density, $\rho_c$, which corresponds to a spatially flat Universe. Depending on the ratio $\Omega = \rho / \rho_c$, the Universe can be:
 
 \begin{align*}
-\Omega = 1 &\quad \text{: flat (Euclidean geometry)}, \\
-\Omega > 1 &\quad \text{: closed (positive curvature)}, \\
-\Omega < 1 &\quad \text{: open (negative curvature)}.
+    \Omega = 1 &\quad \text{: flat (Euclidean geometry)}, \\
+    \Omega > 1 &\quad \text{: closed (positive curvature)}, \\
+    \Omega < 1 &\quad \text{: open (negative curvature)}.
 \end{align*}
 
 Within the standard Friedmann evolution, flatness is not a stable state: any small deviation from $\Omega = 1$ grows with time. However, current measurements, notably from the Planck mission~\cite{planck2018VI}, indicate that $\Omega$ differs from unity by less than about $0.1\%$, implying that the Universe is extremely close to spatial flatness. Consequently, evolving backward in time implies an extreme fine-tuning of the initial condition. For example, a deviation of order $|\Omega_0 - 1| \sim 10^{-3}$ today corresponds to an initial deviation of order $10^{-60}$ near the Planck epoch. This extraordinary sensitivity suggests an apparent fine-tuning problem: why was the early Universe so precisely close to flatness? \\
@@ -304,7 +304,6 @@ The spherical harmonics can be written explicitly as:
 \begin{equation}
     Y_{\ell m}(\theta,\phi) = \sqrt{\frac{2\ell+1}{4\pi}\frac{(\ell-m)!}{(\ell+m)!}} P^m_{\ell}(\cos\theta)\exp^{i m \phi},
 \end{equation}
-
 where $P^m_{\ell}$ are the associated Legendre polynomials (see e.g.~\cite{maths_handbook} for more details).
 
 \subsubsection{Angular Power Spectrum} 
@@ -336,7 +335,6 @@ For a statistically isotropic Gaussian random field, the harmonic coefficients $
 \begin{equation}
     \hat{C}_{\ell} = \frac{1}{2\ell+1} \sum_{m=-\ell}^{\ell} |a_{\ell m}|^2,
 \end{equation}
-
 which satisfies :
 
 \begin{equation}
@@ -368,7 +366,6 @@ From Wick's theorem, the four-point function of a zero-mean Gaussian field facto
     &= C_{\ell}^2 \sum_{m m'} \left(1 + \delta_{m m'} + \delta_{m,-m'}\right) \notag \\
     &= C_{\ell}^2 \left[(2\ell+1)^2 + 2(2\ell+1)\right],
 \end{align}
-
 where the last two terms use $\langle a_{\ell m}^* a_{\ell m'} \rangle = C_\ell\,\delta_{mm'}$ and the condition $a_{\ell m}^* = (-1)^m a_{\ell,-m}$, which gives $\langle a_{\ell m}^* a_{\ell m'}^* \rangle \langle a_{\ell m} a_{\ell m'} \rangle = C_\ell^2\,\delta_{m,-m'}$. Substituting back :
 
 \begin{align}
@@ -411,7 +408,6 @@ The temperature monopole of the CMB is its mean temperature across the sky. It h
 \begin{equation}
     T(z) = T_0 (1 + z),
 \end{equation}
-
 where $T_0$ is the present CMB temperature and $z$ its redshift. Using the measured value of $T_0$ and the computed recombination temperature $T_{\mathrm{rec}}$, one can infer that the CMB was emitted at a redshift $z_{\mathrm{rec}} \sim 1100$.
 
 \jc{A first level of anisotropy is induced by the motion of the observer with respect to the CMB rest frame. Because the Solar System has a peculiar velocity relative to this frame, arising from its motion within the Milky Way and from the motion of the Milky Way within the Local Group, the observed CMB temperature is Doppler shifted across the sky~\cite{doppler1842}. This effect produces a dipolar anisotropy, known as the CMB solar dipole. The dipole anisotropy was first detected in 1977~\cite{smoot1977dipole}, then confirmed by the DMR instrument aboard the COBE satellite~\cite{COBE_DMR_1992}, and later measured with greater precision by WMAP~\cite{WMAP_5years_2009} and Planck Collaboration~\cite{Planck2018III}. The solar dipole, simulated using PySM, is shown in Figure~\ref{fig:cmb_dipole}.}
@@ -490,7 +486,6 @@ Polarisation of the CMB plays a central role in this thesis. We briefly introduc
         0 
     \end{pmatrix},
 \end{equation}
-
 where $A_x$ and $A_y$ are the amplitudes, $\omega$ is the frequency, and $\phi_x$, $\phi_y$ are the phases.
 
 \paragraph{Stokes parameters}
@@ -537,7 +532,6 @@ The Stokes parameters $Q$ and $U$ depend on the choice of local coordinate syste
 \begin{equation}
     (Q \pm iU)'(\hat{n}) = e^{\mp 2i\psi} (Q \pm iU)(\hat{n}),
 \end{equation}
-
 which shows that they are spin-$2$ quantities.
 
 To construct rotationally invariant quantities, \cite{zaldarriaga1997} introduced a decomposition in terms of spin-weighted spherical harmonics:
@@ -698,7 +692,6 @@ Thermal dust emission constitutes one of the main astrophysical sources of B-mod
 \begin{equation}
     I_{\nu, d} \propto \nu^{\beta_d}B_{\nu}(T_d),
 \end{equation}
-
 where $\beta_d$ is the dust spectral index and $B_{\beta_d}(T_d)$ is the Planck function, describing the blackbody emission.
 At frequencies above $\sim 100 GHz$, thermal dust emission dominates over CMB polarisation, as shown in Figure~\ref{fig:foreground_SED}. Its spectral energy distribution (SED) is often parameterised as :
 
@@ -713,7 +706,6 @@ At frequencies above $\sim 100 GHz$, thermal dust emission dominates over CMB po
 \begin{equation} \label{eq:dust_SED}
     f_d(\nu, T_d) = A_d (\frac{\nu}{\nu_{0,d}})^{\beta_d} \frac{e^{\frac{h\nu}{kT_d}} - 1}{e^{\frac{h_{\nu_0,d}}{kT_d}} - 1},
 \end{equation}
-
 with $A_d$ is the amplitude at reference frequency $\nu_{0, d}$ and $\beta_d$ is the spectral index. In practice, the dust temperature is often fixed to $T_d \approx 20 K$, due to degeneracies with $A_d$ and $\beta_d$ while fitting dust SED. Figures \ref{fig:dust_I_map} and \ref{fig:dust_QU_maps} shows respectively Intensity and Polarisation dust maps at $353 GHz$, as measured by Planck and reconstructed using the \emph{Commander}~\footnote{\url{https://github.com/Cosmoglobe/Commander}} framework~\cite{Commander2008}.
 
 \begin{figure}[!htbp]
@@ -799,9 +791,9 @@ This principle forms the basis of \emph{component separation} methods, which aim
 
 In addition to astrophysical foregrounds, ground-based CMB experiments must contend with contamination from the Earth's atmosphere. The atmosphere is not a transparent medium at microwave frequencies and both absorbs and emits radiation, thereby contributing to the measured signal.
 
-In particular, atmospheric brightness is strongly affected by the amount of water vapour, as well as by temperature and pressure, as illustrated in Figure~\ref{fig:atm_spectrum}. The atmospheric spectrum at CMB frequencies is dominated by absorption lines from molecular oxygen ($O_2$) and water vapour ($H_2O$). Between these lines, partially transparent observational windows exist, notably around $90\,\mathrm{GHz}$, $150\,\mathrm{GHz}$, and $220\,\mathrm{GHz}$.
+In particular, atmospheric brightness is strongly affected by the amount of water vapour, as well as by temperature and pressure, as illustrated in Figure~\ref{fig:atm_spectrum}. The atmospheric spectrum at CMB frequencies is dominated by absorption lines from dioxygen ($O_2$) and water vapour ($H_2O$). Between these lines, partially transparent observational windows exist, notably around $90\,\mathrm{GHz}$, $150\,\mathrm{GHz}$, and $220\,\mathrm{GHz}$.
 
-The overall emission level within these windows depends on the amount of water vapour present in the atmosphere, commonly quantified by the Precipitable Water Vapour (PWV). PWV corresponds to the total column-integrated water vapour content, expressed as the equivalent height of liquid water obtained upon condensation. It is defined as
+The overall emission level within these windows depends on the amount of water vapour present in the atmosphere, commonly quantified by the Precipitable Water Vapour (PWV). PWV corresponds to the total column-integrated water vapour content, expressed as the equivalent height of liquid water obtained upon condensation. It is defined as:
 \begin{equation}
     \mathrm{PWV} = \frac{1}{\rho_w}\int_0^{\infty}\rho_v(z)\,dz,
 \end{equation}
@@ -812,7 +804,7 @@ Low values of PWV are essential for high-sensitivity observations, as they reduc
 \begin{figure}[!htbp] 
     \centering 
     \includegraphics[width=0.8\linewidth]{atm_brightness.pdf} 
-    \caption{One-year average zenith atmospheric brightness for different values of Precipitable Water Vapour (PWV). The main $H_2O$ and $O_2$ absorption lines are indicated. Taken from \cite{Morris_2022}.} 
+    \caption{One-year average zenith atmospheric brightness for different values of Precipitable Water Vapour (PWV). The main $H_2O$ and $O_2$ absorption lines are indicated. Taken from \cite{morris2022}, simulated using the am software~\cite{paine2024}.} 
     \label{fig:atm_spectrum} 
 \end{figure}
 

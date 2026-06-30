@@ -17,7 +17,7 @@ The previous chapters focused on map-domain approaches to the analysis of QUBIC 
 This approach relies on the spectral behaviour of the observed sky. Since the Cosmic Microwave Background (CMB), thermal dust, synchrotron emission, and other astrophysical foregrounds exhibit distinct frequency dependencies, their contributions can be statistically disentangled by exploiting the correlations between maps observed at different frequencies. Rather than reconstructing individual component maps, the analysis is performed directly on the angular power spectra and cross-spectra derived from the reconstructed frequency maps.
 Cross-spectrum methods offer several advantages. First, they naturally suppress noise biases when independent noise realizations are available, typically through dedicated simulations. Second, they provide a flexible framework for modelling astrophysical foregrounds and instrumental effects directly at the statistical level. Finally, they establish a direct connection between the measured observables and the theoretical predictions of cosmological models.
 
-The objective of this chapter is therefore twofold. The first part presents the construction and modelling of the multi-frequency angular power spectra obtained from FMM frequency maps, together with the methodology used to separate the different astrophysical contributions. The second part describes how these spectra can be used to constrain cosmological parameters, with particular emphasis on the tensor-to-scalar ratio $r$, which constitutes the primary scientific target of QUBIC.
+The objective of this chapter is therefore twofold. The first part presents the construction and modelling of the multi-frequency angular power spectra obtained from FMM frequency maps, together with the methodology used to separate the different astrophysical contributions. The second part describes how these spectra can be used to constrain cosmological parameters, with particular emphasis on the tensor-to-scalar ratio $r$, which constitutes the primary scientific target of QUBIC. \\
 
 \personal{The cross-spectrum component separation framework and the associated cosmological parameter estimation pipeline were originally developed jointly with Mathias Regnier for the methodological studies presented in \cite{FMM,CMM}, as well as for his PhD thesis. During the second and third years of my PhD, I significantly extended these tools by improving their generality, software architecture, and integration within the QUBIC simulation and reconstruction framework. I also automated large parts of the analysis pipeline, enabling the production of end-to-end forecasts with minimal manual intervention.}
 
@@ -58,11 +58,11 @@ Finally, the binning parameter $\Delta_\ell$ was determined empirically as a com
 
 As the frequency range covered by QUBIC is limited to $\left[130,245\right]$ GHz, it can be advantageous to incorporate external data providing information at frequencies outside this interval. The inclusion of such data increases the spectral leverage available for component separation, improving the discrimination between the different astrophysical contributions. In the case of a sky model containing the CMB and Galactic dust emission, the addition of the Planck $353$ GHz channel is particularly valuable, as this frequency is highly sensitive to dust emission.
 
-Beyond extending the frequency coverage, external data also increase the number of frequency bands available for the cross-spectra analysis. Since the likelihood is built from all auto- and cross-power spectra between frequency bands, the total number of spectra scales as
+Beyond extending the frequency coverage, external data also increase the number of frequency bands available for the cross-spectra analysis. Since the likelihood is built from all auto- and cross-power spectra between frequency bands, the total number of spectra scales as :
 
-\[
-N_{\mathrm{spec}} = \frac{N_{\mathrm{freq}}\left(N_{\mathrm{freq}}+1\right)}{2}.
-\]
+\begin{equation}
+    N_{\mathrm{spec}} = \frac{N_{\mathrm{freq}}\left(N_{\mathrm{freq}}+1\right)}{2}.
+\end{equation}
 
 Adding external frequency channels therefore increases the number of spectra entering the likelihood, providing additional constraints on the model parameters. From this perspective, it can also be beneficial to include frequency bands that overlap with those already observed by QUBIC. For instance, the Planck $143$ GHz and $217$ GHz channels can be incorporated alongside the QUBIC bands. Although these frequencies are already covered by QUBIC, they contribute additional auto- and cross-spectra, thereby increasing the amount of information available for parameter estimation.
 

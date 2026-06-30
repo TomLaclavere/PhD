@@ -15,7 +15,7 @@
 
 The primary goal of the simulation and reconstruction pipeline is to provide a realistic estimate of the capabilities of the QUBIC instrument. However, increasing the realism of the simulations comes at a significant computational cost. In this chapter, we therefore analyse the impact of the main simulation parameters and their associated trade-offs.
 
-The study is divided into two parts. First, we investigate the balance between simulation realism and computational resources. Second, we identify the parameter choices that maximise the sensitivity of the instrument to the tensor-to-scalar ratio, as quantified by the uncertainty $\sigma_r$.
+The study is divided into two parts. First, we investigate the balance between simulation realism and computational resources. Second, we identify the parameter choices that maximise the sensitivity of the instrument to the tensor-to-scalar ratio, as quantified by the uncertainty $\sigma_r$. \\
 
 \personal{Even though parameter studies have been performed in the past, notably by Louise Mousset on $N_{\text{sub}}$ and $k_{\text{max}}$ during her PhD, no significant results or comprehensive analysis of the full set of simulation and reconstruction parameters had been reported. Performing such a study became an important step once the simulation and reconstruction pipeline reached a sufficiently mature and realistic state. In this context, I led the analysis of these parameters, starting in my second year with a study of the convergence of TODs with respect to $N_{\text{sub}}$. The absence of clear convergence, discussed in this chapter, was a major issue over several months and motivated a thorough review of the entire codebase in an attempt to understand its origin, representing a significant fraction of my work during this period. An explanation was eventually found through multiple discussions with the APC team working on QUBIC, and the underlying effect was independently demonstrated by Alexandre Huchet using the qubicsoft framework, as well as by myself through the development of a toy simulation model. During my third year, once the software had reached a more stable state, I performed a new analysis of $N_{\text{sub}}$ for both simulation and reconstruction, based on the $\sigma_r$ convergence. A similar study was then conducted for the maximum diffraction order $k_{\text{max}}$, together with an optimisation of the reconstruction hyperparameters.}
 
@@ -45,7 +45,7 @@ The first quantity we investigate is the convergence of the TOD, that is, the va
 
 Selecting a detector at random on the focal plane and plotting its TOD for different values of $N_{\text{sub}}$, we observe that each configuration produces slightly different values at each time sample, as shown in Figure~\ref{fig:tod_one_det}. This first result indicates that the TOD is indeed affected by the choice of $N_{\text{sub}}$. A convergence trend can nevertheless be observed: the TOD obtained with $N_{\text{sub}} = 4$ differs significantly from the others, whereas those obtained with $N_{\text{sub}} = 64$ and $84$ are nearly indistinguishable visually.
 
-    \begin{figure}[!htbp]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=1\linewidth]{tod_conv_one_det.png}
     \caption{TOD for a single detector of the focal plane obtained with different values of $N_{\text{sub}}$.}
@@ -57,7 +57,6 @@ For a more accurate characterisation, we consider a set of $N_{\text{sub}}$ valu
 \begin{equation}
     \delta_i = \frac{\left\| H(\mathrm{map})^{i} - H(\mathrm{map})^{\mathrm{max}} \right\|_2}{\left\| H(\mathrm{map})^{\mathrm{max}} \right\|_2},
 \end{equation}
-
 which quantifies the relative difference between the TOD obtained with a given $N_{\text{sub},i}$ and the TOD computed with the largest value $N_{\text{sub}}^{\mathrm{max}}$. The normalisation by the norm of $H(\mathrm{map})^{\mathrm{max}}$ provides a dimensionless estimate of the fractional deviation.
 
 \subsubsection{Optimal sub-bands number for simulation and reconstruction}

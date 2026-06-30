@@ -10,4 +10,107 @@
 }{
     \minitoc
 }
+
+\section*{Introduction}
+
+While astrophysical foreground B-mode emission is a fundamental limitation for the detection of primordial B-modes in the CMB signal, ground-based experiments are also contaminated by atmospheric emission. Atmosphere represents the main contributions of the photon noise, due to its high temperature comparing to the sky emissions. Additionally, this noise exhibits temporal and spatial correlations, creating contaminations for the map-making process. Mitigating its effects is one of the most challenging, yet essential, steps toward the detection of primordial B-modes with next-generation CMB experiments.
+
+This chapter presents a new method, based on the interferometric properties of the QUBIC instrument, to remove atmospheric contamination from CMB data using an extended version of the Component Map-Making algorithm introduced in Chapter~\ref{chap:CMM}. It is organised into six sections. We begin with an introduction to the key properties of the atmosphere, the model used to describe it, and the software developed to simulate it. Next, we discuss the properties of atmospheric emission that are particularly problematic for CMB observations, namely its temporal and spatial correlations. We then describe the modifications required to the data acquisition model, followed by the presentation of the different application cases studied. The results are then analysed, allowing us to identify the limitations of using CMM to separate atmospheric and CMB signals. Finally, an alternative model is introduced to address some of the limitations of the previous approach. \\
+
+
+\personal{The work presented in this chapter takes inspiration from the studies of Josquin Errard~\cite{errard2015} and Thomas Morris~\cite{morris2022,morris2025}, as well as from the state-of-the-art atmospheric simulation software \texttt{am}, developed by Scott Paine~\cite{paine2024}, which was used both as a simulation reference and to improve the understanding of atmospheric effects on CMB observations.
+I started working on this topic during the second year of my PhD by developing an atmospheric fluctuation simulation code based on the Kolmogorov spectrum (Section~\ref{section:atm_simulation}). I then focused on understanding the temporal and spatial correlations of atmospheric emission, relying extensively on the work of Errard and Morris~\cite{errard2015,morris2022}, as discussed in Section~\ref{section:atm_correlations}. During this period, I supervised two internship students: Noah Orazi (third-year undergraduate student, five weeks), who worked on the development of an effective atmosphere model to simplify its implementation, and Victor Chabirand (first-year student at École Polytechnique, twelve weeks), with whom I studied the impact of the QUBIC synthesized beam on the temporal and spatial correlations of the atmosphere.
+During my third year, I significantly expanded the atmospheric simulation software, with contributions from Eugène Malavergne (third-year undergraduate student, five weeks), as described in Section~\ref{section:atm_simulation}. Building on my work on the Component Map-Making algorithm, I then adapted its principles to atmospheric emission in an attempt to separate atmospheric contamination from the CMB signal. This atmospheric extension of CMM is presented in Sections~\ref{section:atm_tod_simulation} and~\ref{section:atm_reconstruction}. Finally, once this approach had been implemented and evaluated, I developed an alternative method, called \emph{Successive Map-Making}, based on an idea proposed by Jean-Christophe Hamilton. This method is presented in Section~\ref{section:atm_successive_MM}.}
+
+\section{Atmosphere model \& Simulation} \label{section:atm_simulation}
+
+We already proposed in the subsection~\ref{subsection:atm} a preliminary description of the atmosphere properties and the associated problems for CMB observations. Within this section, we proposed a more detailed presentation, as well as the description of the simple simulation software developed during this thesis.
+
+\subsection{Atmosphere properties}
+
+At millimeter wavelenghts, the atmosphere is the main contaminant for astrophysical and cosmological observations. Observing through the atmosphere is the source of many problems, associated with its properties. They are characterised by the temperature, the presssure, and more importantly, the Precipitable Water Vapour (PWV) of the atmosphere. The PWV is defined from the water vapour density at the considered location through:
+
+\begin{equation}
+    \mathrm{PWV} = \frac{1}{\rho_w}\int_0^{\infty}\rho_v(z)\,dz,
+\end{equation}
+where $\rho_w$ is the density of liquid water ($1000\,\mathrm{kg/m^3}$), and $\rho_v(z)$ is the water vapour density at altitude $z$.
+
+The first difficulty is that atmosphere is not a transparant medium as the frequency range. Its transmission spectrum, shown in Figure~\ref{fig:atm_transmitivity}, contains absorption lines from $O_2$ and $H_2 O$, limiting the observation of the sky between these lines. For these purpose, QUBIC instrument is observing between $130$ and $170$ GHz, as well as between $190$ and $245$ GHz. Additionally, the transmittance is increasing at high frequency, even within the observing windows with the PWV. This is the main motivation for observing from a dry site at high altitude, which has the effect of decreasing the water vapour density $\rho$.
+
+\begin{figure}[!htbp] 
+    \centering 
+    \includegraphics[width=1\linewidth]{atm_transmittance_pwv.pdf} 
+    \caption{Transmittance at the zenith as a function of frequency, for different values of PWV. The two frequency bandwidths, and the absorption lines and their associated molecules are shown. Simulated using the \emph{am} software~\cite{paine2024}.} 
+    \label{fig:atm_transmitivity} 
+\end{figure}
+
+In addition, the atmosphere brightness is a real problem for the noise point of view, as shown in Figure~\ref{fig:atm_brightness}.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{atm_brightness_pwv.pdf}
+    \caption{Brightness temperature at the zenith as a function of frequency, for different values of PWV. The two frequency bandwidths, and the absorption lines and their associated molecules are shown. Simulated using the \emph{am} software~\cite{paine2024}.}
+    \label{fig:atm_brightness}
+\end{figure}
+
+% Parler de contribution de Temp, Pression, mais surtout PWV ! 
+
+\subsection{Numerical description}
+
+\subsubsection{Fluctuations}
+
+\subsubsection{Frequency dependancy}    
+
+\subsubsection{Wind}
+
+\section{Atmosphere temporal and spatial correlations} \label{section:atm_correlations}
+
+% Inspired by Josquin's paper
+
+\section{Data acquisition simulation} \label{section:atm_tod_simulation}
+
+\subsection{Observable atmosphere map}
+
+\subsection{Instrumental model's modification}
+
+\section{Maps' reconstruction \& Atmosphere serapation} \label{section:atm_reconstruction}
+
+\subsection{Atmosphere map-making}
+
+\subsubsection{No wind case}
+
+\subsubsection{Wind case}
+
+\subsection{Atmosphere seraparation and map-making}
+
+\subsubsection{No wind case}
+
+\subsubsection{Wind case}
+
+\section{Results analysis}
+
+\subsection{Noise profile}
+
+\subsection{Tensor-to-scalar ratio atmosphere bias}
+
+\subsection{Comparison with atmosphere filtering}
+
+\subsection{Issues and limitations}
+
+\subsubsection{Convergence}
+
+\subsubsection{Computation time}
+
+\subsubsection{Physical realism}
+
+\section{Alternative method : successive map-making} \label{section:atm_successive_MM}
+
+\subsection{Motivation}
+
+\subsection{Implementation description}
+
+\subsection{Results \& Comparison}
+
+\section*{Conclusion}
+
 \end{document}

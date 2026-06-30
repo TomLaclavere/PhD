@@ -59,7 +59,6 @@ The PSF can be expressed as:
 \begin{equation} \label{eq:psf}
     \mathrm{PSF}^{\vec{n}}(\vec{r}, \lambda) = \vert A_{det}^{\vec{n}}(\vec{r}, \lambda)\vert ^2,
 \end{equation}
-
 with $A_{det}^{\vec{n}}(\vec{r}, \lambda)$ the amplitude \jc{of the electric field $\vec{E}$} on the detector at position $\vec{r}$, for the instrument looking in direction $\vec{n}$ at wavelength $\lambda$.
 
 The amplitude at a detector can be expressed in terms of the contribution from each individual horn, described by $A_{horn}^{\vec{n}}(\vec{r} - \vec{x}_h, \lambda)$, the amplitude transmitted by a horn at position $\vec{x}_h$ and wavelength $\lambda$ to position $\vec{r}$ on the focal plane:
@@ -121,7 +120,7 @@ Finally, the synthesized beam is given by:
     B_{synth}^{\vec{n}}(\vec{r}) = B_{prim}(\vec{n}, \lambda)B_{sec}(\vec{r}, \lambda) \left(\frac{\sin^{2}(\frac{\pi N_{horns}\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])}{\sin^{2}(\frac{\pi\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])}\right)\left(\frac{\sin^{2}(\frac{\pi N_{horns}\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}{\sin^{2}(\frac{\pi\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}\right)
 \end{equation}
 
-\subsection{Beam properties}
+\subsection{Beam properties} \label{sub:beam_properties}
 
 Using QUBIC specifications, summarised in Table~\ref{table:qubic_spec}, we can use Equation~\ref{eq:synth_beam} to compute the synthesized beam of QUBIC. Figure~\ref{fig:synth_beam_qubic} shows a beam composed of multiple high-intensity peaks of different diffraction orders $k$. The number of peaks depends on the maximum order considered, and is given by $N_{peaks} = (2k_{max} + 1)^2$. For a central detector, the central peak is the order-0 peak, corresponding to the maximum of the primary beam. The order-1 peaks are the 8 peaks around the centre, while $k_{max} = 2$ corresponds to $25$ peaks (some at very low relative amplitude).
 
