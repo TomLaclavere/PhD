@@ -791,7 +791,7 @@ This principle forms the basis of \emph{component separation} methods, which aim
 
 In addition to astrophysical foregrounds, ground-based CMB experiments must contend with contamination from the Earth's atmosphere. The atmosphere is not a transparent medium at microwave frequencies and both absorbs and emits radiation, thereby contributing to the measured signal.
 
-In particular, atmospheric brightness is strongly affected by the amount of water vapour, as well as by temperature and pressure, as illustrated in Figure~\ref{fig:atm_spectrum}. The atmospheric spectrum at CMB frequencies is dominated by absorption lines from dioxygen ($O_2$) and water vapour ($H_2O$). Between these lines, partially transparent observational windows exist, notably around $90\,\mathrm{GHz}$, $150\,\mathrm{GHz}$, and $220\,\mathrm{GHz}$.
+In particular, atmospheric brightness is strongly affected by the amount of water vapour, as well as by temperature and pressure, as illustrated in Figure~\ref{fig:atm_brightness}. The atmospheric spectrum at CMB frequencies is dominated by absorption lines from dioxygen ($O_2$) and water vapour ($H_2O$). Between these lines, partially transparent observational windows exist, notably around $90\,\mathrm{GHz}$, $150\,\mathrm{GHz}$, and $220\,\mathrm{GHz}$.
 
 The overall emission level within these windows depends on the amount of water vapour present in the atmosphere, commonly quantified by the Precipitable Water Vapour (PWV). PWV corresponds to the total column-integrated water vapour content, expressed as the equivalent height of liquid water obtained upon condensation. It is defined as:
 \begin{equation}
@@ -801,11 +801,11 @@ where $\rho_w$ is the density of liquid water ($1000\,\mathrm{kg/m^3}$), and $\r
 
 Low values of PWV are essential for high-sensitivity observations, as they reduce both atmospheric emission and absorption. For this reason, CMB experiments are typically located at high-altitude, dry sites.
 
-\begin{figure}[!htbp] 
-    \centering 
-    \includegraphics[width=0.8\linewidth]{atm_brightness.pdf} 
-    \caption{One-year average zenith atmospheric brightness for different values of Precipitable Water Vapour (PWV). The main $H_2O$ and $O_2$ absorption lines are indicated. Taken from \cite{morris2022}, simulated using the am software~\cite{paine2024}.} 
-    \label{fig:atm_spectrum} 
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{atm_brightness_pwv.pdf}
+    \caption{Zenith brightness temperature as a function of frequency for different PWV values. The two observational bands and the main absorption lines and their associated molecules are indicated. Simulated using the \emph{am} software~\cite{paine2024}.}
+    \label{fig:atm_brightness}
 \end{figure}
 
 In addition to its average emission, the atmosphere is a turbulent medium, leading to fluctuations in the observed signal along the line of sight and during telescope scanning, leading to spatial and temporal correlations in data. These fluctuations are commonly described by Kolmogorov turbulence, characterised by a three-dimensional power spectrum :

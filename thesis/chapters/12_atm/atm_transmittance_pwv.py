@@ -13,7 +13,7 @@ SITE_AMC = "QUBIC_site.amc"
 
 F_MIN, F_MAX, F_STEP = 0, 400, 0.2  # GHz
 PWV_VALUES_MM = [0.5, 1.0, 2.0, 3.0, 5.0]
-QUBIC_BANDS_GHZ = [(130, 170), (190, 245)]
+QUBIC_BANDS_GHZ = [(131.25, 168.75), (192.25, 247.5)]
 O2_LINES_GHZ = [60, 118.75]
 H2O_LINES_GHZ = [22.235, 183.31, 325.153, 380.197]
 
@@ -58,20 +58,28 @@ for pwv_mm in PWV_VALUES_MM:
 
 for band_lo, band_hi in QUBIC_BANDS_GHZ:
     ax.axvspan(band_lo, band_hi, color="tab:green", alpha=0.2)
-    ax.text((band_lo + band_hi) / 2, 1.11, "QUBIC", ha="center", color="darkgreen", fontsize=8, fontweight="bold")
+    ax.text(
+        (band_lo + band_hi) / 2,
+        1.02,
+        "QUBIC",
+        ha="center",
+        color="darkgreen",
+        fontsize=8,
+        fontweight="bold",
+    )
 
 for f_line in O2_LINES_GHZ:
     ax.axvline(f_line, color="tab:blue", lw=0.7, ls="--", alpha=0.6)
-    ax.text(f_line, 1.07, "O$_2$", ha="center", color="tab:blue", fontsize=8)
+    ax.text(f_line, 1.02, "O$_2$", ha="center", color="tab:blue", fontsize=8)
 for f_line in H2O_LINES_GHZ:
     ax.axvline(f_line, color="tab:red", lw=0.7, ls="--", alpha=0.6)
-    ax.text(f_line, 1.07, "H$_2$O", ha="center", color="tab:red", fontsize=8)
+    ax.text(f_line, 1.02, "H$_2$O", ha="center", color="tab:red", fontsize=8)
 
 ax.set_xlim(F_MIN, F_MAX)
-ax.set_ylim(0, 1.15)
+ax.set_ylim(0, 1.05)
 ax.set_xlabel("Frequency [GHz]")
 ax.set_ylabel("Zenith transmittance")
-ax.set_title("QUBIC site atmospheric transmittance (am)")
+ax.set_title("Simulated QUBIC site atmospheric transmittance (am)")
 ax.legend()
 ax.grid(True, alpha=0.3)
 

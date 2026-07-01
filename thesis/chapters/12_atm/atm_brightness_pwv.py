@@ -13,7 +13,7 @@ SITE_AMC = "QUBIC_site.amc"
 
 F_MIN, F_MAX, F_STEP = 0, 400, 0.2  # GHz
 PWV_VALUES_MM = [0.5, 1.0, 2.0, 3.0, 5.0]
-QUBIC_BANDS_GHZ = [(130, 170), (190, 245)]
+QUBIC_BANDS_GHZ = [(131.25, 168.75), (192.25, 247.5)]
 O2_LINES_GHZ = [60, 118.75]
 H2O_LINES_GHZ = [22.235, 183.31, 325.153, 380.197]
 
@@ -56,9 +56,8 @@ for pwv_mm in PWV_VALUES_MM:
     f, tau, tx, Trj, Tb = np.loadtxt(StringIO(stdout), unpack=True)
     ax.plot(f, Trj, lw=1, label=f"PWV = {pwv_mm:.1f} mm")
 
-ymax = ax.get_ylim()[1]
-ax.set_ylim(0, ymax * 1.2)
-label_y = ymax * 1.07
+ymax = 200
+label_y = -0.1
 
 for band_lo, band_hi in QUBIC_BANDS_GHZ:
     ax.axvspan(band_lo, band_hi, color="tab:green", alpha=0.2)
@@ -74,12 +73,13 @@ for band_lo, band_hi in QUBIC_BANDS_GHZ:
 
 for f_line in O2_LINES_GHZ:
     ax.axvline(f_line, color="tab:blue", lw=0.7, ls="--", alpha=0.6)
-    ax.text(f_line, label_y, "O$_2$", ha="center", color="tab:blue", fontsize=8)
+    ax.text(f_line + 3, label_y, "O$_2$", ha="left", color="tab:blue", fontsize=8)
 for f_line in H2O_LINES_GHZ:
     ax.axvline(f_line, color="tab:red", lw=0.7, ls="--", alpha=0.6)
-    ax.text(f_line, label_y, "H$_2$O", ha="center", color="tab:red", fontsize=8)
+    ax.text(f_line + 3, label_y, "H$_2$O", ha="left", color="tab:red", fontsize=8)
 
 ax.set_xlim(F_MIN, F_MAX)
+ax.set_ylim(-3, ymax)
 ax.set_xlabel("Frequency [GHz]")
 ax.set_ylabel("Brightness temperature [K]")
 ax.set_title("QUBIC site atmospheric brightness (am)")

@@ -18,44 +18,87 @@ While astrophysical foreground B-mode emission is a fundamental limitation for t
 This chapter presents a new method, based on the interferometric properties of the QUBIC instrument, to remove atmospheric contamination from CMB data using an extended version of the Component Map-Making algorithm introduced in Chapter~\ref{chap:CMM}. It is organised into six sections. We begin with an introduction to the key properties of the atmosphere, the model used to describe it, and the software developed to simulate it. Next, we discuss the properties of atmospheric emission that are particularly problematic for CMB observations, namely its temporal and spatial correlations. We then describe the modifications required to the data acquisition model, followed by the presentation of the different application cases studied. The results are then analysed, allowing us to identify the limitations of using CMM to separate atmospheric and CMB signals. Finally, an alternative model is introduced to address some of the limitations of the previous approach. \\
 
 
-\personal{The work presented in this chapter takes inspiration from the studies of Josquin Errard~\cite{errard2015} and Thomas Morris~\cite{morris2022,morris2025}, as well as from the state-of-the-art atmospheric simulation software \texttt{am}, developed by Scott Paine~\cite{paine2024}, which was used both as a simulation reference and to improve the understanding of atmospheric effects on CMB observations.
+\personal{The work presented in this chapter takes inspiration from the studies of Josquin Errard~\cite{errard2015} and Thomas Morris~\cite{morris2022}, as well as from the state-of-the-art atmospheric simulation software \texttt{am}, developed by Scott Paine~\cite{paine2024}, which was used both as a simulation reference and to improve the understanding of atmospheric effects on CMB observations.
 I started working on this topic during the second year of my PhD by developing an atmospheric fluctuation simulation code based on the Kolmogorov spectrum (Section~\ref{section:atm_simulation}). I then focused on understanding the temporal and spatial correlations of atmospheric emission, relying extensively on the work of Errard and Morris~\cite{errard2015,morris2022}, as discussed in Section~\ref{section:atm_correlations}. During this period, I supervised two internship students: Noah Orazi (third-year undergraduate student, five weeks), who worked on the development of an effective atmosphere model to simplify its implementation, and Victor Chabirand (first-year student at École Polytechnique, twelve weeks), with whom I studied the impact of the QUBIC synthesized beam on the temporal and spatial correlations of the atmosphere.
 During my third year, I significantly expanded the atmospheric simulation software, with contributions from Eugène Malavergne (third-year undergraduate student, five weeks), as described in Section~\ref{section:atm_simulation}. Building on my work on the Component Map-Making algorithm, I then adapted its principles to atmospheric emission in an attempt to separate atmospheric contamination from the CMB signal. This atmospheric extension of CMM is presented in Sections~\ref{section:atm_tod_simulation} and~\ref{section:atm_reconstruction}. Finally, once this approach had been implemented and evaluated, I developed an alternative method, called \emph{Successive Map-Making}, based on an idea proposed by Jean-Christophe Hamilton. This method is presented in Section~\ref{section:atm_successive_MM}.}
 
 \section{Atmosphere model \& Simulation} \label{section:atm_simulation}
 
-We already proposed in the subsection~\ref{subsection:atm} a preliminary description of the atmosphere properties and the associated problems for CMB observations. Within this section, we proposed a more detailed presentation, as well as the description of the simple simulation software developed during this thesis.
+We introduced in Subsection~\ref{subsection:atm} a preliminary description of atmospheric properties and the associated challenges for CMB observations. In this section, we provide a more detailed description, as well as the simulation software developed during this thesis.
 
 \subsection{Atmosphere properties}
 
-At millimeter wavelenghts, the atmosphere is the main contaminant for astrophysical and cosmological observations. Observing through the atmosphere is the source of many problems, associated with its properties. They are characterised by the temperature, the presssure, and more importantly, the Precipitable Water Vapour (PWV) of the atmosphere. The PWV is defined from the water vapour density at the considered location through:
+At millimetre wavelengths, the atmosphere is the main source of contamination for astrophysical and cosmological observations. Observations through the atmosphere are affected by several physical properties, affected by the atmosphere temperature, pressure, and more importantly the precipitable water vapour (PWV). The PWV is defined from the water vapour density at a given location as:
 
 \begin{equation}
-    \mathrm{PWV} = \frac{1}{\rho_w}\int_0^{\infty}\rho_v(z)\,dz,
+    \mathrm{PWV} = \frac{1}{\rho_w} \int_0^{\infty} \rho_v(z)\, dz,
 \end{equation}
 where $\rho_w$ is the density of liquid water ($1000\,\mathrm{kg/m^3}$), and $\rho_v(z)$ is the water vapour density at altitude $z$.
 
-The first difficulty is that atmosphere is not a transparant medium as the frequency range. Its transmission spectrum, shown in Figure~\ref{fig:atm_transmitivity}, contains absorption lines from $O_2$ and $H_2 O$, limiting the observation of the sky between these lines. For these purpose, QUBIC instrument is observing between $130$ and $170$ GHz, as well as between $190$ and $245$ GHz. Additionally, the transmittance is increasing at high frequency, even within the observing windows with the PWV. This is the main motivation for observing from a dry site at high altitude, which has the effect of decreasing the water vapour density $\rho$.
+\subsubsection{Transmitivity}
 
-\begin{figure}[!htbp] 
-    \centering 
-    \includegraphics[width=1\linewidth]{atm_transmittance_pwv.pdf} 
-    \caption{Transmittance at the zenith as a function of frequency, for different values of PWV. The two frequency bandwidths, and the absorption lines and their associated molecules are shown. Simulated using the \emph{am} software~\cite{paine2024}.} 
-    \label{fig:atm_transmitivity} 
+The first difficulty is that the atmosphere is not a fully transparent medium across the relevant frequency range. Its transmission spectrum, shown in Figure~\ref{fig:atm_transmitivity}, contains absorption lines from $O_2$ and $H_2O$, limiting observations to the atmospheric windows between these lines. For this reason, the QUBIC instrument operates in two bands, between $131$ and $169$ GHz and between $192.5$ and $247.5$ GHz. Additionally, the atmospheric transmittance decreases at higher frequencies even within these windows due to PWV absorption. This is one of the main motivations for observing from a dry, high-altitude site, which reduces the water vapour density $\rho_v$.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{atm_transmittance_pwv.pdf}
+    \caption{Zenith atmospheric transmittance as a function of frequency for different PWV values. The two observational bands and the main absorption lines and their associated molecules are indicated. Simulated using the \emph{am} software~\cite{paine2024}.}
+    \label{fig:atm_transmitivity}
 \end{figure}
 
-In addition, the atmosphere brightness is a real problem for the noise point of view, as shown in Figure~\ref{fig:atm_brightness}.
+\subsubsection{Brightness}
+
+In addition, atmospheric brightness, as shown in Figure~\ref{fig:atm_brightness_bis}, is a major source of noise. The higher the brightness temperature, the larger the photon noise induced in the detectors. It also contributes to the thermal load of the detectors, meaning that it is more challenging to cool down the detectors at the temperature required for superconductivity while observing through atmosphere. The brightness also scales with the PWV at the observation site, further reinforcing the need for a dry location.
 
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=1\linewidth]{atm_brightness_pwv.pdf}
-    \caption{Brightness temperature at the zenith as a function of frequency, for different values of PWV. The two frequency bandwidths, and the absorption lines and their associated molecules are shown. Simulated using the \emph{am} software~\cite{paine2024}.}
-    \label{fig:atm_brightness}
+    \caption{Zenith brightness temperature as a function of frequency for different PWV values. The two observational bands and the main absorption lines and their associated molecules are indicated. Simulated using the \emph{am} software~\cite{paine2024}.}
+    \label{fig:atm_brightness_bis}
 \end{figure}
 
-% Parler de contribution de Temp, Pression, mais surtout PWV ! 
+\subsubsection{Fluctuations}
 
-\subsection{Numerical description}
+Despite its mean emission, the atmosphere is a dynamic and turbulent medium with fluctuations in its water vapour density distribution. These fluctuations lead to temporal and spatial correlations in the observed time-ordered data (TOD) that will bias the maps' reconstruction. 
+The water vapour density fluctuations are assumed to follow the Kolmogorov model~\cite{Kolmogorov1941,Tatarski1961}, characterised by the tridmensional power-spectrum:
+
+\begin{equation}
+    P(\vec{k}) \propto |\vec{k}|^{-11/3}.
+\end{equation}
+
+However, this spectrum is not integrable at low spatial frequencies, which implies that the fully scale-invariant turbulence cannot extend to arbitrarily large spactial scales. In practice, this is regularised by introducing a low-wavenumber cutoff $k_\text{min} = r_0^{-1}$, where $r_0^{-1}$ represents the largest scale over which the turbulence can be considered scale-invariant~\cite{morris2022}. This leads to the modified spectrum:
+
+\begin{equation}
+    P_\text{adj}(\vec{k}) \propto (r_0^{-2} + |\vec{k}|^2)^{-11/6},
+\end{equation}
+which interpolates between a constant behaviour at low $k$ and the Kolmogorov turbulences at high $k$. The proportional constant is chosen so that the spectrum is normalised, as:
+
+\begin{equation}
+    \int P_\text{adj}(\vec{k})d\vec{k}=1.
+\end{equation}
+
+\subsubsection{Polarisation}
+
+The emission from the atmosphere is considered to not be polarised. However, few effects are producing polarised emission, such that the Zeeman splitting of $O_2$ by the Hearth magnetic field~\cite{hanany2003, spinelli2011, petroff2020, fujino2025} or the ice cristals in clouds~\cite{takakura2019, li2023, coerver2025}.
+
+The Zeeman effect occurs as the Earth's magnetic filed splits the energy levels of $O_2$ molecules, so their emission comes out slightly circularly polarised. The signal is tied to the magnetic field direction. The effect is relatively small: typical circular polarisation amplitudes are $\sim$130–500 $\mu$K depending on site and frequency \cite{petroff2020,fabbian2012}, corresponding to a fraction of order $10^{-4}$--$10^{-5}$ of the total intensity emission. It also produces a tiny fraction of linear polarisation, about $10000$ times smaller than the circular polarisation ($\sim 1$--$10$~nK)~\cite{fabbian2012}. This effect is deterministic and tied to a fixed geomagnetic pattern, and can therefore be modeled and subtracted as a template, rather than requiring dedicated hardware.
+
+Some clouds, called $\emph{cirrus clouds}$, are thin clouds present at high altitude, transparent to CMB experiment at millimetre range. Nevertheless, they yield horizontally-aligned ice cristals which backward scatter ground radiation and forward scatter sky signal, producing a linear polarisation emission~\cite{li2023}. Unlike Zeeman signal, this signal acts as a \enquote{burst} when a cirrus clouds is observed by the instrument, meaning that it can't be averaged. These events need to be flaged, using sky camera or LIDAR for example, and treated in post analysis. When observing through ice clouds, the atmosphere polarisation emission can reach about $5$--$10\%$ of the intensity emision ($\lesssim 0.1$ K)~\cite{takakura2019}.
+
+During this study, we are completely negleting these effects, and consider the atmosphere to be unpolarised. There is no fundamental limitation for including atmosphere polarisation, but as explained, the expected polarisation is too low to be properly reconstructed with our methods, and is therefore dismissed. It can be an important extension of this work to add atmosphere polarisation effect.
+
+\subsection{Numerical simulation}
+
+Now that we have described the various effects of the atmosphere that are problematic for CMB observations, we present the simulation software used to generate atmospheric emission. Since our objective is to apply the CMM algorithm to atmospheric contamination, we first need to simulate maps of the atmosphere.
+The state-of-the-art software for modelling the mean atmospheric properties is the \emph{am} model~\cite{paine2024}. However, \emph{am} is limited to modelling the average atmospheric properties along a given line of sight and does not include turbulent fluctuations. Additional models are therefore required to simulate atmospheric turbulence. Two main tools, both based on the formalism introduced in the previously discussed studies, have been developed for this purpose.
+
+The most widely adopted is \emph{TOAST}\footnote{\url{https://toast-cmb.readthedocs.io/en/latest/intro.html}} (Time Ordered Astrophysics Scalable Tools)~\cite{TOAST}, a framework for simulating and processing time-ordered data for experiments such as Planck, LiteBIRD, Simons Array, and the Simons Observatory. Its atmospheric module generates a full three-dimensional turbulent volume following the formalism of~\cite{errard2015}. This volume is then advected according to the wind velocity and propagated through the focal plane, reproducing both the temporal correlations along the scan and the spatial correlations between detectors. The implementation is designed to scale to the hundreds of thousands of detectors expected in next-generation CMB experiments.
+A more recent and lightweight alternative is \emph{maria}\footnote{\url{https://thomaswmorris.com/maria/index.html}}~\cite{maria}, a general-purpose (sub-)millimetre observation simulator developed for survey forecasting across a range of single-dish facilities, including MUSTANG-2, AtLAST, and several configurations of ACT, SPT, and the Simons Observatory. Rather than simulating a full three-dimensional turbulent volume, \emph{maria} relies on the two-dimensional frozen-turbulence approximation introduced by~\cite{morris2022}, in which the atmosphere is represented as a set of thin, wind-advected turbulent layers. This approximation enables significantly more efficient simulations of long scanning observations, at the expense of a simplified turbulence model. In addition, \emph{maria} couples this turbulence model with site- and time-dependent weather conditions derived from the ECMWF ERA5 reanalysis database and has been successfully validated against observations from MUSTANG-2~\cite{maria}.
+Both tools rely on the same calibration of the turbulence outer scale derived from POLARBEAR and ACT observations~\cite{errard2015}. They also share conceptual similarities with the simulation approach adopted in this thesis, which favours a simplified, self-contained implementation of the Kolmogorov turbulence model rather than the full TOAST framework.
+
+Unfortunately, these frameworks were developed for classical imagers and cannot be directly applied to the specific case of QUBIC\footnote{In her PhD thesis, Louise Mousset proposed an approach to adapt TOAST to the QUBIC instrument. Such an implementation would greatly facilitate the development of realistic simulations, as TOAST already provides many advanced features, particularly for modelling instrumental systematics. However, this approach was not explored further due to time constraints~\cite{thesislouise}.}. Instead, we chose to develop our own simplified atmospheric model, inspired by the formalisms of~\cite{errard2015} and~\cite{morris2022}, rather than investing significant effort into adapting TOAST or \emph{maria} to QUBIC. The assumptions and implemented features of this model are described in the following.
+
+\subsubsection{Physical proporties}
 
 \subsubsection{Fluctuations}
 
@@ -112,5 +155,10 @@ In addition, the atmosphere brightness is a real problem for the noise point of 
 \subsection{Results \& Comparison}
 
 \section*{Conclusion}
+
+\ifSubfilesClassLoaded{
+    \addstarredchapter{Bibliography}
+    \printbibliography
+}{}
 
 \end{document}
