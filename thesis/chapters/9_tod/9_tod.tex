@@ -59,6 +59,50 @@ For a more accurate characterisation, we consider a set of $N_{\text{sub}}$ valu
 \end{equation}
 which quantifies the relative difference between the TOD obtained with a given $N_{\text{sub},i}$ and the TOD computed with the largest value $N_{\text{sub}}^{\mathrm{max}}$. The normalisation by the norm of $H(\mathrm{map})^{\mathrm{max}}$ provides a dimensionless estimate of the fractional deviation.
 
+Instead of relying on \emph{qubicsoft}, we developed a simplified acquisition model. For each sub-band, a sky map is convolved with the FWHM of the synthesized beam peaks. We then compute the pointing direction of each synthesized beam peak for every detector. By summing the contributions from all sub-bands, we obtain a simplified TOD that retains the essential features required to study its convergence with respect to the number of sub-bands. This test was also performed using the full acquisition model implemented in \emph{qubicsoft} to validate the simplified toy model. The results presented below are mainly obtained with the toy model, as it allows the exploration of more complex configurations with a much lower computational cost.
+
+Unfortunately, the TOD does not appear to converge, regardless of the number of integrated sub-bands. The results, shown in Figure~\ref{fig:tod_conv_qubicsoft}, indicate a relative difference of approximately $5 \times 10^{-3}$ between two TODs computed using 194 and 204 sub-bands. This difference, as well as the others shown in the figure, is significantly larger than expected, and no clear convergence can be observed.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{convergence_tod_qubicsoft_200.png}
+    \caption{TOD convergence with the number of subbands $N_\text{sub}$, using \emph{qubicsoft}.}
+    \label{fig:tod_conv_qubicsoft}
+\end{figure}
+
+After initially suspecting a bug in the code, which led to several months of testing and verification of each operator composing $H$, we eventually identified a plausible explanation. Since the sky is represented as a pixelised map, the simulated TOD is affected by pixelisation. Depending on the frequency of the considered sub-band, the synthesized beam peaks do not point to exactly the same positions on the sky. As a result, the sampled pixel value can \enquote{jump} whenever a peak crosses the boundary between two neighbouring pixels, even for a very small change in frequency. This effect prevents the TOD from converging completely.
+This behaviour is illustrated in Figure~\ref{fig:tod_conv_pixel_effect}, which shows the output of the simplified toy model. For a single time sample, the figure displays the sum of the pixel values sampled by all the synthesized beam peaks as a function of the sub-bands' frequency. A deliberately coarse map resolution is used to emphasise the effect, which appears as the numerous plateaus visible throughout the figure.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{convergence_tod_pixellisation_effect.png}
+    \caption{Crosses represent the sum of the pixel values sampled by all the synthesized beam peaks for each sub-band, shown for different values of $N_{\text{sub}}$. The dashed lines correspond to the average contribution over all sub-bands.}
+    \label{fig:tod_conv_pixel_effect}
+\end{figure}
+
+To confirm that pixelisation is indeed responsible for the lack of convergence, we implemented a pixel interpolation scheme in the toy model to smooth the sky map. Repeating the same analysis with this interpolation yields to the results shown in Figure~\ref{fig:tod_conv_pixel_effect_interp}. In contrast to Figure~\ref{fig:tod_conv_pixel_effect}, the plateaus disappear and are replaced by a smooth evolution with sub-band frequency. More importantly, the sampled values become essentially independent of the number of sub-bands, providing strong evidence that the observed lack of convergence is primarily caused by pixelisation. Same by looking at the dash lines, representing the average of the contributions from all subbands for a given $N_\text{sub}$ value, which spreads less than in the figure without interpolation.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{convergence_tod_pixel_effect_interp.png}
+    \caption{Crosses correspond to the sum of pixels' value seen by all the peaks corresponding to a given subband, for various $N_\text{sub}$ numbers, including an interpolated sky. The dash lines are the average for the contributions from all subbands.}
+    \label{fig:tod_conv_pixel_effect_interp}
+\end{figure}
+
+The resulting convergence, with and without interpolation, for a map with resolution $N_\text{side}=256$ and numerous sub-bands, is shown in Figure~\ref{fig:tod_conv}. The convergence obtained with interpolation is improved by approximately three orders of magnitude.
+We initially expected this level of convergence to be achieved without introducing an explicit interpolation, assuming that the beam convolution would already smooth out the map. However, we found that the synthesized beam peaks have a size comparable to that of the HEALPix pixels for $N_\text{side}=256$. As a result, the convolution only partially mitigates the pixelisation effects and has a limited impact on TOD convergence. Moreover, because the synthesized beam FWHM varies with frequency, the convolution itself introduces an additional source of variation between sub-bands, which also affects the convergence of the TOD.\footnote{For completeness, we compared the TOD convergence with and without beam convolution. Somewhat counter-intuitively, the convergence is slightly better without convolution. However, this effect is much smaller than the pixelisation effect and is not investigated further, since omitting the convolution would not correspond to a realistic instrument model.}
+
+After validating this explanation with the toy model, we implemented an optional interpolation operator in the acquisition operator $H$.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{convergence_tod.png}
+    \caption{Convergence of TOD with the number of subbands, without and without interpolation.}
+    \label{fig:tod_conv}
+\end{figure}
+
+Although these results are satisfying, applying interpolation in the production simulations is not a realistic solution because of its significant computational cost. We therefore investigated an alternative approach to determine a suitable value of $N_\text{sub}$ for our end-to-end simulations.
+
 \subsubsection{Optimal sub-bands number for simulation and reconstruction}
 
 Following the results obtained on the influence of $N_{\text{sub}}$ on the TOD, we consider an alternative test based on the effect of $N_{\text{sub}}$ on $\sigma_r$, the uncertainty on the tensor-to-scalar ratio $r$.
@@ -158,7 +202,14 @@ To improve the signal-to-noise ratio, the outer pixels of the QUBIC sky patch, w
 
 Applying a coverage cut generally improves the signal-to-noise ratio by discarding poorly observed regions. However, the value should remain as small as possible in order to preserve the largest possible sky area and therefore the available statistical information. To determine an appropriate value, we follow the same procedure as in the previous section: we perform simulations for some coverage cut values and study the resulting behaviour of $\sigma_r$.
 
-\rmk{Still miss some values for the plot.}
+The result on the effect of the coverage cut value are presented in Figure~\ref{fig:cov_cut_sigma_r}. A sweet spot is visible for coverage cut equal to $0.2$, meaning that the pixels where the coverage is below $20\%$ of the max are discarded. Below this value, $\sigma_r$ is higher because we are adding pixels with not enough information, leading to a degradation of the signal-to-noise ratio. Above $0.2$, $\sigma_r$ value is raising, which means that we are discarding too much information, and by extension, loosing information inside the patch. We are using this value for the end-to-end simulations.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{sigma_r_cov_cut.png}
+    \caption{Top: fitted value of the tensor-to-scalar ratio $r$ as a function of the coverage cut. Error bars correspond to the MCMC uncertainty $\sigma_r$. Bottom: evolution of $\sigma_r$ as a function of coverage cut.}
+    \label{fig:cov_cut_sigma_r}
+\end{figure}
 
 \subsection{Spectrum parameter : $\Delta_\ell$}
 
@@ -188,8 +239,52 @@ This algorithm is governed by two parameters: the number of PCG iterations $N_{\
 
 The key parameter is $N_{\mathrm{iter}}$, which largely determines the convergence rate. Indeed, it controls the reconstruction accuracy of the component maps at each iteration of the outer loop. If it is too small, the maps are poorly reconstructed, and the estimation of the mixing matrix becomes biased. If it is too large, the computational cost becomes inefficient. Moreover, in the most critical case, when the mixing matrix is itself incorrectly estimated (at the beginning of the reconstruction), a large value of $N_{\mathrm{iter}}$ can lead the maps to converge towards an incorrect solution, which in turn biases the subsequent estimation of the mixing matrix. Finding the appropriate trade-off is therefore delicate and may depend on the assumed physical model of the sky.
 
-To estimate the proper couple for these parameters, we are looking at two elements : the convergence of the spectral index, which determine the reconstruction of the mixing matrix, and the noise profile in residual component maps. 
+To determine the optimal combination of these parameters, we are considering the convergence of the spectral index, which characterises the reconstruction of the mixing matrix. The analysis is performed by fixing the number of loops to $100$ and running the reconstruction for different numbers of PCG iterations per loop\footnote{Initially, we fixed the total number of PCG iterations and adjusted the number of loops and the number of iterations per loop accordingly. However, since $N_{\text{iter}}$ primarily controls the reconstruction of the component maps, whereas $N_{\text{loop}}$ governs the convergence of the mixing matrix, we found it more informative to keep one parameter fixed. Moreover, the total number of iterations is not, by itself, a meaningful criterion for assessing convergence.}. The starting point is choosen randomly at $2\sigma$ from the real value, but is kept the same for all tests. After the loop, a PCG with $150$ iterations is run to properly reconstruct the maps, which is not possible with the low $N_\text{iter}$ values used inside the loop. The number will be increased for the end-to-end simulations. 
+The results are shown in Figure~\ref{fig:beta_convergence} summerised in the Table~\ref{table:niter_convergence}. In this table, the first column $N_\text{iter}$ is the number of PCG iteration per loop, the second column is the loop number where the fit of the spectral index converged, and the third one is the residual value for the spectral index (the difference between the true value and the fitted one).
 
-\rmk{Still ongoing, I am doing empirical tests to understand what is the best combinaison between $N_\text{iter}$ \& $N_\text{loop}$. I made a mistake, so I have to redo simulation, but only one per case instead of 300...}
+\begin{figure}[!htbp]
+    \begin{minipage}{0.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{convergence_beta.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{convergence_beta_residual.png}
+    \end{minipage}
+    \caption{Convergence of spectal index $\beta$ value (left) and residual (right) with the number of loop iterations.}
+    \label{fig:beta_convergence}
+\end{figure}
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{ccc}
+        \hline
+        $N_{\text{iter}}$ & Convergence iteration & $\beta$ residual \\
+        \hline
+        5 & 52 & $7.46 \times 10^{-3}$ \\
+        10 & $\varnothing$ & $\varnothing$ \\
+        12 & $> 100$ & $\varnothing$ \\
+        15 & 68 & $1.35\times 10^{-3}$ \\
+        17 & 90 & $8.86\times 10^{-4}$ \\
+        20 & $> 100$ & $\varnothing$ \\
+        25 & $> 100$ & $\varnothing$ \\
+        30 & $> 100$ & $\varnothing$ \\
+        \hline
+    \end{tabular}
+    \caption{TODO: caption.}
+    \label{table:niter_convergence}
+\end{table}
+
+The symbol $\varnothing$ in the $\beta$ residual column means that the fit of the spectral index did not converge, and in the convergence iteration column means that the fit diverge. The tests show that the best value is around $N_\text{iter} = 15$, which is the value we will use for the end-to-end simulations as it corresponds to the best tradeoff between accuracy and number of loop iterations needed for convergence. The Figure~\ref{fig:beta_convergence_n_iter_15} shows the convergence of the spectral index for the case $N_\text{iter} = 15$.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{convergence_beta_n_iter_15.png}
+    \caption{Convergence of the spectal index $\beta$. The x-axis represents the loop iteration number. (top) Convergence of the $\beta$ value. (bottom) Convergence of the residual value, the difference between the true parameter and the fitted one.}
+    \label{fig:beta_convergence_n_iter_15}
+\end{figure}
+
+One would need to be careful with these values, as they do not represent an absolute rule for CMM. Indeed, they are not performed on a large statistical sample but only on one specific case. Furthermore, we can't find explanation for diverging convergence for some $N_\text{iter}$ values and not for others. An extension of this analysis may be needed in the future, or developing a non-linear solver to remove the need for the alternate convergence.
 
 \end{document}
