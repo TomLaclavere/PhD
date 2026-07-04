@@ -68,7 +68,7 @@ The water vapour density fluctuations are assumed to follow the Kolmogorov model
 
 However, this spectrum is not integrable at low spatial frequencies, which implies that the fully scale-invariant turbulence cannot extend to arbitrarily large spactial scales. In practice, this is regularised by introducing a low-wavenumber cutoff $k_\text{min} = r_0^{-1}$, where $r_0^{-1}$ represents the largest scale over which the turbulence can be considered scale-invariant~\cite{morris2022}. This leads to the modified spectrum:
 
-\begin{equation}
+\begin{equation} \label{eq:Kolmogorov}
     P_\text{adj}(\vec{k}) \propto (r_0^{-2} + |\vec{k}|^2)^{-11/6},
 \end{equation}
 which interpolates between a constant behaviour at low $k$ and the Kolmogorov turbulences at high $k$. The proportional constant is chosen so that the spectrum is normalised, as:
@@ -76,6 +76,13 @@ which interpolates between a constant behaviour at low $k$ and the Kolmogorov tu
 \begin{equation}
     \int P_\text{adj}(\vec{k})d\vec{k}=1.
 \end{equation}
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{kolmogorov_spectrum.png}
+    \caption{Kolmogorov power spectrum. The orange line shows the effect of adding the characteristic turbulences' scale $r_0$.}
+    \label{fig:kolmogorov_spectrum}
+\end{figure}
 
 \subsubsection{Polarisation}
 
@@ -98,17 +105,133 @@ Both tools rely on the same calibration of the turbulence outer scale derived fr
 
 Unfortunately, these frameworks were developed for classical imagers and cannot be directly applied to the specific case of QUBIC\footnote{In her PhD thesis, Louise Mousset proposed an approach to adapt TOAST to the QUBIC instrument. Such an implementation would greatly facilitate the development of realistic simulations, as TOAST already provides many advanced features, particularly for modelling instrumental systematics. However, this approach was not explored further due to time constraints~\cite{thesislouise}.}. Instead, we chose to develop our own simplified atmospheric model, inspired by the formalisms of~\cite{errard2015} and~\cite{morris2022}, rather than investing significant effort into adapting TOAST or \emph{maria} to QUBIC. The assumptions and implemented features of this model are described in the following.
 
-\subsubsection{Physical proporties}
+To account for the impact of atmospheric emission on QUBIC's observations, we simulate the atmosphere as a thin, turbulent layer of water vapor above the instrument\footnote{The software also allows to simulate a 3D volume, similarly than TOAST, but which cannot be used for data acquisition because $H$ only accept HEALPix maps.}. The simulation proceeds in four stages: computing the mean physical properties of the atmosphere as a function of altitude, generating spatially-correlated fluctuations of the water vapor density that mimic atmospheric turbulence, converting these fluctuations into a frequency-dependent brightness temperature using the atmosphere's absorption spectrum, and simulating the temporal evolution of the atmosphere through wind advection. The simulation code is added in the \emph{qubicsoft} library\footnote{\url{https://github.com/qubicsoft/qubic/blob/master/qubic/lib/MapMaking/Qatmosphere.py}}, but is not implemented in the simulation and reconstruction pipeline yet.
+
+\subsubsection{Physical properties}
+
+The main physical properties responsible for the atmospheric emission are the temperature and the water vapour density. They are described by two mean quantities that decreased exponentially with altitude $h$ :
+
+\begin{itemize}
+    \item \textbf{Temperature: } $T_{atm}(h) = T_{atm}(0) e^{-h/h_T}$, where $T_{atm}(0)$ is the average ground temperature and $h_T$ a characteristic scale height~\cite{morris2022}.
+    \item \textbf{Water vapour density: } $\langle \rho(h) \rangle = \rho_0 e^{-\ln 2 \frac{(h-5190)}{h_{H_2O}}}$, where $\rho_0$ is a reference density at 5190 m, the QUBIC altitude, and $h_{H_2O}$ the water vapour half-height.
+\end{itemize}
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{atm_temp_rho.png}
+    \caption{(left) Mean atmosphere temperature and (right) mean water vapour density with altitude. QUBIC altitude is illustrated with the black dashed line. Parameters value are taken from \cite{morris2022}.}
+    \label{fig:atm_temp_rho}
+\end{figure}
+
+As no advanced measurement of PWV has been performed at QUBIC observing site, we are using results from Atacama Desert, located at $\sim 300$ km from QUBIC and widely documented, to initialise the simulation parameters. This can be adjusted future with on-site measurements.
 
 \subsubsection{Fluctuations}
 
+After defining the average properties of the atmosphere, we need to implement its fluctuation, following the Kolmogorov power spectrum, from equation~\ref{eq:Kolmogorov}. During this procedure, we faced an important limitation: the Kolmogorov spectrum is written for Cartesian unit, while our acquisition operator $H$ needs HEALPix map. We developed two alternative implementations:
+
+\begin{itemize}
+    \item \textbf{Flat-sky (Fourier) method: }random phases are drawn on a 2D Fourier grid, weighted by $\sqrt{P(\mathbf{k})}$, and inverse-Fourier-transformed to real space to obtain a fluctuation map $\delta\rho(x,y)$. This flat map is then projected into a healpix map, which create geometrical distortions far from the zenith. 
+    \item \textbf{Full-sky (spherical harmonics) method: }the Kolmogorov spectrum is first translated into an angular correlation function $C(\theta)$ (using the relation between real-space separation and pointing angle, $r = 2h_{atm}\sin(\theta/2)$), then converted into an angular power spectrum $C_\ell$ (computed with CAMB), from which a HEALPix map is drawn with synfast function from healpy. This method is directly creating a HEALPix map of the atmosphere without projection, but it is not physically motivated to represent the atmophere as the surface of a sphere centered on the observer. This representation still may be correct close to the zenith, but may be treated carefully regarding the comparison with the 2D case.
+\end{itemize}
+
+Both approaches produce a fluctuation map $\delta\rho$ representing the turbulent structure of the water vapor field at a given time.
+
+\textbf{Remark: }Both methods to create an atmospheric map compatible with the QUBIC acquisition operator present potential problems. It is a current limitation from our current simulation software, totally out of the scope of this thesis, which will requiere extra attention in the future.
+
+Most atmospheric publications do not measure directly the fluctuations of the water vapour density, but mainly the fluctuations of PWV. We are using this standard deviation $\sigma_{PWV}$ to compute a density fluctuation scale $\sigma_\rho = \sigma_\text{PWV}/h$ (with $h = 2 h_{H_2O}$), following a simple scale approximation~\cite{sugiyama2024}.
+
+\begin{figure}[!htbp]
+    \begin{minipage}{0.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{atm_rho_fluctuation_flat.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{atm_rho_fluctuations_spherical.png}
+    \end{minipage}
+    \caption{Water vapour density fluctuations using Fourier transform (left) and spherical harmonics (right).}
+    \label{fig:amt_rho_fluctuation}
+\end{figure}
+
 \subsubsection{Frequency dependancy}    
+
+The absorbing power of the atmosphere is captured by an absorption spectrum. It is built from precomputed transmission tables (generated with the \emph{am} atmospheric model~\cite{paine2024}) combining three contributions: line-by-line molecular absorption from $H_2O$ and $O_2$, and two continuum terms from $H_2O$–$H_2O$ self-collisions and $H_2O$–air collisions. Combined with the local gas densities (computed via CoolProp\footnote{\url{https://coolprop.org/}} from pressure and temperature), these give the absorption coefficient $\alpha_b(\nu) = \frac{1}{m_{H_2O}}(k_\text{lines} + n_{H_2O}k_\text{self}(\nu) + n_\text{air}k_\text{air}(\nu))$, in $m^2$/g, which quantifies how efficiently the atmosphere absorbs/emits radiation at frequency $\nu$. The result is shown in Figure~\ref{fig:atm_spectrum}. An example of the integrated subbands is also displayed for $N_\text{sub}=8$. In practice, this spectrum is also used to compute the atmosphere mixing matrix elements for the CMM algorithm.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{atm_spectrum.png}
+    \caption{Atmosphere absorption spectrum computed using \emph{am}. The QUBIC frequency bands at 150 and 220 GHz are shown, as well as the subbands integration with their relative bandwidth.}
+    \label{fig:atm_spectrum}
+\end{figure}
+
+The spectrum is adjusted, depending on PWV, temperature and pressure. 
+
+\subsubsection{Atmosphere emission}
+
+From all these elements, we can compute the atmosphere emission, in Kelvin, from: 
+
+\begin{equation}
+    dT(\vec{r}, \nu) = \alpha_b(\nu) \rho(\vec{r}) B(\vec{r}, \nu) T_\text{atm}(\vec{r})dV, 
+\end{equation}
+with $\vec{r}$ the pointing direction, $\alpha_b$ the absorption spectrum, $\rho$ the water vapour density, $B$ the instrument beam, and $T_\text{atm}$ the temperature of the atmosphere. By integrating this expression on the volumen seen by the beam, we have the emission of the atmosphere in Kelvin. 
+
+As bolometers are sensible to temperature fluctuations, we can replace $\rho$ by the fluctuation map $\delta\rho$, which builds the temperature map of the atmosphere $\delta T$, shown in Figure~\ref{fig:atm_map}.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{atm_map.png}
+    \caption{Atmosphere emission map in $\mu K_\text{CMB}$ at 150 GHz.}
+    \label{fig:atm_map}
+\end{figure}
 
 \subsubsection{Wind}
 
+The final atmospheric property to be modeled is the advection induced by the wind. Two methods have been developed to account for this effect.
+
+The most intuitive approach consists of directly advecting the simulated atmospheric map. The entire realisation is shifted by an amount corresponding to the physical displacement induced by the wind, and the telescope samples this shifted map instead of the original one. In practice, every point of the sky map is displaced by the same angular offset, obtained by converting the physical wind displacement (accumulated over time, in metres) into an angular quantity using the altitude of the atmospheric layer as the relevant length scale. Each point is moved along the shortest path on the sphere (a great circle) by an angle equal to the magnitude of this shift. A complete mathematical description of this method, known as the \emph{exponential map}, can be found in \cite{boumal2023} (Example~5.37 and Section~10.21). The displacement is applied in the direction opposite to the wind since, for each point of the shifted map, we seek the location on the original map from which its content originated. The shifted map is then obtained by interpolating the original realisation at these displaced positions, independently for each frequency and Stokes parameter. Although conceptually straightforward, this approach is computationally expensive because it must be applied to every pixel of the map.
+
+To reduce this computational cost, we developed a simpler alternative in which the pointing directions are shifted instead of the atmospheric map itself, which therefore remains unchanged. This approach relies on the frozen-screen hypothesis, commonly used to describe atmospheric turbulence, according to which a time-evolving, wind-advected atmosphere is equivalent to a single frozen realisation observed from displaced positions. Rather than recomputing the entire atmospheric map at every time sample, only the much smaller set of pointing directions sampled by the instrument is shifted, making this the default and considerably more efficient implementation.
+
+The wind is modeled as a cumulative horizontal displacement that increases throughout the observation. For a constant wind velocity, the displacement grows linearly with time, whereas for a fluctuating wind it follows a random walk. Two geometrical implementations are used, depending on the atmospheric representation. When the atmosphere is modeled as a flat layer, the wind-induced displacement is computed exactly: each pointing direction is projected onto the atmospheric plane, the horizontal wind displacement is added directly to the projected position, and the resulting coordinates are projected back onto the celestial sphere. When the atmosphere is represented by a full-sky map, the same physical displacement is converted into a single angular shift, assumed to be uniform across the sky and independent of the pointing elevation. This angular displacement is then applied along the surface of the sphere, following the shortest path and in the direction opposite to the wind, consistently with the map-advection method described above.
+
+Both implementations are mathematically equivalent under these assumptions, as demonstrated in Figure~\ref{fig:atm_wind}. This equivalence has been verified using high-resolution maps and for sky regions sufficiently far from the poles, where projection distortions remain negligible. At coarser resolution, the difference between the methods is more important, due to pixelisation effect, but not related to the code. More robust implementations could be developed in the future, for example by relying on the \texttt{Rotator}\footnote{\url{https://healpy.readthedocs.io/en/latest/generated/healpy.rotator.Rotator.html}} class provided by \emph{healpy}, or the function \emph{shift} from SciPy \texttt{ndimage}\footnote{\url{https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.shift.html}}.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{amt_wind.png}
+    \caption{TOD computed with and without wind. The two different methods used to simulate the wind are displayde, and are consistent with each others.}
+    \label{fig:atm_wind}
+\end{figure}
+
+\textbf{Remark.} The inclusion of wind during data simulation and map reconstruction is discussed later in this chapter. Wind acts sequentially, continuously advecting the atmosphere between successive observations, whereas the acquisition operator $H$ computes the full time-ordered data for all pointing directions simultaneously. Consequently, particular care is required when incorporating wind into the acquisition model.
+
 \section{Atmosphere temporal and spatial correlations} \label{section:atm_correlations}
 
-% Inspired by Josquin's paper
+In this section, we explore the correlation formalism developed by Josquin Errard in \cite{errard2015}, but applied for the QUBIC instrument. It allows a better understanding of the atmosphere temporal and spatial correlation in the specific case of QUBIC frequency dependant multi-peaks synthesized beam.
+
+\rmk{This is the work I did with Victor. We are indeed finding the same result as Josquin, which is nice. But, with more perspective, I have some doubts that these results are really compatible with QUBIC beam. I am adding the plots in the following, and I am expecting to see peaks where correlation increased because of the multiple peaks of the synthesized beam, which is not the case. So, I am not suer that these plots are showing what I want them to show. Maybe I should drop this section.}
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{atm_corr_lenght.png}
+    \caption{}
+    \label{fig:atm_corr_r0}
+\end{figure}
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{atm_corr_wind_speed.png}
+    \caption{}
+    \label{fig:atm_corr_wind_speed}
+\end{figure}
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{atm_wind_dir}
+    \caption{}
+    \label{fig:atm_corr_wind_distortions}
+\end{figure}
 
 \section{Data acquisition simulation} \label{section:atm_tod_simulation}
 
