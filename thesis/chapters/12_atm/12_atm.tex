@@ -171,10 +171,10 @@ The spectrum is adjusted, depending on PWV, temperature and pressure.
 
 From all these elements, we can compute the atmosphere emission, in Kelvin, from: 
 
-\begin{equation}
+\begin{equation} \label{eq:atm_emission}
     dT(\vec{r}, \nu) = \alpha_b(\nu) \rho(\vec{r}) B(\vec{r}, \nu) T_\text{atm}(\vec{r})dV, 
 \end{equation}
-with $\vec{r}$ the pointing direction, $\alpha_b$ the absorption spectrum, $\rho$ the water vapour density, $B$ the instrument beam, and $T_\text{atm}$ the temperature of the atmosphere. By integrating this expression on the volumen seen by the beam, we have the emission of the atmosphere in Kelvin. 
+with $\vec{r}$ the pointing direction, $\alpha_b$ the absorption spectrum, $\rho$ the water vapour density, $B$ the instrument beam, and $T_\text{atm}$ the temperature of the atmosphere. By integrating this expression on the volume seen by the beam, we have the emission of the atmosphere in Kelvin. 
 
 As bolometers are sensible to temperature fluctuations, we can replace $\rho$ by the fluctuation map $\delta\rho$, which builds the temperature map of the atmosphere $\delta T$, shown in Figure~\ref{fig:atm_map}.
 
@@ -187,20 +187,20 @@ As bolometers are sensible to temperature fluctuations, we can replace $\rho$ by
 
 \subsubsection{Wind}
 
-The final atmospheric property to be modeled is the advection induced by the wind. Two methods have been developed to account for this effect.
+The final atmospheric property to be modelled is the advection induced by the wind. Two methods have been developed to account for this effect.
 
 The most intuitive approach consists of directly advecting the simulated atmospheric map. The entire realisation is shifted by an amount corresponding to the physical displacement induced by the wind, and the telescope samples this shifted map instead of the original one. In practice, every point of the sky map is displaced by the same angular offset, obtained by converting the physical wind displacement (accumulated over time, in metres) into an angular quantity using the altitude of the atmospheric layer as the relevant length scale. Each point is moved along the shortest path on the sphere (a great circle) by an angle equal to the magnitude of this shift. A complete mathematical description of this method, known as the \emph{exponential map}, can be found in \cite{boumal2023} (Example~5.37 and Section~10.21). The displacement is applied in the direction opposite to the wind since, for each point of the shifted map, we seek the location on the original map from which its content originated. The shifted map is then obtained by interpolating the original realisation at these displaced positions, independently for each frequency and Stokes parameter. Although conceptually straightforward, this approach is computationally expensive because it must be applied to every pixel of the map.
 
 To reduce this computational cost, we developed a simpler alternative in which the pointing directions are shifted instead of the atmospheric map itself, which therefore remains unchanged. This approach relies on the frozen-screen hypothesis, commonly used to describe atmospheric turbulence, according to which a time-evolving, wind-advected atmosphere is equivalent to a single frozen realisation observed from displaced positions. Rather than recomputing the entire atmospheric map at every time sample, only the much smaller set of pointing directions sampled by the instrument is shifted, making this the default and considerably more efficient implementation.
 
-The wind is modeled as a cumulative horizontal displacement that increases throughout the observation. For a constant wind velocity, the displacement grows linearly with time, whereas for a fluctuating wind it follows a random walk. Two geometrical implementations are used, depending on the atmospheric representation. When the atmosphere is modeled as a flat layer, the wind-induced displacement is computed exactly: each pointing direction is projected onto the atmospheric plane, the horizontal wind displacement is added directly to the projected position, and the resulting coordinates are projected back onto the celestial sphere. When the atmosphere is represented by a full-sky map, the same physical displacement is converted into a single angular shift, assumed to be uniform across the sky and independent of the pointing elevation. This angular displacement is then applied along the surface of the sphere, following the shortest path and in the direction opposite to the wind, consistently with the map-advection method described above.
+The wind is modelled as a cumulative horizontal displacement that increases throughout the observation. For a constant wind velocity, the displacement grows linearly with time, whereas for a fluctuating wind it follows a random walk. Two geometrical implementations are used, depending on the atmospheric representation. When the atmosphere is modelled as a flat layer, the wind-induced displacement is computed exactly: each pointing direction is projected onto the atmospheric plane, the horizontal wind displacement is added directly to the projected position, and the resulting coordinates are projected back onto the celestial sphere. When the atmosphere is represented by a full-sky map, the same physical displacement is converted into a single angular shift, assumed to be uniform across the sky and independent of the pointing elevation. This angular displacement is then applied along the surface of the sphere, following the shortest path and in the direction opposite to the wind, consistently with the map-advection method described above.
 
 Both implementations are mathematically equivalent under these assumptions, as demonstrated in Figure~\ref{fig:atm_wind}. This equivalence has been verified using high-resolution maps and for sky regions sufficiently far from the poles, where projection distortions remain negligible. At coarser resolution, the difference between the methods is more important, due to pixelisation effect, but not related to the code. More robust implementations could be developed in the future, for example by relying on the \texttt{Rotator}\footnote{\url{https://healpy.readthedocs.io/en/latest/generated/healpy.rotator.Rotator.html}} class provided by \emph{healpy}, or the function \emph{shift} from SciPy \texttt{ndimage}\footnote{\url{https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.shift.html}}.
 
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=1\linewidth]{amt_wind.png}
-    \caption{TOD computed with and without wind. The two different methods used to simulate the wind are displayde, and are consistent with each others.}
+    \caption{TOD computed with and without wind. The two different methods used to simulate the wind are displaid, and are consistent with each others.}
     \label{fig:atm_wind}
 \end{figure}
 
@@ -208,30 +208,83 @@ Both implementations are mathematically equivalent under these assumptions, as d
 
 \section{Atmosphere temporal and spatial correlations} \label{section:atm_correlations}
 
-In this section, we explore the correlation formalism developed by Josquin Errard in \cite{errard2015}, but applied for the QUBIC instrument. It allows a better understanding of the atmosphere temporal and spatial correlation in the specific case of QUBIC frequency dependant multi-peaks synthesized beam.
+\rmk{I just did this analysis during the weekend, updating Victor's work. I am not 100\% confident in it as I didn't have time to review and check everything. But, I do believe that this comparison are interesting to demonstrate why BI is well suited for atm MM. Tell me what you think ! It is easy to redo the plots, changing few parameters, so tell me if you catch something strange.}
 
-\rmk{This is the work I did with Victor. We are indeed finding the same result as Josquin, which is nice. But, with more perspective, I have some doubts that these results are really compatible with QUBIC beam. I am adding the plots in the following, and I am expecting to see peaks where correlation increased because of the multiple peaks of the synthesized beam, which is not the case. So, I am not suer that these plots are showing what I want them to show. Maybe I should drop this section.}
+In this section, we investigate the atmospheric correlation formalism developed by Josquin Errard in \cite{errard2015}, adapted to the specific case of the QUBIC instrument. This analysis provides a better understanding of the temporal and spatial correlations of the atmosphere when observed through the frequency-dependent, multi-peaked synthesized beam of a bolometric interferometer. Since the atmospheric map-making algorithm relies on the redundancy of the atmospheric signal, understanding these correlations is an important preliminary step.
+
+Starting from Equation~\ref{eq:atm_emission}, we derive the correlation between the signals measured by two detectors, denoted $i$ and $j$, at two different times $t$ and $t^\prime$ (Equation~14 of \cite{errard2015}):
+
+\begin{align}
+    \textbf{C}_\text{ij}^\text{t$t^\prime$} (\nu) &\equiv \langle T_i(t, \nu) T_j(t^\prime, \nu) \rangle \equiv \langle T(\vec{r}_i(t), \nu) T(\vec{r}_j(t^\prime), \nu) \rangle \\
+    &= \frac{\alpha_b^2(\nu)}{\lambda^4} \int\frac{\vec{dr}}{r^2} \int\frac{\vec{dr^\prime}}{{r^\prime}^2} B(\vec{r}, \nu) B(\vec{r^\prime}, \nu) T_\text{atm}(\vec{r}) T_\text{atm}(\vec{r^\prime}) \langle \rho(\vec{r}) \rho(\vec{r^\prime}) \rangle .
+\end{align}
+
+This expression allows the temporal correlation of the atmospheric signal to be computed as a function of the atmospheric parameters. In \cite{errard2015}, the beam $B$ was assumed to be Gaussian, leading to Figure~5 of that paper, where the correlations are studied as a function of several atmospheric and observational parameters, including the turbulence outer scale $r_0$, the scanning speed, the azimuthal scanning range, the characteristic altitude $z_0$, the wind speed, and the wind direction.
+
+Here, we reproduce the same analysis while replacing the Gaussian beam by the synthesized beam of QUBIC. Throughout this section, we consider the temporal auto-correlation of a single detector, $C_{ii}^{0t}$, corresponding to the correlation between the signal measured at time $t$ and that measured at the initial time.
+
+The telescope is assumed to perform a back-and-forth azimuthal scan at constant elevation, with a scanning speed of $ss = 5^\circ\,\mathrm{s}^{-1}$ over an azimuthal range of $\Delta \text{az} = 40^\circ$\footnote{These values are chosen only for the purpose of illustrating the correlations and do not necessarily correspond to the QUBIC scanning strategy.}. In the absence of wind, the atmosphere remains static, and the correlation pattern is therefore identical for each scan. This reference case is shown in Figure~\ref{fig:atm_corr}. Correlations obtained with the QUBIC synthesized beam are shown with solid lines, while those obtained for a classical imager are shown with dashed lines. The imager beam is modelled as a Gaussian corresponding to the Small Aperture Telescope (SAT) of the Simons Observatory.
+
+For both instruments, the correlation decreases as the line of sight moves away from its initial position before increasing again during the return scan. The most striking difference lies in the beam shape. Because the Gaussian beam of the imager probes a much smaller region of the atmosphere, the temporal correlation decreases much more rapidly than for QUBIC. Consequently, the correlation peaks are significantly narrower and the minimum correlation reached during the scan is much lower than in the bolometric interferometer case.
 
 \begin{figure}[!htbp]
-    \centering
-    \includegraphics[width=1\linewidth]{atm_corr_lenght.png}
-    \caption{}
-    \label{fig:atm_corr_r0}
+\centering
+\includegraphics[width=1\linewidth]{atm_corr.png}
+\caption{Temporal auto-correlation $C_{ii}^{0t}$ of the atmospheric signal measured by a single detector during a back-and-forth azimuthal scan, in the absence of wind. Solid lines correspond to the QUBIC synthesized beam, while dashed lines correspond to a Gaussian beam of the Simons Observatory Small Aperture Telescope (SAT).}
+\label{fig:atm_corr}
+\end{figure}
+
+\subsubsection{Turbulence typical scale}
+
+The main atmospheric parameter governing the correlation is the characteristic turbulence outer scale $r_0$. It represents the typical distance beyond which atmospheric fluctuations become decorrelated. Still neglecting the wind, we compute the temporal correlations for different values of $r_0$. The results are shown in Figure~\ref{fig:atm_corr_r0}.
+
+Besides the faster decorrelation observed for the imager, decreasing $r_0$ naturally leads to a more rapid loss of correlation during the scan.
+
+The solid blue and orange curves obtained for QUBIC exhibit a distinctive non-linear behaviour. We interpret this feature as a consequence of the multiple peaks of the synthesized beam. As the telescope scans across the atmosphere, turbulent structures initially observed by one peak can later be observed by another synthesized-beam peak, producing secondary increases in the correlation. This interpretation explains both the small secondary peaks visible near the correlation minimum for the blue curve and the evolution of the orange curve.
+
+This effect is highlighted in Figure~\ref{fig:atm_bump}, where the scan is performed along the West direction, corresponding to the axis of the horn array and therefore to the direction along which the synthesized beam peaks are aligned. In this configuration, the secondary correlation bump becomes particularly visible.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.6\linewidth]{atm_corr_lenght_qubic.png}
+\caption{Temporal auto-correlation $C_{ii}^{0t}$ for different values of the turbulence outer scale $r_0$, assuming no wind. Solid lines correspond to the QUBIC synthesized beam and dashed lines to the Gaussian imager beam. Smaller values of $r_0$ lead to faster decorrelation.}
+\label{fig:atm_corr_r0}
 \end{figure}
 
 \begin{figure}[!htbp]
-    \centering
-    \includegraphics[width=1\linewidth]{atm_corr_wind_speed.png}
-    \caption{}
-    \label{fig:atm_corr_wind_speed}
+\centering
+\includegraphics[width=0.6\linewidth]{atm_corr_bump.png}
+\caption{Highlighting of the temporal correlation obtained with the QUBIC synthesized beam for a scan performed along the principal axis of the horn array (West-East direction). The secondary bump arises from the multiple peaks of the synthesized beam, which successively observe the same turbulent structures during the scan.}
+\label{fig:atm_bump}
 \end{figure}
 
+\subsubsection{Wind speed}
+
+Another key parameter is the wind speed, which determines how rapidly the observed atmospheric structures are replaced by new ones. The resulting correlations are shown in Figure~\ref{fig:atm_corr_wind_speed}. As expected, the correlation gradually decreases with time until the atmosphere initially observed has been completely advected away.
+
+The QUBIC synthesized beam maintains significantly higher correlations over longer time intervals than the Gaussian beam of the imager, while also producing broader correlation peaks.
+
 \begin{figure}[!htbp]
-    \centering
-    \includegraphics[width=1\linewidth]{atm_wind_dir}
-    \caption{}
-    \label{fig:atm_corr_wind_distortions}
+\centering
+\includegraphics[width=0.7\linewidth]{atm_corr_wind_speed_qubic.png}
+\caption{Temporal auto-correlation $C_{ii}^{0t}$ for different wind velocities. Increasing the wind speed accelerates the decorrelation of the atmospheric signal.}
+\label{fig:atm_corr_wind_speed}
 \end{figure}
+
+\subsubsection{Wind direction}
+
+The direction of the wind relative to the scanning direction also affects the temporal correlations. When the wind is not aligned with the scan, the apparent wind direction changes with respect to the line of sight during the back-and-forth motion. This produces secondary oscillations within the main correlation pattern, which are particularly visible for the imager in Figure~\ref{fig:atm_corr_wind_direction}.
+
+For QUBIC, these secondary oscillations are strongly smoothed by the broader synthesized beam, which preserves higher temporal correlations. Similar oscillations would nevertheless be expected for sufficiently large wind velocities.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.7\linewidth]{atm_corr_wind_dir_qubic.png}
+\caption{Temporal auto-correlation $C_{ii}^{0t}$ for different wind directions relative to the scanning direction. Secondary oscillations appear when the wind is not aligned with the scan, particularly for the imager.}
+\label{fig:atm_corr_wind_direction}
+\end{figure}
+
+Overall, this analysis indicates that the synthesized beam of a bolometric interferometer preserves atmospheric correlations over longer time scales than the narrow beam of a classical imager. This behaviour results from the broader and multi-peaked structure of the synthesized beam, which allows different peaks to probe overlapping atmospheric structures during the scan. Such a property is expected to be beneficial for atmospheric mitigation using map-making techniques, especially when combined with the spectral imaging capabilities of QUBIC for separating atmospheric emission from the CMB.
 
 \section{Data acquisition simulation} \label{section:atm_tod_simulation}
 
