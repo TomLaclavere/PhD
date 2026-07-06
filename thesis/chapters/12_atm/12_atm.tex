@@ -215,7 +215,7 @@ In this section, we investigate the atmospheric correlation formalism developed 
 Starting from Equation~\ref{eq:atm_emission}, we derive the correlation between the signals measured by two detectors, denoted $i$ and $j$, at two different times $t$ and $t^\prime$ (Equation~14 of \cite{errard2015}):
 
 \begin{align}
-    \textbf{C}_\text{ij}^\text{t$t^\prime$} (\nu) &\equiv \langle T_i(t, \nu) T_j(t^\prime, \nu) \rangle \equiv \langle T(\vec{r}_i(t), \nu) T(\vec{r}_j(t^\prime), \nu) \rangle \\
+    \textbf{C}_\text{ij}^\text{t$t^\prime$} (\nu) &\equiv \langle T_i(t, \nu) T_j(t^\prime, \nu) \rangle \equiv \langle T(\vec{r}_i(t), \nu) T(\vec{r}_j(t^\prime), \nu) \rangle \notag \\ 
     &= \frac{\alpha_b^2(\nu)}{\lambda^4} \int\frac{\vec{dr}}{r^2} \int\frac{\vec{dr^\prime}}{{r^\prime}^2} B(\vec{r}, \nu) B(\vec{r^\prime}, \nu) T_\text{atm}(\vec{r}) T_\text{atm}(\vec{r^\prime}) \langle \rho(\vec{r}) \rho(\vec{r^\prime}) \rangle .
 \end{align}
 
@@ -288,17 +288,70 @@ Overall, this analysis indicates that the synthesized beam of a bolometric inter
 
 \section{Data acquisition simulation} \label{section:atm_tod_simulation}
 
-\subsection{Observable atmosphere map}
+Including the atmosphere in the data acquisition requieres adaptation in the model described earlier. Two modifications are needed to account for the atmophere evolving in local coordinates, while CMB is observed in galactic coordinates, and for the mouvement of atmosphere with respect to the wind.
 
-\subsection{Instrumental model's modification}
+\subsection{Coordinates system}
+
+For the previous simulation, the pointing operator $P_\text{roj}$ (described in \ref{section:instrumental_model}) is converting telescope's orientation in local coordintes (azimuth, elevation) to galactic coordinates (RA, DEC). The difficulty is that atmosphere might be expressed in local coordinates as well. It means that the atmosphere map is moving with respect to the sky due to the Earth mouvement.
+The result is that for a uniform pointing in a $15^\circ$ radius circle centered on the QUBIC patch position, right panel in Figure~\ref{fig:atm_coordintates}, the coverage of the atmosphere is a sphere moving on the sky, as illustrated in the left panel of the same figure. 
+
+\begin{figure}[!htbp]
+    \begin{minipage}{0.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{atm_coverage_galactic.pdf}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{atm_coverage_local.pdf}
+    \end{minipage}
+\caption{Coverage for a uniform pointing of a $15^\circ$ radius circle located in (RA=$0^\circ$, DEC=$-57^\circ$) in galactic coordinates (left) and local coordinates (right). The coverage in local coordinates (azimuth, elevation) is no longer a circle because of Earth's rotation with respect to galactic frame.}
+    \label{fig:atm_coordintates}
+\end{figure}
+
+The consequence is that the general data acquisition equation \ref{eq:acquisition} needs to be adjusted, by computing one acquisition operator that is observing in galactic coordinates as before, and one observing in local coordinates, such that: 
+
+\begin{align}
+    \vec{d} = H\vec{s} + \vec{n} &= H_\text{gal}\vec{s_\text{CMB}} + H_\text{local}\vec{s_\text{atm}} + \vec{n} \notag \\
+    &= \vec{d_\text{cmb}} + \vec{d_\text{atm}}.
+\end{align}
+
+The \emph{qubicsoft} already includes possibility to observe in local coordinates, but the joint map-making of atmosphere and CMB (or any other astrophysical emission) requieres the definition of two acquisition operators. Consequently, memory usage is doubled, as is algorithmic complexity, because we are forced to define different coverage and noise matrices, and redifined the dimension of all operators to account for this change.
+
+\subsection{Wind operator}
+
+In the previous section, we discussed the simulation of wind advection on the atmosphere map and proposed two mathematically equivalent approaches: shifting the atmosphere map itself or modifying the scanning strategy. However, to perform atmosphere map-making, it is necessary to include a method for estimating the wind responsible for the map displacement in order to obtain an unbiased reconstruction.
+The wind reconstruction, described in Section~\ref{sub:wind}, is based on a $\chi^2$ minimisation, in which the wind vector is estimated by comparing the observed TOD with the TOD predicted from the current reconstructed atmosphere map shifted according to different wind candidates.
+Although modifying the scanning strategy is computationally much cheaper than shifting the atmosphere map and is perfectly suited for simulated data, this approach cannot be used for wind reconstruction. Indeed, each wind candidate would require rebuilding the acquisition operator $H$, since the pointing directions would change. This operation is prohibitively expensive from a computational point of view.
+For this reason, we introduced a dedicated wind operator acting before the acquisition operator $H$. This operator shifts the atmosphere map according to a given wind vector before it is observed by the instrument. During the $\chi^2$ minimisation, only this lightweight operator needs to be updated for each wind candidate, while the costly acquisition operator $H$ remains unchanged.
+
+Furthermore, the standard implementation of $H$ computes the TOD for all time samples simultaneously. In contrast, wind reconstruction requires processing the data in shorter time intervals to capture possible variations in the wind speed and direction throughout the observation. To address this issue, we developed a chunked implementation of $H$, allowing the acquisition operator to be constructed independently for successive blocks of time samples. Fortunately, this implementation requires approximately the same amount of memory as the standard version, although it significantly increases the computational time. It also increases the complexity of the reconstruction algorithm, since all quantities manipulated by the PCG solver must now include an additional dimension corresponding to the number of chunks, $N_{\mathrm{chunk}}$.
+
+The acquisition operator observing in local coordiantes can be writen:
+
+\begin{equation}
+    \vec{d_\text{atm}} = H_\text{atm}\vec{s_\text{atm}} = \begin{pmatrix}
+        H_{\text{atm}}^{1} W(\vec{w_1}) \\
+        H_{\text{atm}}^{2} W(\vec{w_2}) \\
+        \cdots \\
+        H_{\text{atm}}^{N_\text{chunk}} W(\vec{w_{N_\text{chunk}}})
+        \end{pmatrix} \vec{s_\text{atm}},
+\end{equation}
+where $W$ is the wind, or shifting, operator, and $\vec{w_i}$ the effective wind vector corresponding to chunk $i$.
+
+As a reminder, each $H_{\text{atm}}^{i}$ has dimensions $\left(N_\text{sub}, N_\text{pix}, N_\text{stk}\right)$ and does not include the operator projecting the atmosphere into Galactic coordinates. This highlights how the algorithmic complexity becomes problematic.
 
 \section{Maps' reconstruction \& Atmosphere serapation} \label{section:atm_reconstruction}
+
+\subsection{Atmosphere separation}
+
+\subsection{Wind reconstruction} \label{sub:wind}
 
 \subsection{Atmosphere map-making}
 
 \subsubsection{No wind case}
 
-\subsubsection{Wind case}
+\subsubsection{Wind case} 
 
 \subsection{Atmosphere seraparation and map-making}
 
