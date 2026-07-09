@@ -84,7 +84,7 @@ which interpolates between a constant behaviour at low $k$ and the Kolmogorov tu
     \label{fig:kolmogorov_spectrum}
 \end{figure}
 
-\subsubsection{Polarisation}
+\subsubsection{Polarisation} \label{subsub:atm_polarisation}
 
 The emission from the atmosphere is considered to not be polarised. However, few effects are producing polarised emission, such that the Zeeman splitting of $O_2$ by the Hearth magnetic field~\cite{hanany2003, spinelli2011, petroff2020, fujino2025} or the ice cristals in clouds~\cite{takakura2019, li2023, coerver2025}.
 
@@ -318,7 +318,7 @@ The consequence is that the general data acquisition equation \ref{eq:acquisitio
 
 The \emph{qubicsoft} already includes possibility to observe in local coordinates, but the joint map-making of atmosphere and CMB (or any other astrophysical emission) requieres the definition of two acquisition operators. Consequently, memory usage is doubled, as is algorithmic complexity, because we are forced to define different coverage and noise matrices, and redifined the dimension of all operators to account for this change.
 
-\subsection{Wind operator}
+\subsection{Wind operator} \label{sub:wind_operator}
 
 In the previous section, we discussed the simulation of wind advection on the atmosphere map and proposed two mathematically equivalent approaches: shifting the atmosphere map itself or modifying the scanning strategy. However, to perform atmosphere map-making, it is necessary to include a method for estimating the wind responsible for the map displacement in order to obtain an unbiased reconstruction.
 The wind reconstruction, described in Section~\ref{sub:wind}, is based on a $\chi^2$ minimisation, in which the wind vector is estimated by comparing the observed TOD with the TOD predicted from the current reconstructed atmosphere map shifted according to different wind candidates.
@@ -341,13 +341,54 @@ where $W$ is the wind, or shifting, operator, and $\vec{w_i}$ the effective wind
 
 As a reminder, each $H_{\text{atm}}^{i}$ has dimensions $\left(N_\text{sub}, N_\text{pix}, N_\text{stk}\right)$ and does not include the operator projecting the atmosphere into Galactic coordinates. This highlights how the algorithmic complexity becomes problematic.
 
+Finally, the full data acquisition is:
+
+\begin{align} \label{eq:atm_data_model}
+    \vec{d} &= H\vec{s} + \vec{n} \notag \\
+    &= \begin{pmatrix}
+        H_\text{local} W(\vec{w}) A_\text{atm} & H_\text{gal}
+    \end{pmatrix} \begin{pmatrix}
+        \vec{s_\text{atm}} \\
+        \vec{s_\text{CMB}}
+    \end{pmatrix} + \vec{n}.
+\end{align}
+
 \section{Maps' reconstruction \& Atmosphere serapation} \label{section:atm_reconstruction}
+
+In this section, we discuss the joint reconstruction of CMB and atmosphere maps using the CMM algorithm together with the modified data acquisition model.
+We first introduce the component separation method used to distinguish the CMB from atmospheric emission, followed by the wind reconstruction technique. We then present results of increasing complexity. We begin with the reconstruction of the atmosphere alone (i.e. without the CMB and therefore without component separation), first without wind and then with wind, in order to study the impact of observing in local coordinates rather than Galactic coordinates. This also illustrates the effect of wind advection and demonstrates why it must be accounted for during the reconstruction. Finally, we present the joint CMM reconstruction of the CMB and atmosphere, again considering both the cases with and without wind.
+
+A preliminary analysis of these results is presented here, while a more detailed discussion is provided in the following section.
+
+It is important to emphasise that this work is still at the research-and-development stage. It relies on several simplifying assumptions and has only been validated using simulations. Furthermore, the implementation has not yet been fully optimised and several aspects are still under development. Consequently, the results presented in this chapter should be regarded as a proof of concept rather than as a realistic forecast of the instrument's performance.
 
 \subsection{Atmosphere separation}
 
+The component separation between atmosphere and CMB is done following the exact same idea than for astrophysical component separation with CMM. We are using the different spectrum of the components to reconstruct to separate their contribution through the reconstruction of a mixing matrix (see Chapter~\ref{chap:CMM} for explanation on astrophysical components). In $K_\text{CMB}$ units, the CMB spectrum is flat and equal to unity, while the atmosphere follows a complicated spectrum, with dependancy on its temperature and PWV, presented in Figures~\ref{fig:atm_brightness} and \ref{fig:atm_spectrum}.
+The idea we developed for this purpose is to use the Blind-CMM (fully detailed in section~\ref{section:cmm_blind}) to reconstruct the atmosphere spectrum, allowing the separation with CMB signal. The main advantage of this method is that it does not assume any model for the atmosphere frequency emission, which, coupled with the spectral imaging capabilities of QUBIC, making it possible to perform atmosphere separation.
+
+The separation algorithm is working exactly like the CMM pipeline: we are iterating over loops, in which component maps' pixels and mixing matrix elements are alternatively reconstructed. The main limitation with this method is that atmosphere temperature fluctuations are at the order of $10^{5}~\mu K_\text{CMB}$, while CMB ones are $\sim 100~\mu K_\text{CMB}$. This large difference in of $3$ orders of magnitude makes the separation and reconstruction very complicated, and requires a very large number of loop iterations. The result is that the reconstruction is very costly from the computational point of view.
+
 \subsection{Wind reconstruction} \label{sub:wind}
 
+\rmk{Peut-être que cette sous-section devrait être placée après la sous-section de la reconstruction d'atm avec vent, où je montre le besoin de fit le vent en plus du reste.}
+
+Wind reconstruction is the most challenging part of the atmosphere reconstruction, while also being intrinsically necessary for applying the map-making algorithm. Since the wind continuously shifts the atmosphere map, the pixels observed by the instrument during the scan are no longer those corresponding to the pointing directions. Consequently, the wind vector must be reconstructed alongside the map pixels to account for this displacement, and to avoid mismatch between reconstructed and seen pixels.
+Because the wind continuously moves the atmosphere, only relatively short time intervals can be used for its reconstruction. If too many time samples are considered simultaneously, the atmosphere initially observed will have moved too much, making a reliable reconstruction impossible. As discussed in Section~\ref{sub:wind_operator}, we therefore developed a chunk-based implementation, in which the wind is reconstructed independently over successive time intervals.
+
+The estimation of the wind vector is incorporated into the reconstruction loop, resulting in a three-step iterative algorithm: reconstruction of the map pixels, reconstruction of the mixing matrix, and reconstruction of the wind vector. This last step is by far the most computationally demanding part of the reconstruction. The main limitation arises from the need to apply the wind shift operator (described in Section~\ref{sub:wind_operator}) for every wind-vector estimate evaluated by SciPy's \texttt{minimize} function.
+
+As shown in Equation~\ref{eq:atm_data_model}, the shift operator is applied after the atmospheric mixing matrix. Consequently, its computational cost depends on both the map resolution and the number of frequency sub-bands used in the mixing matrix. This choice was not motivated by physical considerations. From a computational perspective, it would be preferable to apply the shift operator before the mixing matrix, reducing its dimensions from $\left(N_\text{chunk}, N_\text{freq}\right)$ to $N_\text{chunk}$ and significantly decreasing the associated computational cost.
+The current implementation was instead motivated by software design limitations. Since all the elements of the mixing matrix are fitted simultaneously, it is much simpler to manipulate a single mixing matrix of size $N_\text{freq}$ than one with dimensions $\left(N_\text{chunk}, N_\text{freq}\right)$. Applying the shift operator before the mixing matrix would therefore require constraining the mixing-matrix parameters to be identical across all chunks, preventing the optimisation from fitting unnecessary degrees of freedom. Implementing these additional constraints would have required substantial modifications to the reconstruction algorithm and could not be completed within the timeframe of this thesis. It therefore remains an important direction for future developments.
+
+\subsection{Maps' fixing}
+
+An interesting idea was proposed by Ingunn Wehus, one of the Cosmoglobe\footnote{\url{https://www.cosmoglobe.uio.no/}} coordinator, to reduce the reconstruction complexity. As we are considering a non-polarised atmosphere (see \ref{subsub:atm_polarisation}), there is no need to reconstruct the pixels of the Q and U maps. Additionally, Planck data are already providing measurement which are sample-variance limited at the angular scales covered by QUBIC, meaning that we can't reconstruct Intensity map at a better level than Planck. We can limit ourselves to the reconstruction of the CMB polarisation maps, and of the atmosphere temperature map, dividing the number of pixels by 2. 
+Because of the implementation of the PCG solver in the \emph{qubicsoft}, we can't choose which map will be reconstructed. We developed, based on an idea of Pierre Chanial and an early implementation by Mathias Regnier, a Masking operator that is added in the equation \ref{eq:atm_data_model}. This operator is hiding the maps to be fixed, allowing to decrease the reconstruction unknowns. 
+
 \subsection{Atmosphere map-making}
+
+Here, we propose to show results of the atmosphere map-making, without including CMB and component separation. The goal is to observe the effect of performing the map-making in local coordinates, as well as observing the effect of not accounting for the wind displacement.
 
 \subsubsection{No wind case}
 
@@ -375,13 +416,46 @@ As a reminder, each $H_{\text{atm}}^{i}$ has dimensions $\left(N_\text{sub}, N_\
 
 \subsubsection{Physical realism}
 
+\subsection{Future improvements}
+
 \section{Alternative method : successive map-making} \label{section:atm_successive_MM}
 
 \subsection{Motivation}
 
 \subsection{Implementation description}
 
-\subsection{Results \& Comparison}
+\subsection{Results \& Comparison} \label{sub:atm_limits}
+
+\section{Further developments}
+
+\rmk{Maybe should be a subsection after "Issues and limitations" ?}
+
+\subsection{Parametric reconstruction}
+
+While only the Blind approach was developed during this thesis, the Parametric approach could also be applied to this problem. Instead of reconstructing the elements of the mixing matrix directly, which can be challenging, one could reconstruct the physical atmospheric parameters that determine the emission spectrum, namely the PWV, temperature, and pressure.
+From these parameters, the atmospheric spectrum can be computed using the \emph{am} framework~\cite{paine2024}, resulting in a model with significantly fewer degrees of freedom than the Blind approach. However, calling \emph{am} at each iteration of the reconstruction would likely be computationally expensive. A more efficient strategy would consist of precomputing atmospheric spectra over a sufficiently dense grid of parameter values and interpolating between them during the optimisation. This would make the evaluation of the atmospheric model inexpensive while retaining the physical description provided by \emph{am}.
+
+This approach was not investigated during this thesis due to time constraints, but there is no obvious reason why it should not be applicable.
+
+\subsection{External data}
+
+The inclusion of external atmospheric measurements is one of the most promising improvements for the proposed method. Two types of external information could be incorporated into the reconstruction: measurements of the wind and measurements of the atmospheric properties. Both would significantly improve the reconstruction of the atmosphere and its separation from the CMB signal.
+
+Two levels of external information can be considered. The first consists of meteorological stations, which provide measurements of the wind, humidity, temperature, and pressure. Their main limitation is that these measurements are generally performed at ground level or at low altitude. As a result, they are not fully representative of the atmospheric layers responsible for the contamination observed by the instrument. Consequently, such measurements would be better used as priors for the reconstruction rather than as direct estimates of the atmospheric parameters.
+
+A second, more accurate, approach would consist of using a \emph{Light Detection and Ranging} (LIDAR) system to probe the atmosphere. A LIDAR emits laser pulses into the atmosphere and measures the light scattered back by air molecules, aerosols, or clouds. These measurements provide information on the atmospheric structure and, through the Doppler effect, can also be used to estimate the wind velocity.
+If a LIDAR were operated simultaneously with the CMB observations, it could provide measurements of the atmospheric properties throughout the observation. In principle, these data could be used to estimate the PWV, temperature, pressure, and wind vector associated with each time sample. Such information could then be incorporated directly into the atmosphere reconstruction, potentially avoiding the need for the iterative wind and mixing matrix estimations procedure developed in this chapter. Even if the measurements are not sufficiently accurate to be used directly, they would still provide valuable priors, significantly improving the stability and accuracy of the reconstruction.
+
+\subsection{Code optimisation}
+
+As discussed in Section~\ref{sub:atm_limits}, the current pipeline is limited by the computational time required to obtain results. Improving the efficiency of the implementation is therefore an important objective for future developments.
+
+The application of CMM to atmosphere reconstruction suffers from the same limitation as its application to astrophysical components: the alternate convergence scheme leads to a very high computational cost, due to its poor convergence speed. This issue is even more significant in the atmospheric case, as an additional reconstruction step is introduced in each loop to estimate the wind vector. Moreover, this additional step is the most computationally demanding part of the algorithm. Therefore, developing a non-linear solver capable of reconstructing all parameters simultaneously would provide a significant improvement, although such a development would require substantial effort.
+
+Without considering such a major modification, several optimisations can still be implemented, particularly regarding the wind operator. As mentioned in Section~\ref{sub:wind}, the performance could be improved by applying the shift operator before the mixing matrix rather than after it. Although this would require additional developments, it would not require fundamental changes to the reconstruction method.
+Furthermore, since the shift operator is implemented using PyOperators~\cite{PyOperators}, it should be possible to parallelise its execution efficiently. However, the current implementation relies internally on a method from \texttt{healpy}, which appears to prevent execution on multiple CPU cores. Resolving this issue would significantly improve the performance of the shift operator.
+
+Finally, a more detailed study of the convergence behaviour, and of its dependence on the simulation and reconstruction parameters, would help identify optimal choices for these parameters and reduce the number of iterations required for convergence.
 
 \section*{Conclusion}
 
