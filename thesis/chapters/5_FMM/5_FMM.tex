@@ -26,7 +26,7 @@ We start by introducing the general fundamentals of map-making for CMB experimen
 
 Map-making algorithms lie at the heart of the data analysis pipeline of all CMB telescopes. These algorithms use Time-Ordered Data (TOD), datasets in which each sample corresponds to the sky signal measured by the instrument at a given time, to reconstruct maps of the sky. This reconstruction relies on the pointing direction of the telescope at each time sample, together with a model of the instrument. In this section, we develop the standard map-making formalism used by most CMB experiments and its adaptation to the specific features of QUBIC.
 
-\subsection{Map-Making Solution}
+\subsection{Map-Making Solution} \label{sub:mm_solution}
 
 The purpose of map-making is to reconstruct sky maps from telescope data. In CMB experiments, the data are commonly referred to as Time-Ordered Data (TOD), since the temporal dependence of the measurements is a key element in the reconstruction process through the scanning strategy of the instrument. This differs significantly from typical telescopes which rely on long exposure observations to produce accurate and low-noise images of the sky. In contrast, CMB instruments continuously scan the sky following specific observing strategies. Different scanning strategies present different advantages and drawbacks, but their primary purpose is to mitigate systematic effects, such as electronic or cryogenic fluctuations, by observing the same sky location under different instrumental conditions. Scanning strategies also help reduce the impact of atmospheric $1/f$ noise, which dominates at low frequencies. In addition, modern CMB experiments aim to measure the polarisation of the CMB. This requires observing the same region of the sky with different detector orientation angles in order to distinguish the Stokes parameters $Q$ and $U$ (see \ref{subsub:polarisation}).
 
@@ -87,7 +87,7 @@ where we note $\vec{\hat{s}}$ the maximal-likelihood solution of the map-making 
 Unfortunately, despite $\vec{\hat{s}}$ having an analytical solution, it requires to compute the inverse of the matrix $M \equiv (H^{~T} N^{-1} H)$. $M$ has a size $(N_{pix} \times N_{pix})$, with $N_{pix} \sim 10^7$ for modern experiment. Inversion algorithms, like Cholesky factorisation or LU decomposition, have a computation cost in $\mathcal{O}(N_{pix}^{~3})$ and a memory usage in $\mathcal{O}(N_{pix}^{~2})$~\cite{golub13}. It then requires $\sim 10^{21}$~FLOP to invert such a matrix. With the CPU on my laptop\footnote{Intel i7-13850HX}, being able to perform around $100$~GFLOP/s, I would need many years to perform an inversion ($\sim 320$ years with Cholesky decomposition). Even with exascale supercomputer, with $10^{18}~\mathrm{FLOP}/s$, $\sim 20$ minutes are still needed. But, the main issue comes from memory, as in double precision\footnote{8 bytes per element}, the computation needs $8 \times (N_{pix})^2 = 800$~TB, just to store the matrix. \\
 From these elements, matrix inversion is not practically feasible on realistic CMB datasets.
 
-\subsection{Iterative Solver: PCG}
+\subsection{Iterative Solver: PCG} \label{sub:pcg_solver}
 
 To overcome the difficulty of matrix inversion, modern map-making algorithms rely on iterative solvers, such as the Preconditioned Conjugate Gradient (PCG) method, which avoid explicit matrix inversion and only require repeated evaluations of the operator. Indeed, equation \ref{eq:mapmaking_inv} can be rewritten : 
 

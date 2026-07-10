@@ -9,4 +9,57 @@
 }{
     \minitoc
 }
+
+\rmk{Should we really keep the name NNMM ? I don't think so, but I can't find a good name. Just use Inverse Map-Making ?}
+
+\section*{Introduction}
+
+In this chapter, we present an alternative reconstruction pipeline to the FMM and CMM methods discussed in Chapters~\ref{chap:FMM} and \ref{chap:CMM}, respectively. While both of these methods rely on forward modelling, this new algorithm, called \emph{Neural Network Map-Making} (NNMM), aims to solve the inverse map-making problem. Although we previously argued that the inverse operator $H^{-1}$ cannot be computed under realistic conditions, NNMM uses physics-guided neural networks to approximate this inverse mapping. Following this approach, we develop inverse counterparts of both FMM and CMM based on neural networks.
+
+We first compare the advantages and limitations of inverse methods with those of the forward-modelling approaches presented in the previous chapters. We then introduce the key concepts underlying the inversion procedure. Finally, we address one of the main limitations of neural networks in physics applications, namely uncertainty estimation, by combining physics-guided neural networks with the probabilistic programming framework Pyro\footnote{\url{https://pyro.ai/}}.
+
+This chapter is intentionally kept concise, as the draft of the associated publication is included immediately afterwards.
+
+\personal{The NNMM project was led by Leonora Kardum during her two-year postdoctoral position at APC. I contributed to this work by helping with the understanding of the complex instrumental model, as well as the FMM and CMM algorithms, in order to develop their inverse counterparts. I also contributed to the development of the programming software used to invert the operators and was responsible for implementing the Pyro module used for uncertainty estimation. Finally, I developed the code introducing the inverse mixing matrix into the reconstruction process, allowing the extension of NNMM from the FMM framework to the CMM framework.}
+
+\section{Inverse problem approach}
+
+In the FMM chapter, we claimed in the subsection~\ref{sub:mm_solution} that it was not numerically possiblse to solve the equation (see equation~\ref{eq:mapmaking_inv} for details):
+
+\begin{equation}
+    \vec{\hat{s}} = (H^{~T} N^{-1} H)^{-1} H^{~T} N^{-1} \vec{d},
+\end{equation}
+because it is too expensive to invert the instrumental model $H$. To overcome this difficulty, Leonora Kardum had the idea of separating each sub-operators that composed $H$, detailled in the section \ref{section:instrumental_model}, to compute their individual inverse through analytical expression or pseudo-inverse estimation. Then, Machine Learning is used to approximate inversion for too complicated operators.
+
+Therefore, the goal of this approach is to compute the inverse expression of all the operators describing the instrument systems, to build $H^{-1}$. From equation \ref{eq:instrumental_model}, we have:
+\begin{equation}
+    \mathcal{H}_{\nu}^{-1} = \mathcal{U}_{\text{nit}, \nu}^{-1} \mathcal{T}_{\text{atm}}^{-1} \mathcal{A}_{\text{perture}}^{-1} \mathcal{F}_{\text{ilt}}^{-1} [\mathcal{P}_{\text{roj}, \nu}^{-1} * \mathcal{H}_{\text{WP}}^{-1}] \mathcal{P}_{\text{ol}}^{-1} \mathcal{I}_{\text{nt}}^{-1} \mathcal{T}_{\text{rans}}^{-1} \mathcal{R}_{\text{esp}}^{-1},
+    \label{eq:inv_instrumental_model}
+\end{equation}
+
+\rmk{TO BE REVIEWED}
+
+The inverse approach benefits from multiple point of view. The first and main one is regarding its versatility. While the inverse approach depends on the TOD, and needs to be re-done for each data set, the inverse 
+
+\section{Operators inversion}
+
+\rmk{TO BE REVIEWED}
+
+Here, we are not entering into the details of how we compute the inverse of each operator (you can refer to the draft paper for that). Still, we are describing three different inversion cases.
+
+\textbf{Exact inverses.}
+Operators corresponding to diagonal or homothetic transformations, such as unit conversion $U$, atmospheric transmission $T$, integration $A$, filtering $F$, flux integration $D$, and transmission $I$, admit a direct analytical inverse. These inverses are obtained through element-wise division and are implemented as fixed or learnable diagonal layers.
+
+\textbf{Physics-guided approximate inverses.}
+Some operators have a known analytical expression and admit an exact inverse under specific assumptions. This is the case for the bolometer time response $B$ (Section~5.4) and the polarization rotation operators $P$ and $H_W$ (Section~5.3). Their inversion relies on their analytical solutions, with instrumental parameters kept as physically interpretable and differentiable quantities (for example, the detector time constant $\tau$), rather than being treated as unconstrained neural-network parameters.
+
+\textbf{Pseudo-inverse with learned residual correction.}
+The projection operator $L$ is the only operator in the chain without an exact inverse. Indeed, it is a many-to-one transformation mapping sky pixels onto TOD samples with non-uniform coverage. For this operator, we compute a physically motivated pseudo-inverse based on the standard maximum-likelihood backprojection:
+\[
+L^\dagger \equiv (L^T N^{-1} L)^{-1} L^T N^{-1}.
+\]
+This operator is approximated using its diagonal component $L^T1$ as described in Section~5.5. The neural network is then trained only to learn the residual correction associated with the off-diagonal terms neglected by this approximation.
+
+\section{Uncertainty estimation}
+
 \end{document}

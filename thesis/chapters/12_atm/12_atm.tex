@@ -416,13 +416,21 @@ Here, we propose to show results of the atmosphere map-making, without including
 
 \subsubsection{Physical realism}
 
-\subsection{Future improvements}
-
 \section{Alternative method : successive map-making} \label{section:atm_successive_MM}
 
-\subsection{Motivation}
+\subsection{Motivation \& Principle}
 
-\subsection{Implementation description}
+As discussed previously, including the wind reconstruction within the CMM fitting loop makes the algorithm both extremely computationally expensive and difficult to converge. We therefore came to the conclusion that attempting to reconstruct all the unknowns simultaneously from relatively small chunks of data might be too ambitious.
+
+After identifying this limitation, Jean-Christophe Hamilton proposed an alternative approach in which the wind is no longer reconstructed explicitly. Instead, the atmosphere is reconstructed iteratively over successive time chunks. The reconstructed atmosphere from one chunk is then propagated to the next as the initial guess for PCG, without explicitly estimating the wind vector itself.
+
+\subsection{Implementation}
+
+The underlying principle of this approach is closely related to the wind reconstruction method presented previously, in which the observation is also divided into successive time chunks. The implementation of this new map-making algorithm, which we refer to as \emph{Successive Map-Making}, is therefore largely based on the infrastructure developed for wind reconstruction.
+
+The complete observation is divided into several consecutive chunks. An iterative process then applies the PCG solver to reconstruct the atmosphere map for each chunk. The reconstruction obtained for one chunk is used as the initial estimate for the following one, since the large-scale atmospheric fluctuation pattern is expected to evolve smoothly from one chunk to the next.
+
+So far, this method has only been tested for atmosphere reconstruction alone, without including the reconstruction of the mixing matrix. Extending the method to full component separation therefore remains an open question. Two possible strategies can be envisaged: either reconstruct the mixing matrix after the PCG reconstruction of each chunk, or estimate a single mixing matrix using all chunks simultaneously. In the first approach, the mixing matrix reconstructed for one chunk could naturally be used as the initial estimate for the next, potentially improving the convergence of the algorithm.
 
 \subsection{Results \& Comparison} \label{sub:atm_limits}
 
