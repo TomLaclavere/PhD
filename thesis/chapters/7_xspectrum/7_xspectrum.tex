@@ -173,9 +173,16 @@ During this section, we will use the simulation parameters estimated in the Chap
 
 \rmk{I am running proper simulations at the same time, plots can evolve.}
 
-\rmk{I don't really know what to say about the resulting fit...}
-
 \subsection{FMM cross-spectrum}
+
+With the Frequency Map-Making, we are computing frequency maps from QUBIC data. Thanks to spectral imaging, we are reconstructing multiple maps within the physical bandwidth. Increasing the number of maps as the effect of improving the component separation between CMB and astrophysical components, as it increases the number of spectra to fit their associated parameters. Figure~\ref{fig:fmm_UWB_sigma_r} shows an example of a triangle plot obtained by fitting $r$, $A_d$ and $\alpha_d$ on the maps cross-spectra (as visible in Figure~\ref{fig:fmm_xspectra}). The important values for QUBIC scientific goal are the tensor-to-scalar ratio and its associated uncertainty $\sigma_r$. As we are working on simulation, this value has to be compatible with the one used to generate the CMB signal ($r=0$), while $\sigma_r$ gives an estimation of the sensitivity of QUBIC instrument. In the Chapter~\ref{chap:forecast}, we use this analysis to compare the two instrumental configuration and the evolution of $r$ with the number of reconstructed maps.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=1\linewidth]{xspectra_unbiasing_wo_noise.png}
+\caption{Cross-spectra computed on frequency maps obtained through FMM, with $N_\text{rec}=2$. The diagonal corresponds to the auto-spectra at $150$ and $220$ GHz, while the off-diagonal is the associated cross-spectrum.}
+\label{fig:fmm_xspectra}
+\end{figure}
 
 \begin{figure}[!htbp]
 \centering
@@ -186,6 +193,21 @@ During this section, we will use the simulation parameters estimated in the Chap
 
 \subsection{CMM cross-spectrum}
 
+With the Component Map-Making, we are comuting component maps from QUBIC data. The idea behind CMM is to perform map-making and component separation at the same time. For this purpose, two algorithms have been developed: Parametric and Blind. In both case, the output of CMM is one map per composent. In our case, it is one for CMB and one for Dust. On example of the associated cross-spectra is visible in Figure~\ref{fig:cmm_xspectra}. On the CMB auto-spectrum, we are feeting the value of $r$, while the dust parameters are estimated on the dust auto-spectrum. A result of the associated fit is shown in Figure~\ref{cmm_UWB_sigma_r}.
+
+\begin{figure}[!htbp]
+\centering
+% \includegraphics[width=1\linewidth]{}
+\caption{Cross-spectra computed on component maps obtained through CMM. The diagonal corresponds to the auto-spectra of CMB and Dust map, while the off-diagonal is the associated cross-spectrum.}
+\label{fig:cmm_xspectra}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+% \includegraphics[width=1\linewidth]{cmm_uwb_sigma_r.png}
+\caption{}
+\label{fig:cmm_UWB_sigma_r}
+\end{figure}
 \subsection{Noise realisations}
 
 A key aspect of the noise debiasing procedure is determining the number of noise realisations required to accurately estimate the noise contribution to the angular power spectra. Since there is no straightforward way to predict this number \emph{a priori}, we performed a series of end-to-end simulations using different numbers of noise realisations. For each configuration, the parameter estimation procedure was repeated, and the resulting constraints were analysed.

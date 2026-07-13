@@ -11,15 +11,29 @@
     \minitoc
 }
 
+\section*{Introduction}
+
+A large part of this thesis has been devoted to the development of realistic simulation and reconstruction pipelines for the QUBIC instrument. In this chapter, we use these pipelines to produce sensitivity forecasts for QUBIC and compare the performance of different reconstruction algorithms, instrumental configurations, and sky models. Although the framework can be extended to more realistic and complex sky models, we deliberately restrict the analysis to relatively simple cases. The primary objective of this thesis was the development and validation of the forecasting pipeline itself, rather than an exhaustive study of the resulting forecasts.
+
+It is important to emphasise that the results presented in this chapter should not be interpreted as predictions of the final performance of the real instrument. Instead, they represent the expected sensitivity of the current simulation and reconstruction framework, based on the present understanding of the instrument. As discussed throughout this thesis, a number of simplifying assumptions have been made, and QUBIC itself is still at the prototype stage. Many aspects of bolometric interferometry remain to be fully understood and validated experimentally, and future developments may significantly modify both the instrumental model and the associated performance forecasts.
+
+\personal{During my first year, I developed with Mathias Regnier the first version of the forecast pipeline, presented within his thesis. During my second and third years, I further developed both FMM and CMM pipelines by improving the overall programming architecture, coding quality, bug corrections and user ergonomy (Chapter~\ref{chap:qubicsoft}) and by studying the TOD realism (Chapter~\ref{chap:tod}).}
+
 \section{Studied Cases}
 
-\subsection{CMB without foregrounds: QUBIC raw sensitivity}
+Different configurations are investigated to assess their impact on the sensitivity of QUBIC, and in particular on the uncertainty of the tensor-to-scalar ratio measurement, $\sigma_r$. We compare different sky models, instrumental configurations, and reconstruction algorithms, and also study the impact of incorporating external data as well as testing the free angular resolution cases.
 
-\subsection{CMB + Dust (d0, d1, d6, \dots): Simple forecasts}
+\subsection{Sky configurations}
 
-\subsection{CMB + Dust (d0, d1, d6) + Synchrotron (s0, s1): Realistic forecasts}
 
-\section{Fixed and free angular resolution} \label{sec:convolution}
+
+\subsection{Instrumental design}
+
+\subsection{Reconstruction algorithms}
+
+\subsection{External data}
+
+\subsection{Free angular resolution}
 
 \section{Results}
 
@@ -46,7 +60,5 @@
 \subsection{CMM: Blind Analysis}
 
 \subsection{Addition of external data for component separation}
-
-\subsection{Exploring exotic models}
 
 \end{document}
