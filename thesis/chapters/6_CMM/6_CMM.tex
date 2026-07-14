@@ -42,7 +42,7 @@ The component maps are still reconstructed using PCG method, in the exact same w
 \noindent
 \textbf{Remark:} In \cite{CMM}, we also explored the possibility of jointly reconstructing instrumental systematic effects together with the mixing matrix and the component maps. As a proof of concept, detector gains were included among the fitted parameters, adding a new step to the alternate fitting. Instrumental systematic estimation within the CMM is not considered further in this thesis, since self-calibration (discussed in Chapter~\ref{chap}) provides a dedicated framework for handling instrumental uncertainties. The detectors' gain estimation was shown as a proof of concept.
 
-\subsection{External data}
+\subsection{External data} \label{sub:cmm_external_data}
 
 In FMM (Chapter~\ref{sub:fmm_external_data}), we discussed the need to incorporate external data during the reconstruction process to mitigate the lack of information on the synthesized beam peaks at the edge of the observed patch. For the same reason, we also include external data in the CMM reconstruction.
 However, since CMM performs component separation jointly with map reconstruction, its use of external data can be extended further. In FMM, external data were not included within the observed patch itself to perform reconstruction only from QUBIC information. In contrast, for CMM, we find that incorporating additional frequency information is beneficial, as it extends the accessible frequency range beyond that covered by QUBIC. Particularly, including higher and lower frequency channels improves the leverage of the component separation by providing a broader spectral coverage.
