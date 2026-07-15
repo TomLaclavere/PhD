@@ -43,16 +43,18 @@ span_extended = ax.axhspan(
     window_low,
     window_up,
     color="0.85",
-    label=f"Extended margin, cryostat limits $\\pm$ beam half-width ({window_low:.1f}°–{window_up:.1f}°)",
+    label=f"Extended margin, elevation limits $\\pm$ beam half-width ({window_low:.1f}°–{window_up:.1f}°)",
 )
 span_hard = ax.axhspan(
     HOR_DOWN,
     HOR_UP,
     color="0.65",
-    label=f"Cryostat elevation limits ({HOR_DOWN}°–{HOR_UP}°)",
+    label=f"Elevation limits ({HOR_DOWN}°–{HOR_UP}°)",
 )
-line_not_visible, = ax.plot(lst, alt_not_visible, "--", color="0.5", label="Patch center not visible")
-line_visible, = ax.plot(
+(line_not_visible,) = ax.plot(
+    lst, alt_not_visible, "--", color="0.5", label="Patch center not visible"
+)
+(line_visible,) = ax.plot(
     lst,
     alt_visible,
     "-",
@@ -67,7 +69,7 @@ ax.set_xlim(0, 24)
 ax.set_xticks(np.arange(0, 25, 3))
 ax.set_title(
     # f"Observation window : {PATCH_NAME} on {DATE_OBS.iso[:10]}\n"
-    f"Patch center within cryostat limits [{HOR_DOWN}°, {HOR_UP}°] for {frac_visible:.1f}% of the sidereal day"
+    f"Patch center within elevation limits [{HOR_DOWN}°, {HOR_UP}°] for {frac_visible:.1f}% of the sidereal day"
 )
 ax.legend(
     handles=[line_visible, line_not_visible, span_hard, span_extended],
