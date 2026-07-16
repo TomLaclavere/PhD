@@ -59,7 +59,7 @@ The PSF can be expressed as:
 \begin{equation} \label{eq:psf}
     \mathrm{PSF}^{\vec{n}}(\vec{r}, \lambda) = \vert A_{det}^{\vec{n}}(\vec{r}, \lambda)\vert ^2,
 \end{equation}
-with $A_{det}^{\vec{n}}(\vec{r}, \lambda)$ the amplitude \jc{of the electric field $\vec{E}$} on the detector at position $\vec{r}$, for the instrument looking in direction $\vec{n}$ at wavelength $\lambda$.
+with $A_{det}^{\vec{n}}(\vec{r}, \lambda)$ the amplitude of the electric field $\vec{E}$ on the detector at position $\vec{r}$, for the instrument looking in direction $\vec{n}$ at wavelength $\lambda$.
 
 The amplitude at a detector can be expressed in terms of the contribution from each individual horn, described by $A_{horn}^{\vec{n}}(\vec{r} - \vec{x}_h, \lambda)$, the amplitude transmitted by a horn at position $\vec{x}_h$ and wavelength $\lambda$ to position $\vec{r}$ on the focal plane:
 
@@ -189,12 +189,12 @@ As in the case of interference fringes, the distance between two fringes is prop
 \subsection{Polychromatic beam}
 
 In the previous figures, the synthesized beam was treated as monochromatic. However, its shape changes when observing a polychromatic source because the positions of the secondary peaks vary with frequency. The left panel of Figure~\ref{fig} illustrates this effect for several monochromatic beams. The right panel shows the corresponding polychromatic beam, where the superposition of monochromatic contributions produces a continuous plateau instead of distinct peaks.
-\jc{For a detector located at the centre of the focal plane and observing along the instrument line of sight, the optical path difference between all horn pairs vanishes. Consequently, the central peak remains at the same position for all frequencies and is not broadened by the spectral integration. Its amplitude is therefore simply determined by the value of the primary beam at $\vec{n}=0$.}
+For a detector located at the centre of the focal plane and observing along the instrument line of sight, the optical path difference between all horn pairs vanishes. Consequently, the central peak remains at the same position for all frequencies and is not broadened by the spectral integration. Its amplitude is therefore simply determined by the value of the primary beam at $\vec{n}=0$.
 
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=1\linewidth]{synth_beam_many_freq.pdf}
-    \caption{(left) 1D cut of the synthesized beam for QUBIC observing two monochromatic point sources at $131$ and $169~\mathrm{GHz}$. (right) 1D cut of the synthesized beam for QUBIC observing a polychromatic point source within its frequency bandwidth $\left[131, 169\right]~\mathrm{GHz}$, approximated by $5$ monochromatic beams. \jc{The continuous integration over frequency of monochromatic synthesized beams leads to a plateau-like structure.} Taken from \cite{QUBICII}.}
+    \caption{(left) 1D cut of the synthesized beam for QUBIC observing two monochromatic point sources at $131$ and $169~\mathrm{GHz}$. (right) 1D cut of the synthesized beam for QUBIC observing a polychromatic point source within its frequency bandwidth $\left[131, 169\right]~\mathrm{GHz}$, approximated by $5$ monochromatic beams. The continuous integration over frequency of monochromatic synthesized beams leads to a plateau-like structure. Taken from \cite{QUBICII}.}
     \label{fig:synth_beam_poly}
 \end{figure}
 
@@ -206,7 +206,7 @@ The idea behind \emph{spectral imaging} is to use the frequency dependence of QU
 
 \subsection{Sub-band reconstruction}
 
-The logical application of spectral imaging is the possibility of splitting the plateau into frequency sub-bands. From a single polychromatic dataset, we can construct multiple monochromatic datasets using our knowledge of the beam. The number of recoverable sub-bands is limited by the requirement that adjacent peaks must be distinguishable. The condition can be derived from the angular separation between two peaks at different frequencies, $\theta_\nu = \frac{\lambda\Delta_\nu}{\Delta_h\nu}$, with $\Delta_\nu = \nu_2 - \nu_1$ and $\nu = \sqrt{\nu_1\nu_2}$, and their associated $\mathrm{FWHM}_\nu \sim \frac{\lambda}{\Delta_h(P-1)}$. \jc{Finally, we got} : 
+The logical application of spectral imaging is the possibility of splitting the plateau into frequency sub-bands. From a single polychromatic dataset, we can construct multiple monochromatic datasets using our knowledge of the beam. The number of recoverable sub-bands is limited by the requirement that adjacent peaks must be distinguishable. The condition can be derived from the angular separation between two peaks at different frequencies, $\theta_\nu = \frac{\lambda\Delta_\nu}{\Delta_h\nu}$, with $\Delta_\nu = \nu_2 - \nu_1$ and $\nu = \sqrt{\nu_1\nu_2}$, and their associated $\mathrm{FWHM}_\nu \sim \frac{\lambda}{\Delta_h(P-1)}$. Finally, we got: 
 
 \begin{equation} \label{eq:spectral_resolution}
     \frac{\Delta_\nu}{\nu} \sim \frac{1}{P-1}.
@@ -218,12 +218,10 @@ It is important to note that this separation is a post-processing step, performe
 \subsection{Interest for foreground separation}
 
 The main interest of reconstructing multiple sub-bands is the same as observing with multiple frequency channels: to use spectral information to separate the contributions from astrophysical foregrounds and the CMB. As explained in Section~\ref{section:foregrounds}, the CMB is distinguishable from foregrounds through their spectral signatures. Increasing the number of frequency bands greatly improves the ability to separate each contribution. However, classical imagers are limited by their intrinsic spectral resolution and cannot identify complex foreground emission. On the other hand, QUBIC will be capable of constraining foregrounds much more accurately and of reconstructing the CMB signal without bias.
-\jc{This improvement comes at a cost, as increasing the number of reconstructed sub-bands reduces the signal-to-noise ratio per band and introduces anti-correlated noise between sub-bands. As a result, a trade-off must be found between improving spectral resolution and maintaining acceptable noise levels. This effect is further discussed in Chapter~\ref{chap:FMM}.}
+This improvement comes at a cost, as increasing the number of reconstructed sub-bands reduces the signal-to-noise ratio per band and introduces anti-correlated noise between sub-bands. As a result, a trade-off must be found between improving spectral resolution and maintaining acceptable noise levels. This effect is further discussed in Chapter~\ref{chap:FMM}.
 
 In the following chapters, we present two algorithms that use spectral imaging to reconstruct the CMB signal: Frequency Map-Making (FMM, Chapter~\ref{chap:FMM}) and Component Map-Making (CMM, Chapter~\ref{chap:CMM}). 
-\sout{In FMM, spectral imaging is used to reconstruct multiple frequency maps within QUBIC's physical bandwidth, exploiting the improved spectral resolution to separate foregrounds and the CMB. In CMM, the frequency dependence of the synthesized beam is used to directly reconstruct CMB and foreground maps by exploiting their distinct spectral signatures.}
-
-\jc{FMM can be viewed as an extension of classical multi-frequency imaging techniques, adapted to the specific case of QUBIC. It exploits the improved spectral resolution provided by spectral imaging to reconstruct multiple frequency maps within the instrument bandwidth, thereby enhancing the separation between astrophysical foregrounds and the CMB.
-In contrast, CMM represents a more direct exploitation of the bolometric interferometry concept. Rather than first reconstructing frequency maps, it uses the frequency dependence of the synthesized beam to incorporate spectral information directly into the map-making operator, enabling a simultaneous reconstruction of astrophysical components and their spectral signatures.}
+FMM can be viewed as an extension of classical multi-frequency imaging techniques, adapted to the specific case of QUBIC. It exploits the improved spectral resolution provided by spectral imaging to reconstruct multiple frequency maps within the instrument bandwidth, thereby enhancing the separation between astrophysical foregrounds and the CMB.
+In contrast, CMM represents a more direct exploitation of the bolometric interferometry concept. Rather than first reconstructing frequency maps, it uses the frequency dependence of the synthesized beam to incorporate spectral information directly into the map-making operator, enabling a simultaneous reconstruction of astrophysical components and their spectral signatures.
 
 \end{document}
