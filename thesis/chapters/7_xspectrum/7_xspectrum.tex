@@ -163,15 +163,15 @@ The resulting covariance matrix is :
 
 \section{Cosmological parameters' estimation}
 
-\rmk{Should be in forecast chapter ?}
 
 From the set of auto- and cross- spectra, the associated noise estimation from equation \ref{eq:xspec_noise_cov_matrix}, and the theoritical model defined in equation \ref{xspec_model}, we perform a MCMC estimation, to estimate the CMB and foregrounds parameters. 
+
+\textbf{Remark.} A chapter dedicated to sensitivity forecasts for the QUBIC instrument was initially planned as part of this thesis. Its objective was to compare the different reconstruction methods and instrumental configurations under various sky models and simulation settings, in particular the parameters $N_\text{rec}$ for FMM and $N_\text{freq}$ for CMM. Unfortunately, due to time constraints, the results are still too preliminary to be included with sufficient confidence. Although the forecasting pipelines are fully implemented, further work is required to optimise their convergence and to achieve a deeper understanding of the obtained results before drawing robust scientific conclusions. 
+\rmk{Small remark to say that a forecast chapter was planned, but was not included...}
 
 \subsection{Simulation parameters}
 
 During this section, we will use the simulation parameters estimated in the Chapter \ref{chap:tod}. We simulate a full 3 years observation campaign for the QUBIC instrument, using the UWB configuration (see \ref{sub:UWB_design}). QUBIC observes is target patch of $1.5^\circ$, located in $(RA=0^\circ, DEC=57^\circ)$. We consider a sky composed of only CMB and Dust\footnote{It is a reasonable assumption to neglect the contribution from Synchrotron inside the considered frequency range}, and we fix the amplitude of lensing $A_{\text{lens}}$ at $0$. In addition, the $147$, $213$ and $353$ GHz bands from Planck are added during the cross-spectra analysis. 
-
-\rmk{I am running proper simulations at the same time, plots can evolve.}
 
 \subsection{FMM cross-spectrum}
 
@@ -197,17 +197,19 @@ With the Component Map-Making, we are comuting component maps from QUBIC data. T
 
 \begin{figure}[!htbp]
 \centering
-% \includegraphics[width=1\linewidth]{}
+\includegraphics[width=1\linewidth]{cmm_db_xspectra.png}
 \caption{Cross-spectra computed on component maps obtained through CMM. The diagonal corresponds to the auto-spectra of CMB and Dust map, while the off-diagonal is the associated cross-spectrum.}
 \label{fig:cmm_xspectra}
 \end{figure}
 
 \begin{figure}[!htbp]
 \centering
-% \includegraphics[width=1\linewidth]{cmm_uwb_sigma_r.png}
-\caption{}
+\includegraphics[width=1\linewidth]{cmm_db_sigma_r.png}
+\caption{\rmk{Is it necessary to show this plot ?}}
 \label{fig:cmm_UWB_sigma_r}
 \end{figure}
+
+
 \subsection{Noise realisations}
 
 A key aspect of the noise debiasing procedure is determining the number of noise realisations required to accurately estimate the noise contribution to the angular power spectra. Since there is no straightforward way to predict this number \emph{a priori}, we performed a series of end-to-end simulations using different numbers of noise realisations. For each configuration, the parameter estimation procedure was repeated, and the resulting constraints were analysed.
