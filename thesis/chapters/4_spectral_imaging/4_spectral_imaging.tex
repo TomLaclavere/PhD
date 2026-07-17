@@ -16,7 +16,7 @@
 
 A central feature of the QUBIC instrument is its horn array, which produces an interference pattern on the focal plane through bolometric interferometry. Unlike conventional imagers, the instrument response is therefore described by a synthesized beam resulting from the coherent combination of signals originating from all horn pairs.
 This synthesized beam exhibits a complex spatial structure composed of interference fringes forming a series of peaks whose morphology strongly depends on the observing frequency. As a consequence, the signal measured on the focal plane contains not only spatial information, but also spectral information encoded in the chromatic evolution of the interference pattern.
-This property forms the basis of the spectral imaging capability of QUBIC. By exploiting the frequency dependence of the synthesized beam, the wide instrumental bandwidth can be decomposed into several sub-bands, allowing a  reconstruction of the sky signal as a function of frequency.
+This property forms the basis of the spectral imaging capability of QUBIC. By exploiting the frequency dependence of the synthesized beam, the wide instrumental bandwidth can be decomposed into several sub-bands, allowing a reconstruction of the sky signal as a function of frequency.
 In this chapter, we first introduce the theoretical framework of synthesized beams in bolometric interferometry and describe the monochromatic and polychromatic properties of the synthesized beam. We then explain how the chromaticity of the interference pattern can be used to perform spectral imaging and improve component separation for CMB observations.
 
 \section{Synthesized Beam}
@@ -104,20 +104,20 @@ Substituting into Equation~\ref{eq:synth_beam_init} and using $\abs{A_{horn}}^2 
     &= B_{prim}(\vec{n}, \lambda)B_{sec}(\vec{r}, \lambda)\abs{\sum_{h = 1}^{N_{horns}} e^{\frac{2\pi i}{\lambda} \vec{x}_h \cdot (\frac{\vec{r}}{D_f} - \vec{n})} }^2
 \end{align}
 
-Assuming a regular square horn array with spacing $\Delta_h$, the interference term factorises along each spatial direction. Using the geometric series $\sum_{n=1}^{N} x^N = \frac{1 - x^N}{1 - x}$, this gives:
+Assuming a regular square horn array with spacing $\Delta_h$, the interference term factorises along each spatial direction. Using the geometric series $\sum_{n=1}^{N} x^n = \frac{1 - x^N}{1 - x}$, this gives:
 
 \begin{align}
     \sum_{h=1}^{N_{horns}}e^{\frac{2\pi i}{\lambda} \vec{x}_h \cdot (\frac{\vec{r}}{D_f} - \vec{n})}
-    &= \sum_{h=1}^{N_{horns}}e^{\frac{2\pi i}{\lambda} x_h (\frac{x_f}{D_f} - n_x)} \sum_{h=1}^{N_{horns}}e^{\frac{2\pi i}{\lambda} y_h (\frac{y_f}{D_f} - n_y)} \notag \\
-    &= \frac{1 - e^{\frac{2\pi i}{\lambda} N_{horns} \Delta_h (\frac{x_f}{D_f} - n_x)}}{1 - e^{\frac{2\pi i}{\lambda} \Delta_h (\frac{x_f}{D_f} - n_x)}} \frac{1 - e^{\frac{2\pi i}{\lambda} N_{horns} \Delta_h (\frac{y_f}{D_f} - n_y)}}{1 - e^{\frac{2\pi i}{\lambda} \Delta_h (\frac{y_f}{D_f} - n_y)}} \notag \\
-    &= \frac{e^{i\frac{\pi N_{horns}\Delta_h}{\lambda}(\frac{x_f}{D_f} - n_x)}}{e^{i\frac{\pi\Delta_h}{\lambda}(\frac{x_f}{D_f} - n_x)}} \frac{\sin(\frac{\pi N_{horns}\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])}{\sin(\frac{\pi\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])} \notag \\
-    &\quad\times \frac{e^{i\frac{\pi N_{horns}\Delta_h}{\lambda}(\frac{y_f}{D_f} - n_y)}}{e^{i\frac{\pi\Delta_h}{\lambda}(\frac{y_f}{D_f} - n_y)}} \frac{\sin(\frac{\pi N_{horns}\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}{\sin(\frac{\pi\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}
+    &= \sum_{h=1}^{N_{horn}}e^{\frac{2\pi i}{\lambda} x_h (\frac{x_f}{D_f} - n_x)} \sum_{h=1}^{N_{horn}}e^{\frac{2\pi i}{\lambda} y_h (\frac{y_f}{D_f} - n_y)} \notag \\
+    &= \frac{1 - e^{\frac{2\pi i}{\lambda} N_{horn} \Delta_h (\frac{x_f}{D_f} - n_x)}}{1 - e^{\frac{2\pi i}{\lambda} \Delta_h (\frac{x_f}{D_f} - n_x)}} \frac{1 - e^{\frac{2\pi i}{\lambda} N_{horn} \Delta_h (\frac{y_f}{D_f} - n_y)}}{1 - e^{\frac{2\pi i}{\lambda} \Delta_h (\frac{y_f}{D_f} - n_y)}} \notag \\
+    &= \frac{e^{i\frac{\pi N_{horn}\Delta_h}{\lambda}(\frac{x_f}{D_f} - n_x)}}{e^{i\frac{\pi\Delta_h}{\lambda}(\frac{x_f}{D_f} - n_x)}} \frac{\sin(\frac{\pi N_{horn}\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])}{\sin(\frac{\pi\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])} \notag \\
+    &\quad\times \frac{e^{i\frac{\pi N_{horn}\Delta_h}{\lambda}(\frac{y_f}{D_f} - n_y)}}{e^{i\frac{\pi\Delta_h}{\lambda}(\frac{y_f}{D_f} - n_y)}} \frac{\sin(\frac{\pi N_{horn}\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}{\sin(\frac{\pi\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}
 \end{align}
 
 Finally, the synthesized beam is given by:
 
 \begin{equation} \label{eq:synth_beam}
-    B_{synth}^{\vec{n}}(\vec{r}) = B_{prim}(\vec{n}, \lambda)B_{sec}(\vec{r}, \lambda) \left(\frac{\sin^{2}(\frac{\pi N_{horns}\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])}{\sin^{2}(\frac{\pi\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])}\right)\left(\frac{\sin^{2}(\frac{\pi N_{horns}\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}{\sin^{2}(\frac{\pi\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}\right)
+    B_{synth}^{\vec{n}}(\vec{r}) = B_{prim}(\vec{n}, \lambda)B_{sec}(\vec{r}, \lambda) \left(\frac{\sin^{2}(\frac{\pi N_{horn}\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])}{\sin^{2}(\frac{\pi\Delta_h}{\lambda}[\frac{x_f}{D_f} - n_x])}\right)\left(\frac{\sin^{2}(\frac{\pi N_{horn}\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}{\sin^{2}(\frac{\pi\Delta_h}{\lambda}[\frac{y_f}{D_f} - n_y])}\right)
 \end{equation}
 
 \subsection{Beam properties} \label{sub:beam_properties}
@@ -152,7 +152,7 @@ To better understand the shape of the beam, it is useful to think about Young's 
     \label{fig:qubic_fringes}
 \end{figure}
 
-Due to their specific dimensions, the horn beams have a FWHM of $12.9^\circ$ at $150~\mathrm{GHz}$. The beam properties can be derived from the optical parameters summarised in Table~\ref{table:qubic_spec}. The FWHM of the peaks is given by $\sim\frac{\lambda}{\Delta_h}$, which is equal to $0.39^\circ$ at $150~\mathrm{GHz}$.
+Due to their specific dimensions, the horn beams have a FWHM of $12.9^\circ$ at $150~\mathrm{GHz}$. The beam properties can be derived from the optical parameters summarised in Table~\ref{table:qubic_spec}. The FWHM of the peaks is given by $\sim\frac{\lambda}{(N_{horn}-1) \Delta_h}$, which is equal to $0.39^\circ$ at $150~\mathrm{GHz}$.
 Additionally, the position of the central peak depends on the position of the point source, or equivalently, on the position of the detector on the focal plane. Figure~\ref{fig:synth_beam_qubic} assumed a point source and a detector aligned with the optical axis. For an off-centre detector, however, the central peak is shifted by $\tan^{-1}\!\left(\frac{r}{D_f}\right)$, where $r$ is the distance from the optical axis to the detector. As an example, for $r=12~\mathrm{mm}$, the central peak is shifted by $\theta_{shift} \approx 2.3^\circ$. This case is shown in Figure~\ref{fig:synth_beam_off_centre}.
 
 \begin{figure}[!htbp]
@@ -188,7 +188,7 @@ As in the case of interference fringes, the distance between two fringes is prop
 
 \subsection{Polychromatic beam}
 
-In the previous figures, the synthesized beam was treated as monochromatic. However, its shape changes when observing a polychromatic source because the positions of the secondary peaks vary with frequency. The left panel of Figure~\ref{fig} illustrates this effect for several monochromatic beams. The right panel shows the corresponding polychromatic beam, where the superposition of monochromatic contributions produces a continuous plateau instead of distinct peaks.
+In the previous figures, the synthesized beam was treated as monochromatic. However, its shape changes when observing a polychromatic source because the positions of the secondary peaks vary with frequency. The left panel of Figure~\ref{fig:synth_beam_poly} illustrates this effect for several monochromatic beams. The right panel shows the corresponding polychromatic beam, where the superposition of monochromatic contributions produces a continuous plateau instead of distinct peaks.
 For a detector located at the centre of the focal plane and observing along the instrument line of sight, the optical path difference between all horn pairs vanishes. Consequently, the central peak remains at the same position for all frequencies and is not broadened by the spectral integration. Its amplitude is therefore simply determined by the value of the primary beam at $\vec{n}=0$.
 
 \begin{figure}[!htbp]
@@ -202,14 +202,14 @@ For a detector located at the centre of the focal plane and observing along the 
 
 \subsection{Principle}
 
-The idea behind \emph{spectral imaging} is to use the frequency dependence of QUBIC's synthesized beam to measure spectral information of the observed signal. This chromaticity causes the synthesized beam to spatially encode spectral information on the focal plane. By subdividing the secondary plateau into sub-bands, we can directly observe the signal in each sub-band with our bolometers, within the total frequency bandwidth. This results in an improved spectral resolution compared to a classical imager, which is limited to a single broad band. Typically, $\Delta_\nu / \nu \sim 0.3$ for an imager, while for QUBIC $\frac{\Delta_\nu}{\nu} \approx \frac{1}{P - 1} = 0.05$~\cite{QUBICII} (see below for a derivation, equation \ref{eq:spectral_resolution}).
+The idea behind \emph{spectral imaging} is to use the frequency dependence of QUBIC's synthesized beam to measure spectral information of the observed signal. This chromaticity causes the synthesized beam to spatially encode spectral information on the focal plane. By subdividing the secondary plateau into sub-bands, we can directly observe the signal in each sub-band with our bolometers, within the total frequency bandwidth. This results in an improved spectral resolution compared to a classical imager, which is limited to a single broad band. Typically, $\Delta_\nu / \nu \sim 0.3$ for an imager, while for QUBIC $\frac{\Delta_\nu}{\nu} \approx \frac{1}{N_{horn}-1} = 0.05$~\cite{QUBICII} (see below for a derivation, equation \ref{eq:spectral_resolution}).
 
 \subsection{Sub-band reconstruction}
 
-The logical application of spectral imaging is the possibility of splitting the plateau into frequency sub-bands. From a single polychromatic dataset, we can construct multiple monochromatic datasets using our knowledge of the beam. The number of recoverable sub-bands is limited by the requirement that adjacent peaks must be distinguishable. The condition can be derived from the angular separation between two peaks at different frequencies, $\theta_\nu = \frac{\lambda\Delta_\nu}{\Delta_h\nu}$, with $\Delta_\nu = \nu_2 - \nu_1$ and $\nu = \sqrt{\nu_1\nu_2}$, and their associated $\mathrm{FWHM}_\nu \sim \frac{\lambda}{\Delta_h(P-1)}$. Finally, we got: 
+The logical application of spectral imaging is the possibility of splitting the plateau into frequency sub-bands. From a single polychromatic dataset, we can construct multiple monochromatic datasets using our knowledge of the beam. The number of recoverable sub-bands is limited by the requirement that adjacent peaks must be distinguishable. The condition can be derived from the angular separation between two peaks at different frequencies, $\theta_\nu = \frac{\lambda\Delta_\nu}{\Delta_h\nu}$, with $\Delta_\nu = \nu_2 - \nu_1$ and $\nu = \sqrt{\nu_1\nu_2}$, and their associated $\mathrm{FWHM}_\nu \sim \frac{\lambda}{\Delta_h (N_{horn}-1)}$. Finally, we got:
 
 \begin{equation} \label{eq:spectral_resolution}
-    \frac{\Delta_\nu}{\nu} \sim \frac{1}{P-1}.
+    \frac{\Delta_\nu}{\nu} \sim \frac{1}{N_{horn}-1}.
 \end{equation}
 
 From this, one finds that up to approximately 5 sub-bands can be constructed within the physical frequency bandwidth of QUBIC~\cite{QUBICII,thesislouise}. The splitting is illustrated in the right panel of Figure~\ref{fig:synth_beam_poly}.

@@ -74,7 +74,7 @@ This expansion is described by the \emph{scale factor} \(a(t)\), which quantifie
 H(t) = \frac{\dot{a}(t)}{a(t)},
 \]
 
-with \emph{Hubble constant} being $H(0) \equiv H_0$.
+with \emph{Hubble constant} being $H(t_0) \equiv H_0$.
 
 An observable consequence of this expansion is the \emph{cosmological redshift} \(z\). As light propagates through an expanding Universe, its wavelength is stretched along with space. This effect is not a simple Doppler redshift~\cite{doppler1842}, but rather a consequence of the expansion of spacetime, hence the name of cosmological redshift, illustrated in Figure~\ref{fig:cosmological_redshift}. Nevertheless, the interpretation of cosmological redshift is misleading, as it has nothing to do with any recession velocity. It is often interpreted as the stretching of space due to expansion, which would have the effect of increasing the wavelength along photon's trajectory. However, general relativity asserts that local reference frame can't be distinguished from Minkowski space, and by extension, that the photon will never know about spacetime stretching. The observed shift in photon's frequency is rather due to integration of infinitesimal Doppler shifts along the travel path, caused by Lorentz' boost to go from one Minkowski frame to another. (see \cite{Bunn_2009} for more accurate description).
 Yet, the redshift can still be simply defined as:
@@ -107,7 +107,7 @@ In 1922, Friedmann demonstrated that Einstein's equations naturally admit homoge
 
 These ideas are closely connected to Mach's principle\footnote{The term \enquote{Mach's principle} was introduced by Einstein based on the ideas developed by Mach in~\cite{mach1883}.}, according to which local inertial properties should be determined by the global distribution of matter in the Universe. In this view, rotational motion is not defined with respect to an absolute space, as in Newtonian mechanics, but relative to the large-scale matter distribution of the Universe. Einstein was strongly influenced by this principle during the development of General Relativity, where no preferred inertial frame exists a priori. Nevertheless, General Relativity does not fully implement Mach's principle, since vacuum solutions such as de Sitter spacetime remain valid even in the absence of matter.
 
-Building on these results, Robertson~\cite{robertson1935} and Walker~\cite{walker1936} formulated the general relativistic metric describing a homogeneous and isotropic expanding Universe. This metric, now known as the Friedmann-Lemaître-Robertson-Walker (FLRW) metric, forms the cornerstone of the $\Lambda$CDM cosmological model. It is written as :
+Building on these results, Robertson~\cite{robertson1935} and Walker~\cite{walker1936} formulated the general relativistic metric describing a homogeneous and isotropic expanding Universe. This metric, now known as the Friedmann-Lemaître-Robertson-Walker (FLRW) metric, forms the cornerstone of the $\Lambda$CDM cosmological model. It is written as:
 
 \begin{equation}
     ds^2 = c^2 dt^2 - a(t)^2 \left( \frac{dr^2}{1 - kr^2} + r^2 d\Omega^2 \right),
@@ -150,7 +150,7 @@ Although the cosmological principle is fundamentally an assumption, modern obser
 
 \subsection{Content of the Universe} \label{subsection:content_Universe}
 
-In the two previous subsections~\ref{subsection:expansion} and \ref{subsection:cosmological_principle}, we introduced the standard description of the Universe : it is homogeneous, isotropic and expanding. We now provide a brief overview of its contents. 
+In the two previous subsections~\ref{subsection:expansion} and \ref{subsection:cosmological_principle}, we introduced the standard description of the Universe: it is homogeneous, isotropic and expanding. We now provide a brief overview of its contents. 
 These contents can be classified into three categories: radiation, matter, and the hypothetical cosmological constant. Each of these components evolves differently with the scale factor that describes the expansion of the Universe. Moreover, each component dominated the Universe at different epochs in its history. The evolution of each density is shown in Figure~\ref{fig:evolution_density}.
 
 \begin{figure}[!htbp]
@@ -161,11 +161,11 @@ These contents can be classified into three categories: radiation, matter, and t
     \label{fig:evolution_density}
 \end{figure}
 
-At early times of the Universe, the radiation was dominating. This radiation consisted of the relativistic particles : photons and neutrinos. At this time, the Universe was a very dense plasma of protons and electrons at thermal equilibrium, where very small photons' free path, forming a nearly perfect blackbody. The density of radiation and matter were equal at z $\sim$ 3400~\cite{desi2024,planck2018VI}, which correspond to approximatively 80000 years after first times of the Universe. Today, radiation contributes about 0.008\% of the total energy density, as inferred from Planck 2018 data~\cite{planck2018VI}.
+At early times of the Universe, the radiation was dominating. This radiation consisted of the relativistic particles: photons and neutrinos. At this time, the Universe was a very dense plasma of protons and electrons at thermal equilibrium, where very small photons' free path, forming a nearly perfect blackbody. The density of radiation and matter was equal at z $\sim$ 3400~\cite{desi2024,planck2018VI}, which corresponds to approximately 80000 years after first times of the Universe. Today, radiation contributes about 0.008\% of the total energy density, as inferred from Planck 2018 data~\cite{planck2018VI}.
 
-As the Universe expanded, non-relativistic matter came to dominate the energy density. This matter is composed of baryonic matter and dark matter. The term \enquote{baryonic matter} is misleading, as it designates all non-relativistic particles of the Standard Model; however, its energy density is overwhelmingly dominated by protons and neutrons, hence the terminology. On the other hand, dark matter is a hypothetical form of matter, which only (or mostly) interact through gravitational force, and thus, which does not emit light. It was first suggested by comparing \enquote{seen mass} computed from galaxies brightness and \enquote{unseen mass} computed from galaxy velocities in the Coma Galaxies Cluster by Zwicky in 1933~\cite{zwicky1933}. The mass computed from the velocity of galaxies was much higher than the luminous mass, suggesting the presence of massive matter that does not emit light. 
+As the Universe expanded, non-relativistic matter came to dominate the energy density. This matter is composed of baryonic matter and dark matter. The term \enquote{baryonic matter} is misleading, as it designates all non-relativistic particles of the Standard Model; however, its energy density is overwhelmingly dominated by protons and neutrons, hence the terminology. On the other hand, dark matter is a hypothetical form of matter, which only (or mostly) interacts through gravitational force, and thus, which does not emit light. It was first suggested by comparing \enquote{seen mass} computed from galaxies brightness and \enquote{unseen mass} computed from galaxy velocities in the Coma Galaxies Cluster by Zwicky in 1933~\cite{zwicky1933}. The mass computed from the velocity of galaxies was much higher than the luminous mass, suggesting the presence of massive matter that does not emit light. 
 
-Since then, multiple independent observations have provided strong evidence for dark matter : galaxy rotation curves~\cite{rubin1980}, the Bullet Cluster through gravitational lensing~\cite{bullet_cluster}, Baryon Acoustic Oscillations peaks observed in CMB~\cite{planck2018VI} and Large Scale Structure (LSS)~\cite{SDSS2017,DESI2024III}, formation rate of LSS~\cite{lls_formation_rate_cdm}, and many others. While we still don't know its nature from the particle point of view, its cosmological properties are well constrained. It is commonly divided into three categories : cold, warm and hot dark matter, which refer to velocity and mass (or equivalently, whether it was relativistic in the early Universe). This classification determines how far dark matter can propagate (free-stream) and thus influences the formation of structures at different scales. Observations strongly favour the Cold Dark Matter (CDM) scenario~\cite{cold_dark_matter}, in which dark matter is non-relativistic. Warmer dark matter would have required larger primordial perturbations than measured to form observed LSS. 
+Since then, multiple independent observations have provided strong evidence for dark matter: galaxy rotation curves~\cite{rubin1980}, the Bullet Cluster through gravitational lensing~\cite{bullet_cluster}, Baryon Acoustic Oscillations peaks observed in CMB~\cite{planck2018VI} and Large Scale Structure (LSS)~\cite{SDSS2017,DESI2024III}, formation rate of LSS~\cite{lls_formation_rate_cdm}, and many others. While we still don't know its nature from the particle point of view, its cosmological properties are well constrained. It is commonly divided into three categories: cold, warm and hot dark matter, which refer to velocity and mass (or equivalently, whether it was relativistic in the early Universe). This classification determines how far dark matter can propagate (free-stream) and thus influences the formation of structures at different scales. Observations strongly favour the Cold Dark Matter (CDM) scenario~\cite{cold_dark_matter}, in which dark matter is non-relativistic. Warmer dark matter would have required larger primordial perturbations than measured to form observed LSS. 
 
 Today, Cold Dark Matter (CDM) represents about 26.5\%~\cite{planck2018VI} of total energy density, and plays a central role in Standard Model of Cosmology, $\Lambda$CDM. The ordinary matter is responsible for 4.5\%~\cite{planck2018VI} of the energy density budget, meaning that the energy density of matter occupies 31\% of the energy density of the Universe, and that 85\% of matter in the Universe is composed of dark matter.
 
@@ -176,11 +176,11 @@ Today, dark energy remains one of the greatest unknowns in cosmology and fundame
 
 From the previous subsection, the Standard Model of cosmology describes the Universe as homogeneous, isotropic, expanding, and composed of radiation, matter and dark energy. It is enough to describe the evolution of the Universe, and match remarkably well with observations. However, fundamental questions remain unanswered, and in particular three issues cannot be explained within this framework: the horizon problem, the flatness problem, and the monopole problem.
 
-\textbf{Horizon problem : Why is the CMB temperature so uniform ?} As discussed previously, at the time of recombination the Universe was extremely homogeneous, with density fluctuations of order $10^{-5}$, and consequently the cosmic microwave background (CMB) exhibits an almost perfectly uniform temperature. This uniformity is naturally explained if the early Universe was in thermal equilibrium, consistent with the fact that the CMB spectrum is an almost perfect blackbody~\cite{COBE1994}.
+\textbf{Horizon problem: Why is the CMB temperature so uniform ?} As discussed previously, at the time of recombination the Universe was extremely homogeneous, with density fluctuations of order $10^{-5}$, and consequently the cosmic microwave background (CMB) exhibits an almost perfectly uniform temperature. This uniformity is naturally explained if the early Universe was in thermal equilibrium, consistent with the fact that the CMB spectrum is an almost perfect blackbody~\cite{COBE1994}.
 However, within the standard cosmological model, regions of the CMB that are widely separated on the sky were never in causal contact: light signals would not have had enough time to travel between them since the beginning of the expansion. These regions therefore lie outside each other’s particle horizon and cannot have exchanged information or thermalised.
 This raises a fundamental question: why do causally disconnected regions have the same temperature?
 
-\textbf{Flatness problem : Why is the Universe flat ?} In general relativity~\cite{einstein1916_general_relativity}, the geometry of spacetime is determined by its energy content. In a homogeneous and isotropic Universe, this relation is encoded in the Friedmann equations~\cite{friedmann1922}, which relate the expansion rate to the total energy density and spatial curvature. From these equations, one defines the critical density, $\rho_c$, which corresponds to a spatially flat Universe. Depending on the ratio $\Omega = \rho / \rho_c$, the Universe can be:
+\textbf{Flatness problem: Why is the Universe flat ?} In general relativity~\cite{einstein1916_general_relativity}, the geometry of spacetime is determined by its energy content. In a homogeneous and isotropic Universe, this relation is encoded in the Friedmann equations~\cite{friedmann1922}, which relate the expansion rate to the total energy density and spatial curvature. From these equations, one defines the critical density, $\rho_c$, which corresponds to a spatially flat Universe. Depending on the ratio $\Omega = \rho / \rho_c$, the Universe can be:
 
 \begin{align*}
     \Omega = 1 &\quad \text{: flat (Euclidean geometry)}, \\
@@ -190,7 +190,7 @@ This raises a fundamental question: why do causally disconnected regions have th
 
 Within the standard Friedmann evolution, flatness is not a stable state: any small deviation from $\Omega = 1$ grows with time. However, current measurements, notably from the Planck mission~\cite{planck2018VI}, indicate that $\Omega$ differs from unity by less than about $0.1\%$, implying that the Universe is extremely close to spatial flatness. Consequently, evolving backward in time implies an extreme fine-tuning of the initial condition. For example, a deviation of order $|\Omega_0 - 1| \sim 10^{-3}$ today corresponds to an initial deviation of order $10^{-60}$ near the Planck epoch. This extraordinary sensitivity suggests an apparent fine-tuning problem: why was the early Universe so precisely close to flatness? \\
 
-\textbf{Monopole problem : Why are magnetic monopoles not observed ?} Grand unified theories (GUTs), which attempt to unify the electromagnetic, weak, and strong interactions at high energy scales, generally predict the existence of topological defects formed during phase transitions in the early Universe. Among these relics are magnetic monopoles, hypothetical particles carrying an isolated magnetic charge, whose existence was first proposed by Dirac in 1931~\cite{dirac1931}. In standard cosmology, such monopoles should be efficiently produced during the spontaneous symmetry breaking associated with the GUT phase transition. Causally disconnected regions of space choose different vacuum states, leading to the formation of stable topological defects. As a consequence, one expects a large relic abundance of monopoles. However, monopoles are not observed in the present Universe, despite extensive experimental searches. This discrepancy constitutes the monopole problem: standard cosmology predicts a relic density of monopoles that is many orders of magnitude larger than observational bounds.
+\textbf{Monopole problem: Why are magnetic monopoles not observed ?} Grand unified theories (GUTs), which attempt to unify the electromagnetic, weak, and strong interactions at high energy scales, generally predict the existence of topological defects formed during phase transitions in the early Universe. Among these relics are magnetic monopoles, hypothetical particles carrying an isolated magnetic charge, whose existence was first proposed by Dirac in 1931~\cite{dirac1931}. In standard cosmology, such monopoles should be efficiently produced during the spontaneous symmetry breaking associated with the GUT phase transition. Causally disconnected regions of space choose different vacuum states, leading to the formation of stable topological defects. As a consequence, one expects a large relic abundance of monopoles. However, monopoles are not observed in the present Universe, despite extensive experimental searches. This discrepancy constitutes the monopole problem: standard cosmology predicts a relic density of monopoles that is many orders of magnitude larger than observational bounds.
 % \rmk{Should I talk about higher order topological defects ? Like cosmic cords, walls, ...}
 
 An answer to the three problems was proposed by Alexei Starobinsky in 1979~\cite{starobinskii1979} and Alan Guth in 1981~\cite{guth1981}, through the idea of an exponential expansion phase at the very beginning of the Universe. The model was then developed by Andrei Linde in 1983~\cite{linde1983}, and has since given rise to a wide variety of models. We will explain in the following subsection the idea behind this theory and how it can solve the issues discussed previously.
@@ -223,7 +223,7 @@ In this section, we aim to produce a quick overview of the history of the Univer
 
 \subsection{Inflation and First particles}
 
-As discussed in Section~\ref{subsection:inflation}, the standard cosmological model predicts an early phase of accelerated, quasi-exponential expansion known as inflation, occurring at energies of order $10^{16}\,\mathrm{GeV}$ (corresponding to $t \sim 10^{-36} - 10^{-32}\,\mathrm{s}$). This paradigm addresses several major issues in cosmology and provides a mechanism for setting the initial conditions of the observable Universe. At the end of inflation, the scalar field driving this expansion reaches the minimum of its potential and decays into relativistic particles as the Universe cools. This process, known as reheating, occurs at characteristic energy scales of order $10^{9} - 10^{15}\,\mathrm{GeV}$ and marks the onset of a radiation-dominated hot plasma. Subsequently, at temperatures ranging from $T \sim 10^{12}\,\mathrm{GeV}$ down to the electroweak scale $T \sim 100\,\mathrm{GeV}$, matter and antimatter are produced and remain in thermal equilibrium. During this epoch, baryogenesis occurs at an unknown high-energy scale, hypothetically generating a baryon asymmetry of order $10^{-10}$, which prevents complete matter-antimatter annihilation. As the Universe expands and cools further, at the electroweak phase transition ($T \sim 100\,\mathrm{GeV}$), the electroweak symmetry is broken, separating the electromagnetic and weak interactions. At lower energies ($T \sim 1\,\mathrm{GeV}$), the QCD confinement transition occurs, leading to the formation of hadrons, primarily protons and neutrons, as quarks become confined into colour-neutral states. At temperatures around $T \sim 1\,\mathrm{MeV}$ ($t \sim 1\,\mathrm{s}$), neutrinos decouple from the primordial plasma, forming a relic background known as the cosmic neutrino background. Shortly afterward, electron-positron pairs annihilate efficiently when the temperature drops below the electron mass scale ($T \lesssim 0.5\,\mathrm{MeV}$), transferring their entropy to photons. This sequence of symmetry-braeking transitions are well described by the Standard Model of Particles Physics~\cite{halzenmartin1984,peskinschroeder1995qft}.
+As discussed in Section~\ref{subsection:inflation}, the standard cosmological model predicts an early phase of accelerated, quasi-exponential expansion known as inflation, occurring at energies of order $10^{16}\,\mathrm{GeV}$ (corresponding to $t \sim 10^{-36} - 10^{-32}\,\mathrm{s}$). This paradigm addresses several major issues in cosmology and provides a mechanism for setting the initial conditions of the observable Universe. At the end of inflation, the scalar field driving this expansion reaches the minimum of its potential and decays into relativistic particles as the Universe cools. This process, known as reheating, occurs at characteristic energy scales of order $10^{9} - 10^{15}\,\mathrm{GeV}$ and marks the onset of a radiation-dominated hot plasma. Subsequently, at temperatures ranging from $T \sim 10^{12}\,\mathrm{GeV}$ down to the electroweak scale $T \sim 100\,\mathrm{GeV}$, matter and antimatter are produced and remain in thermal equilibrium. During this epoch, baryogenesis occurs at an unknown high-energy scale, hypothetically generating a baryon asymmetry of order $10^{-10}$, which prevents complete matter-antimatter annihilation. As the Universe expands and cools further, at the electroweak phase transition ($T \sim 100\,\mathrm{GeV}$), the electroweak symmetry is broken, separating the electromagnetic and weak interactions. At lower energies ($T \sim 1\,\mathrm{GeV}$), the QCD confinement transition occurs, leading to the formation of hadrons, primarily protons and neutrons, as quarks become confined into colour-neutral states. At temperatures around $T \sim 1\,\mathrm{MeV}$ ($t \sim 1\,\mathrm{s}$), neutrinos decouple from the primordial plasma, forming a relic background known as the cosmic neutrino background. Shortly afterward, electron-positron pairs annihilate efficiently when the temperature drops below the electron mass scale ($T \lesssim 0.5\,\mathrm{MeV}$), transferring their entropy to photons. This sequence of symmetry-breaking transitions are well described by the Standard Model of Particles Physics~\cite{halzenmartin1984,peskinschroeder1995qft}.
 
 The resulting Universe is dominated by radiation (photons and neutrinos) with a small residual baryonic matter component, which later seeds the formation of large-scale structure~\cite{dodelson}.
 
@@ -244,7 +244,7 @@ The predicted primordial abundances are in good agreement with observations, mak
 
 During the radiation-dominated era, photons were tightly coupled to baryons through Thomson scattering of free electrons~\cite{dodelson}, forming a single photon-baryon fluid. Due to the primordial density fluctuations generated during inflation (see Section~\ref{subsection:inflation}), over dense regions acted as gravitational potential wells, attracting baryonic matter.
 However, photon pressure counteracted gravitational fall. The competition between gravity and radiation pressure led to acoustic oscillations in the coupled photon-baryon fluid, generating spherical sound waves propagating outward from initial under and over densities. The speed of sound in this fluid is given by $c_s = \sqrt{\partial P / \partial \rho}$. Since the photon-baryon fluid is dominated by radiation, its equation of state is well approximated by that of a pure radiation gas, $P = \rho c^2 / 3$~\cite{dodelson}, so that $\partial P / \partial \rho = c^2/3$ and $c_s \sim c / \sqrt{3}$.
-These oscillations ceased at recombination (see Section~\ref{subsection:recombination}), when photons decoupled from baryons and began to free-stream. The maximum distance travelled by these sound waves, moving at $c_s \sim c / \sqrt{3}$, defines a characteristic scale, known as the sound horizon. As the CMB was emitted at $t_{CMB} \sim 380000$ years, corresponding to a redshift $1 + z \sim 1100$, the characteristic scale of the oscillations can be computed by : $c / \sqrt{3} * t_{CMB} * z \equiv 75 Mpc$. Unfortunately, this back of the envelope computation does not include expansion during the sound wave propagation, and integrated over the emission of CMB, as decoupling between photons and baryons does not happen instantaneously, but took about $115000$ years~\cite{planck2018VI}. Adding these effects, the characteristic scale of BAO is about 150 Mpc.
+These oscillations ceased at recombination (see Section~\ref{subsection:recombination}), when photons decoupled from baryons and began to free-stream. The maximum distance travelled by these sound waves, moving at $c_s \sim c / \sqrt{3}$, defines a characteristic scale, known as the sound horizon. As the CMB was emitted at $t_{CMB} \sim 380000$ years, corresponding to a redshift $1 + z \sim 1100$, the characteristic scale of the oscillations can be computed by: $c / \sqrt{3} * t_{CMB} * z \equiv 75 Mpc$. Unfortunately, this back of the envelope computation does not include expansion during the sound wave propagation, and integrated over the emission of CMB, as decoupling between photons and baryons does not happen instantaneously, but took about $115000$ years~\cite{planck2018VI}. Adding these effects, the characteristic scale of BAO is about 150 Mpc.
 This scale is imprinted in the late-time matter distribution as a preferred clustering scale. Baryon Acoustic Oscillations (BAO) were first detected in the large-scale distribution of galaxies independently by the Sloan Digital Sky Survey~\cite{Eisenstein_2005} and the 2dF Galaxy Redshift Survey~\cite{Cole_2005}. They appear as a distinct peak in the two-point correlation function at a scale of approximately $150\,\mathrm{Mpc}$, corresponding to the sound horizon at recombination (see Fig.~\ref{fig:bao_peak}).
 
 \begin{figure}[!htbp]
@@ -303,19 +303,19 @@ The spherical harmonic functions $Y_{\ell m}(\theta,\phi)$ depend on the angular
 The spherical harmonics can be written explicitly as:
 
 \begin{equation}
-    Y_{\ell m}(\theta,\phi) = \sqrt{\frac{2\ell+1}{4\pi}\frac{(\ell-m)!}{(\ell+m)!}} P^m_{\ell}(\cos\theta)\exp^{i m \phi},
+    Y_{\ell m}(\theta,\phi) = \sqrt{\frac{2\ell+1}{4\pi}\frac{(\ell-m)!}{(\ell+m)!}} P^m_{\ell}(\cos\theta)e^{i m \phi},
 \end{equation}
 where $P^m_{\ell}$ are the associated Legendre polynomials (see e.g.~\cite{maths_handbook} for more details).
 
 \subsubsection{Angular Power Spectrum} 
 
-After introducing spherical harmonics, the temperature anisotropies (or any scalar field on the sphere) can be expanded as :
+After introducing spherical harmonics, the temperature anisotropies (or any scalar field on the sphere) can be expanded as:
 
 \begin{equation}
     \Delta T(\vec{n}) = \sum_{\ell=0}^{+\infty}\sum_{m=-\ell}^{\ell}a_{\ell m}Y_{\ell m}(\vec{n}).
 \end{equation}
 
-Using the orthogonality of spherical harmonics, the coefficients $a_{\ell m}$ are given by :
+Using the orthogonality of spherical harmonics, the coefficients $a_{\ell m}$ are given by:
 
 \begin{align}
     a_{\ell m} &= \int_{4\pi} \Delta T(\vec{n})Y_{\ell m}^{*}(\vec{n})d\Omega \\
@@ -323,10 +323,10 @@ Using the orthogonality of spherical harmonics, the coefficients $a_{\ell m}$ ar
 \end{align}
 where the second line corresponds to a uniformly discretised sky map, with $\Omega_{pix}$ the size of one pixel.
 
-The statistical properties of the field are fully described by the two-point correlation function for a Gaussian field. In harmonic space, this implies :
+The statistical properties of the field are fully described by the two-point correlation function for a Gaussian field. In harmonic space, this implies:
 
 \begin{equation}
-    \langle a_{\ell m}^{*}a_{\ell\prime m\prime} \rangle = \delta_{\ell\ell\prime}\delta_{m m\prime}C_{ell},
+    \langle a_{\ell m}^{*}a_{\ell\prime m\prime} \rangle = \delta_{\ell\ell\prime}\delta_{m m\prime}C_{\ell},
 \end{equation}
 
 with $\langle\rangle$ designating ensemble-average over many sky realisations, and $C_{\ell}$ is the angular power spectrum.
@@ -336,7 +336,7 @@ For a statistically isotropic Gaussian random field, the harmonic coefficients $
 \begin{equation}
     \hat{C}_{\ell} = \frac{1}{2\ell+1} \sum_{m=-\ell}^{\ell} |a_{\ell m}|^2,
 \end{equation}
-which satisfies :
+which satisfies:
 
 \begin{equation}
     \langle \hat{C}_{\ell} \rangle = C_{\ell}.
@@ -346,7 +346,7 @@ Additionally, we are used to expressing $C_\ell$ in a rescaled form. Indeed, as 
 
 \subsubsection{Cosmic variance} 
 
-Unfortunately, we only have access to a single realisation of the sky, and independent modes for each multipole $\ell$. Meaning that there is an intrinsic statistical uncertainty on the estimator $\hat{C}_{\ell}$, which cannot be reduced by improving instrumental sensitivity. This fundamental limitation is known as \emph{cosmic variance}. The variance of the estimator $\hat{C}_{\ell}$ can be computed as :
+Unfortunately, we only have access to a single realisation of the sky, and independent modes for each multipole $\ell$. Meaning that there is an intrinsic statistical uncertainty on the estimator $\hat{C}_{\ell}$, which cannot be reduced by improving instrumental sensitivity. This fundamental limitation is known as \emph{cosmic variance}. The variance of the estimator $\hat{C}_{\ell}$ can be computed as:
 
 \begin{align}
     \frac{\mathrm{Var}(\hat{C}_{\ell})}{C_{\ell}^2} \notag
@@ -355,7 +355,7 @@ Unfortunately, we only have access to a single realisation of the sky, and indep
     \left\langle \sum_{m m'} a_{\ell m}^* a_{\ell m} \, a_{\ell m'}^* a_{\ell m'} \right\rangle - 1 \notag \\
 \end{align}
 
-From Wick's theorem, the four-point function of a zero-mean Gaussian field factorises into products of two-point functions :
+From Wick's theorem, the four-point function of a zero-mean Gaussian field factorises into products of two-point functions:
 
 \begin{align}
     \left\langle \sum_{m m'} a_{\ell m}^* a_{\ell m} \, a_{\ell m'}^* a_{\ell m'} \right\rangle
@@ -367,7 +367,7 @@ From Wick's theorem, the four-point function of a zero-mean Gaussian field facto
     &= C_{\ell}^2 \sum_{m m'} \left(1 + \delta_{m m'} + \delta_{m,-m'}\right) \notag \\
     &= C_{\ell}^2 \left[(2\ell+1)^2 + 2(2\ell+1)\right],
 \end{align}
-where the last two terms use $\langle a_{\ell m}^* a_{\ell m'} \rangle = C_\ell\,\delta_{mm'}$ and the condition $a_{\ell m}^* = (-1)^m a_{\ell,-m}$, which gives $\langle a_{\ell m}^* a_{\ell m'}^* \rangle \langle a_{\ell m} a_{\ell m'} \rangle = C_\ell^2\,\delta_{m,-m'}$. Substituting back :
+where the last two terms use $\langle a_{\ell m}^* a_{\ell m'} \rangle = C_\ell\,\delta_{mm'}$ and the condition $a_{\ell m}^* = (-1)^m a_{\ell,-m}$, which gives $\langle a_{\ell m}^* a_{\ell m'}^* \rangle \langle a_{\ell m} a_{\ell m'} \rangle = C_\ell^2\,\delta_{m,-m'}$. Substituting back:
 
 \begin{align}
     \frac{\mathrm{Var}(\hat{C}_{\ell})}{C_{\ell}^2}
@@ -375,7 +375,7 @@ where the last two terms use $\langle a_{\ell m}^* a_{\ell m'} \rangle = C_\ell\
     &= \frac{2\ell+3}{2\ell+1} - 1 = \frac{2}{2\ell+1}. \notag
 \end{align}
 
-Then, cosmic variance can be computed using :
+Then, cosmic variance can be computed using:
 
 \begin{equation} \label{eq:cosmic_variance}
     \frac{\mathrm{Var}(\hat{C}_{\ell})}{C_{\ell}^2} = \frac{2}{2\ell+1}.
@@ -383,7 +383,7 @@ Then, cosmic variance can be computed using :
 
 \subsubsection{Sky pixelisation}
 
-In real observations, sky maps must be pixelized to allow for numerical treatment; consequently, the angular coordinates $\theta$ and $\phi$ are discretised. The most widely used pixelization scheme in CMB experiments (and cosmology in general) is the HEALPix method~\cite{healpix2005}, which is accessible in the Python package Healpy\footnote{\url{https://github.com/healpy/healpy}}. The number of pixels in HEALPix, and thus the angular resolution, is controlled by the parameter $N_{\mathrm{side}}$, with : $N_{\mathrm{pix}} = 12 N_{\mathrm{side}}^2.$
+In real observations, sky maps must be pixelized to allow for numerical treatment; consequently, the angular coordinates $\theta$ and $\phi$ are discretised. The most widely used pixelization scheme in CMB experiments (and cosmology in general) is the HEALPix method~\cite{healpix2005}, which is accessible in the Python package Healpy\footnote{\url{https://github.com/healpy/healpy}}. The number of pixels in HEALPix, and thus the angular resolution, is controlled by the parameter $N_{\mathrm{side}}$, with: $N_{\mathrm{pix}} = 12 N_{\mathrm{side}}^2.$
 In principle, the maximum multipole that can be reliably probed depends on the pixel size. In practice, HEALPix relies on numerical approximations to accelerate spherical harmonic transforms, which become computationally expensive at high multipoles. To ensure accuracy, the maximum multipole is typically limited to $\ell_{\max} = 3 N_{\mathrm{side}}$.
 
 This framework is based on three key properties:
@@ -404,14 +404,14 @@ As discussed above (see \ref{subsection:recombination}), the CMB follows a nearl
 
 \subsubsection{Temperature Monopole and Dipole} 
 
-The temperature monopole of the CMB is its mean temperature across the sky. It has been accurately measured by FIRAS instrument of COBE satellite at $T_0 = 2.7255 \pm 0.0006 K$~\cite{COBE1994}. This measurement remains the most precise determination of the CMB monopole, as subsequent experiments have primarily focused on measuring anisotropies around this mean temperature, with the notable exception of dedicated spectral distortion\footnote{Spectral distortions of the CMB spectrum occur when energy is injected into the photon bath at epochs when thermalisation processes become inefficient. The CMB spectrum then no longer follows a blackbody law but different distributions depending on the epoch of injection.} missions (PIXIE~\cite{PIXIE2024}, PRISTINE, FOSSIL~\cite{FOSSIL2022}), aiming to improve constraints on the monopole spectrum itself. From particle physics considerations, photon–baryon decoupling occurs when the primordial plasma reaches a temperature $T_{rec} \sim 3000 K$. As discussed in \ref{subsection:expansion}, cosmic expansion induces a redshift of photon wavelengths. For a blackbody spectrum, this implies that the temperature scales with redshift as :
+The temperature monopole of the CMB is its mean temperature across the sky. It has been accurately measured by FIRAS instrument of COBE satellite at $T_0 = 2.7255 \pm 0.0006 K$~\cite{COBE1994}. This measurement remains the most precise determination of the CMB monopole, as subsequent experiments have primarily focused on measuring anisotropies around this mean temperature, with the notable exception of dedicated spectral distortion\footnote{Spectral distortions of the CMB spectrum occur when energy is injected into the photon bath at epochs when thermalisation processes become inefficient. The CMB spectrum then no longer follows a blackbody law but different distributions depending on the epoch of injection.} missions (PIXIE~\cite{PIXIE2024}, PRISTINE, FOSSIL~\cite{FOSSIL2022}), aiming to improve constraints on the monopole spectrum itself. From particle physics considerations, photon–baryon decoupling occurs when the primordial plasma reaches a temperature $T_{rec} \sim 3000 K$. As discussed in \ref{subsection:expansion}, cosmic expansion induces a redshift of photon wavelengths. For a blackbody spectrum, this implies that the temperature scales with redshift as:
 
 \begin{equation}
     T(z) = T_0 (1 + z),
 \end{equation}
 where $T_0$ is the present CMB temperature and $z$ its redshift. Using the measured value of $T_0$ and the computed recombination temperature $T_{\mathrm{rec}}$, one can infer that the CMB was emitted at a redshift $z_{\mathrm{rec}} \sim 1100$.
 
-A first level of anisotropy is induced by the motion of the observer with respect to the CMB rest frame. Because the Solar System has a peculiar velocity relative to this frame, arising from its motion within the Milky Way and from the motion of the Milky Way within the Local Group, the observed CMB temperature is Doppler shifted across the sky~\cite{doppler1842}. This effect produces a dipolar anisotropy, known as the CMB solar dipole. The dipole anisotropy was first detected in 1977~\cite{smooth1977}, then confirmed by the DMR instrument aboard the COBE satellite~\cite{COBE_DMR_1992}, and later measured with greater precision by WMAP~\cite{WMAP_5years_2009} and Planck Collaboration~\cite{Planck2018III}. The solar dipole, simulated using PySM, is shown in Figure~\ref{fig:cmb_dipole}.
+A first level of anisotropy is induced by the motion of the observer with respect to the CMB rest frame. Because the Solar System has a peculiar velocity relative to this frame, arising from its motion within the Milky Way and from the motion of the Milky Way within the Local Group, the observed CMB temperature is Doppler shifted across the sky~\cite{doppler1842}. This effect produces a dipolar anisotropy, known as the CMB solar dipole. The dipole anisotropy was first detected in 1977~\cite{smoot1977}, then confirmed by the DMR instrument aboard the COBE satellite~\cite{COBE_DMR_1992}, and later measured with greater precision by WMAP~\cite{WMAP_5years_2009} and Planck Collaboration~\cite{Planck2018III}. The solar dipole, simulated using PySM, is shown in Figure~\ref{fig:cmb_dipole}.
 
 \begin{figure}[!htbp]
     \centering
@@ -464,11 +464,11 @@ One can note that y-axis is showing $D_{\ell}$ instead of $C_{\ell}$, $D_{\ell}$
 
 The CMB angular power spectrum exhibits three main regimes, which we describe below.
 
-\paragraph{Sachs-Wolfe plateau :} $\ell \lesssim 30.$ At angular scales larger than the first acoustic peak, perturbation modes were outside the sound horizon at recombination and could not undergo causal acoustic oscillations. Temperature anisotropies therefore directly reflect the primordial matter power spectrum, unprocessed by BAO physics. The Harrison-Zel'dovich spectrum~\cite{harrisson1970,zeldovich1972} predicts a scale-invariant primordial spectrum ($n_s = 1$), which via the Sachs-Wolfe effect~\cite{SachsWolfe1967} ($\delta T/T \approx \Phi/3$ for adiabatic perturbations) produces the nearly flat plateau in $D_{\ell}$. Measurements in this regime are limited by cosmic variance and partial sky coverage.
+\paragraph{Sachs-Wolfe plateau:} $\ell \lesssim 30.$ At angular scales larger than the first acoustic peak, perturbation modes were outside the sound horizon at recombination and could not undergo causal acoustic oscillations. Temperature anisotropies therefore directly reflect the primordial matter power spectrum, unprocessed by BAO physics. The Harrison-Zel'dovich spectrum~\cite{harrisson1970,zeldovich1972} predicts a scale-invariant primordial spectrum ($n_s = 1$), which via the Sachs-Wolfe effect~\cite{SachsWolfe1967} ($\delta T/T \approx \Phi/3$ for adiabatic perturbations) produces the nearly flat plateau in $D_{\ell}$. Measurements in this regime are limited by cosmic variance and partial sky coverage.
 
-\paragraph{Baryon Acoustic Oscillations :} $30 \lesssim \ell \lesssim 2000.$ The peaks in the CMB power spectrum arise from acoustic oscillations (see \ref{subsection:bao}) in the tightly coupled photon-baryon plasma prior to recombination. The first peak, at $\ell \sim 220$, corresponds to the mode that has undergone half an oscillation at the time of last scattering. Subsequent peaks correspond to higher-order oscillations: odd peaks correspond to compressions in gravitational potentials, while even peaks correspond to rarefactions driven by photon pressure.
+\paragraph{Baryon Acoustic Oscillations:} $30 \lesssim \ell \lesssim 2000.$ The peaks in the CMB power spectrum arise from acoustic oscillations (see \ref{subsection:bao}) in the tightly coupled photon-baryon plasma prior to recombination. The first peak, at $\ell \sim 220$, corresponds to the mode that has undergone half an oscillation at the time of last scattering. Subsequent peaks correspond to higher-order oscillations: odd peaks correspond to compressions in gravitational potentials, while even peaks correspond to rarefactions driven by photon pressure.
 
-\paragraph{Silk Damping :} $\ell \gtrsim 1000-2000.$ At small angular scales, anisotropies are suppressed due to photon diffusion (Silk damping) and the finite thickness of the last scattering surface. Photons undergo a random walk before decoupling, which erases small-scale temperature fluctuations. This leads to an exponential suppression of power at high multipoles~\cite{Silk1968}. 
+\paragraph{Silk Damping:} $\ell \gtrsim 1000-2000.$ At small angular scales, anisotropies are suppressed due to photon diffusion (Silk damping) and the finite thickness of the last scattering surface. Photons undergo a random walk before decoupling, which erases small-scale temperature fluctuations. This leads to an exponential suppression of power at high multipoles~\cite{Silk1968}. 
 
 \subsection{CMB Polarisation}
 
@@ -476,7 +476,7 @@ So far, we discussed the temperature anisotropies of the Cosmic Microwave Backgr
 
 \subsubsection{Reminder on polarisation} \label{subsub:polarisation}
 
-Polarisation of the CMB plays a central role in this thesis. We briefly introduce here the relevant definitions and properties used in the following. Light, including the CMB, is an electromagnetic wave, consisting of electric and magnetic fields governed by Maxwell's equations~\cite{Maxwell1865}. In Cartesian coordinates $(x, y, z)$, an electric field propagating along the $z$-axis can be written as :
+Polarisation of the CMB plays a central role in this thesis. We briefly introduce here the relevant definitions and properties used in the following. Light, including the CMB, is an electromagnetic wave, consisting of electric and magnetic fields governed by Maxwell's equations~\cite{Maxwell1865}. In Cartesian coordinates $(x, y, z)$, an electric field propagating along the $z$-axis can be written as:
 
 \begin{equation}
     \vec{E}(t) = 
@@ -500,8 +500,8 @@ The polarisation state of the radiation is fully described by the Stokes paramet
     \end{pmatrix} \\
     &= \frac{1}{2} 
     \begin{pmatrix} 
-        I + Q & U - iV \\ 
-        U + iV & I - Q 
+        I + Q & U + iV \\ 
+        U - iV & I - Q 
     \end{pmatrix}.
 \end{align}
 
@@ -527,7 +527,7 @@ A visual representation of the Stokes parameters is shown in Figure~\ref{fig:sto
 
 \paragraph{E- and B-modes}
 
-The Stokes parameters $Q$ and $U$ depend on the choice of local coordinate system and are therefore not invariant under rotations on the sphere. Under a rotation by an angle $\psi$, they transform as :
+The Stokes parameters $Q$ and $U$ depend on the choice of local coordinate system and are therefore not invariant under rotations on the sphere. Under a rotation by an angle $\psi$, they transform as:
 
 \begin{equation}
     (Q \pm iU)'(\hat{n}) = e^{\mp 2i\psi} (Q \pm iU)(\hat{n}),
@@ -540,14 +540,14 @@ To construct rotationally invariant quantities, \cite{zaldarriaga1997} introduce
     (Q \pm iU)(\hat{n}) = \sum_{\ell m} a_{\ell m}^{\pm 2} \, {}_{\pm 2}Y_{\ell m}(\hat{n}).
 \end{equation}
 
-From these coefficients, the scalar E-mode and pseudo-scalar B-mode components are defined as :
+From these coefficients, the scalar E-mode and pseudo-scalar B-mode components are defined as:
 
 \begin{align}
     a_{\ell m}^{E} &= -\frac{1}{2}\left(a_{\ell m}^{2} + a_{\ell m}^{-2}\right), \\
     a_{\ell m}^{B} &= \frac{i}{2}\left(a_{\ell m}^{2} - a_{\ell m}^{-2}\right).
 \end{align}
 
-The corresponding real-space fields are then :
+The corresponding real-space fields are then:
 
 \begin{align}
     E(\hat{n}) &= \sum_{\ell m} a_{\ell m}^{E} Y_{\ell m}(\hat{n}), \\
@@ -610,7 +610,7 @@ As a consequence, primordial gravitational waves generate both E-mode and B-mode
 
 \subsection{Cosmological parameters}
 
-The minimal $\Lambda$CDM model is described by six free cosmological parameters. Although the model can be extended to include additional parameters, such extensions often introduce degeneracies and are not required to provide a significantly better fit to CMB observations~\cite{planck2018VI}. The six parameters of the $\Lambda$CDM model are :
+The minimal $\Lambda$CDM model is described by six free cosmological parameters. Although the model can be extended to include additional parameters, such extensions often introduce degeneracies and are not required to provide a significantly better fit to CMB observations~\cite{planck2018VI}. The six parameters of the $\Lambda$CDM model are:
 
 \begin{itemize}
     \item \textbf{Baryon density} $\Omega_b h^2$,
@@ -674,7 +674,7 @@ Several physical mechanisms generate B-mode polarisation on the sky. In the cont
 
 \subsection{Lensing} \label{sub:lensing}
 
-As described by General Relativity~\cite{generalrelativity1915}, mass curves space-time, and this curvature acts as a gravitational lens that deflects the propagation of light. In particular, \emph{gravitational lensing} alters the polarisation of photons. In the context of the CMB, photons travelling toward us are deflected by large-scale structures, inducing a mixing between E- and B-mode polarisation.
+As described by General Relativity~\cite{einstein1916_general_relativity}, mass curves space-time, and this curvature acts as a gravitational lens that deflects the propagation of light. In particular, \emph{gravitational lensing} alters the polarisation of photons. In the context of the CMB, photons travelling toward us are deflected by large-scale structures, inducing a mixing between E- and B-mode polarisation.
 Given the relative amplitudes of these two components, the conversion of B-modes into E-modes is negligible. In contrast, the leakage of E-modes into B-modes constitutes a major obstacle for the detection of primordial B-modes. Figure \ref{fig:cmb_lensing} compares the B-mode power spectrum (in blue) for different values of the tensor-to-scalar ratio $r$ (e.g. $r = 0.01$ and $r = 0.001$) with the lensing-induced B-mode spectrum (in green). It shows that if $r \lesssim 10^{-2}$, as suggested by current constraints~\cite{Tristram_2022}, lensing contamination out passes a significant fraction of the primordial B-mode signal. 
 To overcome this limitation, the lensing contribution must be removed using a technique known as delensing. This approach consists in reconstructing a template of the lensing signal from measurements of E-modes and of the projected gravitational potential, and subtracting this template from the observed B-mode map.
 
@@ -687,13 +687,13 @@ To overcome this limitation, the lensing contribution must be removed using a te
 
 \subsection{Astrophysical Dust} \label{sub:dust}
 
-Thermal dust emission constitutes one of the main astrophysical sources of B-mode polarisation, in addition to gravitational lensing of the CMB. In the interstellar medium, aspherical dust grains form large-scale structures and tend to align partially with the Galactic magnetic field through radiative torque mechanisms. As a result, their thermal emission is linearly polarised. Heated by stellar radiation to typical temperatures of $T_d \sim 20 K$, these grains emit in the microwave and far-infrared following, \tom{in the most simplistic model called $d_0$,} a modified blackbody (grey body) law~\cite{Planck2013XI}. This emission can be modelled as :
+Thermal dust emission constitutes one of the main astrophysical sources of B-mode polarisation, in addition to gravitational lensing of the CMB. In the interstellar medium, aspherical dust grains form large-scale structures and tend to align partially with the Galactic magnetic field through radiative torque mechanisms. As a result, their thermal emission is linearly polarised. Heated by stellar radiation to typical temperatures of $T_d \sim 20 K$, these grains emit in the microwave and far-infrared following, in the most simplistic model called $d_0$, a modified blackbody (grey body) law~\cite{Planck2013XI}. This emission can be modelled as:
 
 \begin{equation}
     I_{\nu, d} \propto \nu^{\beta_d}B_{\nu}(T_d),
 \end{equation}
 where $\beta_d$ is the dust spectral index and $B_{\beta_d}(T_d)$ is the Planck function, describing the blackbody emission.
-At frequencies above $\sim 100 GHz$, thermal dust emission dominates over CMB polarisation, as shown in Figure~\ref{fig:foreground_SED}. Its spectral energy distribution (SED) is often parameterised as :
+At frequencies above $\sim 100 GHz$, thermal dust emission dominates over CMB polarisation, as shown in Figure~\ref{fig:foreground_SED}. Its spectral energy distribution (SED) is often parameterised as:
 
 
 \begin{figure}[!htbp] 
@@ -704,7 +704,7 @@ At frequencies above $\sim 100 GHz$, thermal dust emission dominates over CMB po
 \end{figure}
 
 \begin{equation} \label{eq:dust_SED}
-    f_d(\nu, T_d) = A_d (\frac{\nu}{\nu_{0,d}})^{\beta_d} \frac{e^{\frac{h\nu}{kT_d}} - 1}{e^{\frac{h_{\nu_0,d}}{kT_d}} - 1},
+    f_d(\nu, T_d) = A_d (\frac{\nu}{\nu_{0,d}})^{\beta_d} \frac{e^{\frac{h\nu}{kT_d}} - 1}{e^{\frac{h\nu_0,d}{kT_d}} - 1},
 \end{equation}
 with $A_d$ is the amplitude at reference frequency $\nu_{0, d}$ and $\beta_d$ is the spectral index. In practice, the dust temperature is often fixed to $T_d \approx 20 K$, due to degeneracies with $A_d$ and $\beta_d$ while fitting dust SED. Figures \ref{fig:dust_I_map} and \ref{fig:dust_QU_maps} shows respectively Intensity and Polarisation dust maps at $353 GHz$, as measured by Planck and reconstructed using the \emph{Commander}~\footnote{\url{https://github.com/Cosmoglobe/Commander}} framework~\cite{Commander2008}.
 
@@ -731,13 +731,13 @@ with $A_d$ is the amplitude at reference frequency $\nu_{0, d}$ and $\beta_d$ is
 
 Synchrotron radiation arises from relativistic electrons spiralling in Galactic magnetic fields. As these charged particles are accelerated perpendicular to their velocity, they emit highly anisotropic radiation that is intrinsically linearly polarised. This mechanism constitutes one of the main low-frequency astrophysical foregrounds contaminating CMB polarisation measurements.
 
-The simplest synchrotron model, called $s_0$, asserts that its emission spectrum follows a power law in frequency space, which can be modelled as :
+The simplest synchrotron model, called $s_0$, asserts that its emission spectrum follows a power law in frequency space, which can be modelled as:
 \begin{equation}
     I_{\nu, s} \propto \nu^{\beta_s},
 \end{equation}
 where $\beta_s$ is the synchrotron spectral index, typically ranging between $-3.2$ and $-2.5$ depending on the region of the sky.
 
-At frequencies below $\sim 70$~GHz, synchrotron emission dominates over CMB, as shown in Figure~\ref{fig:foreground_SED}. Its spectral energy distribution (SED) is commonly parameterised as :
+At frequencies below $\sim 70$~GHz, synchrotron emission dominates over CMB, as shown in Figure~\ref{fig:foreground_SED}. Its spectral energy distribution (SED) is commonly parameterised as:
 \begin{equation} \label{eq:sync_SED}
     f_s(\nu) = A_s \left(\frac{\nu}{\nu_{0,s}}\right)^{\beta_s},
 \end{equation}
@@ -772,7 +772,7 @@ The impact of these foregrounds on CMB polarisation measurements is further illu
 
 These results highlight that foreground emission is a major obstacle to the detection of primordial CMB B-modes. However, dust and synchrotron emissions exhibit spectral behaviours that differ from that of the CMB, as described by Eqs.~\ref{eq:dust_SED} and~\ref{eq:sync_SED}. This difference provides a way to disentangle the various contributions using multi-frequency observations.
 
-This principle forms the basis of \emph{component separation} methods, which aim at reconstructing the CMB signal from contaminated sky observations. These techniques will be introduced and developed in the following Chapters : \ref{chap:FMM}, \ref{chap:CMM} and \ref{chap:NNMM}.
+This principle forms the basis of \emph{component separation} methods, which aim at reconstructing the CMB signal from contaminated sky observations. These techniques will be introduced and developed in the following Chapters: \ref{chap:FMM}, \ref{chap:CMM} and \ref{chap:NNMM}.
 
 \begin{figure}[!htbp]
     \begin{minipage}{0.5\linewidth}
@@ -808,7 +808,7 @@ Low values of PWV are essential for high-sensitivity observations, as they reduc
     \label{fig:atm_brightness}
 \end{figure}
 
-In addition to its average emission, the atmosphere is a turbulent medium, leading to fluctuations in the observed signal along the line of sight and during telescope scanning, leading to spatial and temporal correlations in data. These fluctuations are commonly described by Kolmogorov turbulence, characterised by a three-dimensional power spectrum :
+In addition to its average emission, the atmosphere is a turbulent medium, leading to fluctuations in the observed signal along the line of sight and during telescope scanning, leading to spatial and temporal correlations in data. These fluctuations are commonly described by Kolmogorov turbulence, characterised by a three-dimensional power spectrum:
 \begin{equation}
     P(\vec{k}) \propto |\vec{k}|^{-11/3},
 \end{equation}
