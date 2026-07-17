@@ -4,15 +4,17 @@
 
 \begin{document}
 
+\chapter{Component Map-Making} \label{chap:CMM}
+
 \ifSubfilesClassLoaded{
     \tableofcontents
 }{
     \minitoc
 }
 
-\chapter{Component Map-Making} \label{chap:CMM}
+\section*{Introduction}
 
-This chapter introduces an innovative algorithm that performs astrophysical component separation simultaneously with map-making by exploiting the frequency information contained in QUBIC Time-Ordered-Data. Although formally applicable to any CMB experiment, this method is particularly effective when combined with the spectrathanks to a strong frequency dependance of the synthesized beam. We refer to this approach as \emph{Component Map-Making} (CMM).
+This chapter introduces an innovative algorithm that performs astrophysical component separation simultaneously with map-making by exploiting the frequency information contained in QUBIC Time-Ordered-Data. Although formally applicable to any CMB experiment, this method is particularly effective when combined with the spectral imaging capabilities enabled by bolometric interferometry, which allows for an increased spectral resolution thanks to a strong frequency dependance of the synthesized beam. We refer to this approach as \emph{Component Map-Making} (CMM).
 
 The first section presents the general principles of CMM and highlights its differences with Frequency Map-Making (FMM). We then discuss the component-separation formalism, for which two solutions have been implemented: one based on parametric models of foreground emission and another independent of any specific assumptions on foregrounds' spectrum. The chapter concludes with a discussion of the numerical properties of CMM and the statistical properties of the reconstructed maps. This chapter focuses on the methodology; detailed developments and results are presented in the following chapters. \\
 
@@ -40,7 +42,7 @@ Since both $A$ and $\vec{c}$ are unknown and strongly correlated, they cannot be
 The component maps are still reconstructed using PCG method, in the exact same way than in FMM algorithm. On the another hand, the mixing matrix is estimated with a classical $\chi^2$ minimisation, done in two different manners, detailed in the following Section.
 
 \noindent
-\textbf{Remark:} In \cite{CMM}, we also explored the possibility of jointly reconstructing instrumental systematic effects together with the mixing matrix and the component maps. As a proof of concept, detector gains were included among the fitted parameters, adding a new step to the alternate fitting. Instrumental systematic estimation within the CMM is not considered further in this thesis, since self-calibration (discussed in Chapter~\ref{chap}) provides a dedicated framework for handling instrumental uncertainties. The detectors' gain estimation was shown as a proof of concept.
+\textbf{Remark:} In \cite{CMM}, we also explored the possibility of jointly reconstructing instrumental systematic effects together with the mixing matrix and the component maps. As a proof of concept, detector gains were included among the fitted parameters, adding a new step to the alternate fitting. Instrumental systematic estimation within the CMM is not considered further in this thesis, since self-calibration (discussed in Chapter~\ref{chap:gps}) provides a dedicated framework for handling instrumental uncertainties. The detectors' gain estimation was shown as a proof of concept.
 
 \subsection{External data} \label{sub:cmm_external_data}
 
@@ -72,7 +74,6 @@ $d_1$ is the standard pipeline model and a generalisation of $d_0$. It is a Modi
 \paragraph{$\boldsymbol{d_6}$} \label{paragraph:d6}
 Under $d_6$~\cite{vansyngel2018}, each pixel is described by a $d_0$ model modified by adding a frequency decorrelation. The decorrelation, parametrised by the parameter $l_{corr}$, is assumed constant across the sky. The resulting SED for the dust exhibits a random dispersion around the modified blackbody model, which increases when $l_{corr}$ decreases. The physical motivation behind \texttt{d6} is to model the multiple dust clouds observed at different distances along the line of sight. These clouds may have different local magnetic field orientations and temperatures, and thus different spectral indices. Since the relative weight of each cloud's contribution to the total signal changes with frequency, the effective (line-of-sight-averaged) polarisation angle also varies with frequency, hence the term dust frequency decorrelation.
 
-
 \subsection{Results}
 
 Figure~\ref{fig:cmm_parametric_maps} presents an example of the result of reconstructing CMB and Dust, simulated from $d_0$ model (see \ref{paragraph:d0},) component maps. It shows the reconstructed and residual maps for both CMB and Dust, for the three Stokes parameters' maps.
@@ -80,18 +81,16 @@ Figure~\ref{fig:cmm_parametric_maps} presents an example of the result of recons
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=1\linewidth]{d0_component_maps.pdf}
-    \caption{CMB and Dust reconstructed and residual maps with Parametric CMM. \tom{Redone with unseen}}
+    \caption{CMB and Dust reconstructed and residual maps with Parametric CMM.}
     \label{fig:cmm_parametric_maps}
 \end{figure}
 
-The associated convergence of the spectral index is visible in Figure~\ref{fig:d0_spectral_index}\footnote{\tom{In this figure, the error bars are underestimated. A proper Monte-Carlo analysis, with different noise realisation, would be needed for a proper estimation of the error on the fitted value of $\beta$.}}. It shows the convergence from different starting point, to the input value in dash line. 
-
-\rmk{Too light, I don't really know what to add here.}
+The associated convergence of the spectral index is visible in Figure~\ref{fig:d0_spectral_index}\footnote{In this figure, the error bars are underestimated. A proper Monte-Carlo analysis, with different noise realisation, would be needed for a proper estimation of the error on the fitted value of $\beta$.}. It shows the convergence from different starting point, to the input value in dash line. A small bias with respect to the true value is nevertheless visible. This bias originates from the presence of noise: since all reconstructions use the same noise realization, they converge toward the same slightly biased estimate rather than the exact input value.
 
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=1\linewidth]{d0_spectral_index_convergence.png}
-    \caption{\tom{Convergence of the dust spectral index with the number of loop iteration for 30 differents starting point. (Top) Convergence of the fitted spectral index $\beta$. (Bottom) Convergence of the residual between the fitted and the true values of the spectral index.}}
+    \caption{Convergence of the dust spectral index with the number of loop iteration for 30 differents starting point. (Top) Convergence of the fitted spectral index $\beta$. (Bottom) Convergence of the residual between the fitted and the true values of the spectral index.}
     \label{fig:d0_spectral_index}
 \end{figure}
 
@@ -102,7 +101,7 @@ The associated convergence of the spectral index is visible in Figure~\ref{fig:d
 While developing the Parametric CMM, we saw the limitation of relying on a given model to mitigate foregrounds contamination of CMB signal. Indeed, if we assume the wrong model to describe foregrounds, the component separation will be biased, resulting in wrong cosmological parameters' estimation in CMB map. Furthermore, in case of complex foregrounds model, with unmodelled underlying effects, we will never be able to correctly estimate them. This thought is the basis of the development of non-parametric component separation method.
 Based on this idea, we developed a non-parametric version of the CMM, that we call \emph{Blind CMM}.
 
-Here, we are not considering any parameter for foregrounds, the mixing matrix elements are now the unknowns we aim at fitting. It drastically increases the complexity of the reconstruction : while $\left(N_{comp}-1\right)$ parameters were enough to describe the full mixing matrix in the Parametric case (in $d_0$ model), $\left(N_{comp}-1\right)\times N_{freq}$ are now required in the Blind approach. The increased complexity will affect the reconstruction, but is the only way to separate complex foregrounds model from CMB. Beyond that, thanks to QUBIC's high spectral resolution, unbiased reconstruction is possible, completely independently of the real foregrounds' model. The case of frequency decorrelated dust is explored in \cite{regnier2024}, and discussed in the next subsection.
+Here, we are not considering any parameter for foregrounds, the mixing matrix elements are now the unknowns we aim at fitting. It drastically increases the complexity of the reconstruction : while $\left(N_{comp}-1\right)$ parameters were enough to describe the full mixing matrix in the Parametric case (in $d_0$ model), $\left(N_{comp}-1\right)\times N_{freq}$ are now required in the Blind approach. The increased complexity will affect the reconstruction, but is the only way to separate complex foregrounds model from CMB. Beyond that, thanks to QUBIC's high spectral resolution, unbiased reconstruction is possible, completely independently of the real foregrounds' model. The case of frequency decorrelated dust is explored in \cite{regnier2024}, and discussed in the next subsection. \\
 
 \textbf{Remark:} A third approach has been implemented in the case of a sky composed of CMB, Dust and Synchrotron. This method can be called Mixed reconstruction. The idea is to reconstruct one component using Parametric approach, and the other one with Blind approach. The method is fully implemented and functional, but is not explored further within this thesis, as it would have required a lot of effort to investigate and optimise its convergence, which is even more complicated than the two previous cases. 
 
@@ -112,8 +111,8 @@ In Blind CMM, we are no longer reconstructing foregrounds' parameters, but direc
 
 \begin{figure}[!htbp]
     \centering
-    \includegraphics[width=0.7\linewidth]{d0_blind_mixing_matrix.png}
-    \caption{Mixing Matrix elements' reconstruction in Blind CMM for $d_0$ model. Vertical axis showing the mixing matrix elements, is in log space, while horizontal axis is the frequency of each bin. \tom{(Top) Fitted mixing matrix elements in red, compared with the true values in green and the associated $d_0$ model in blue. (Bottom) Residual between the true and fitted values for each mixing matrix' bins. In this figure, error bars on the fitted mixing matrix element are underestimated. A proper Monte-Carlo analysis would be needed to compute accurate ones.}}
+    \includegraphics[width=1\linewidth]{d0_blind_mixing_matrix.png}
+    \caption{Mixing Matrix elements' reconstruction in Blind CMM for $d_0$ model. Vertical axis showing the mixing matrix elements, is in log space, while horizontal axis is the frequency of each bin. (Top) Fitted mixing matrix elements in red, compared with the true values in green and the associated $d_0$ model in blue. (Bottom) Residual between the true and fitted values for each mixing matrix' bins. In this figure, error bars on the fitted mixing matrix element are underestimated. A proper Monte-Carlo analysis would be needed to compute accurate ones.}
     \label{fig:cmm_blind_mm_d0}
 \end{figure}
 
@@ -173,7 +172,7 @@ Note that an alternative strategy would be to fit the resolution simultaneously 
 \section{Complex reconstruction}
 
 This final section presents the application of the CMM algorithm to more complex foreground models. Although the cases considered here are not discussed further in the remainder of the thesis, they illustrate the versatility and robustness of the CMM when confronted with increasingly realistic descriptions of astrophysical foregrounds. More generally, they highlight the potential of this approach for component separation, a challenge that may ultimately constitute a limiting factor for CMB experiments based on direct imaging.
-Section~\ref{sub:foregrounds} introduced simplified models for thermal dust and synchrotron emission. These were respectively described by a modified blackbody spectrum with a power-law emissivity ($d_0$ model) and by a power law in frequency space ($s_0$ model). While these approximations are often used for forecasting studies, real astrophysical foregrounds may exhibit significantly more complex spectral and spatial behaviours. Therefore, accurately mitigating their contamination requires more sophisticated modelling.
+Section~\ref{section:foregrounds} introduced simplified models for thermal dust and synchrotron emission. These were respectively described by a modified blackbody spectrum with a power-law emissivity ($d_0$ model) and by a power law in frequency space ($s_0$ model). While these approximations are often used for forecasting studies, real astrophysical foregrounds may exhibit significantly more complex spectral and spatial behaviours. Therefore, accurately mitigating their contamination requires more sophisticated modelling.
 
 \subsection{Spatially varying spectral index} \label{sub:cmm_d1}
 
