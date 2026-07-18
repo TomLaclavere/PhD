@@ -40,7 +40,7 @@ To be accurate, $N_\text{sub}$ needs to be high enough to properly describe the 
 The first quantity we investigate is the convergence of the TOD, that is, the value of $N_{\text{sub}}$ beyond which the TOD no longer changes significantly. A first approach consists of directly comparing the TOD generated with different values of $N_{\text{sub}}$. For simplicity, we consider a sky containing only CMB emission. We then simulate several instrumental operators $H$ corresponding to different values of $N_{\text{sub}}$. To limit the computational cost, only a few time samples are considered. The TOD is computed as :
 
 \begin{equation}
-    \mathrm{TOD}*{N*{\text{sub}}} = H_{N_{\text{sub}}}, s_{\text{CMB}}.
+    \mathrm{TOD}_{N_{\text{sub}}} = H_{N_{\text{sub}}} s_{\text{CMB}}.
 \end{equation}
 
 Selecting a detector at random on the focal plane and plotting its TOD for different values of $N_{\text{sub}}$, we observe that each configuration produces slightly different values at each time sample, as shown in Figure~\ref{fig:tod_one_det}. This first result indicates that the TOD is indeed affected by the choice of $N_{\text{sub}}$. A convergence trend can nevertheless be observed: the TOD obtained with $N_{\text{sub}} = 4$ differs significantly from the others, whereas those obtained with $N_{\text{sub}} = 64$ and $84$ are nearly indistinguishable visually.
@@ -297,5 +297,7 @@ The symbol $\varnothing$ in the $\beta$ residual column means that the fit of th
 \end{figure}
 
 One would need to be careful with these values, as they do not represent an absolute rule for CMM. Indeed, they are not performed on a large statistical sample but only on one specific case. Furthermore, we can't find explanation for diverging convergence for some $N_\text{iter}$ values and not for others. An extension of this analysis may be needed in the future, or developing a non-linear solver to remove the need for the alternate convergence.
+
+\rmk{I don't add the same plot for blind CMM, because the reconstruction was bad in all cases. Even if we can see a convergence, some mixing matrix elements were far from the true value, and the reconstructed maps look very bad.}
 
 \end{document}

@@ -22,7 +22,7 @@ Particular emphasis is placed on the architecture of \emph{qubicsoft} and on the
 The chapter also presents the implemented simulation and reconstruction capabilities, discusses the currently known issues and limitations, and outlines the most important developments planned for future releases of the framework. \\
 
 \personal{At the beginning of this thesis, the simulation and reconstruction pipeline was still at an R\&D stage, with many hard-coded or \enquote{work-in-progress} components, and was maintained in a separate repository from \emph{qubicsoft}. In collaboration with Mathias Regnier, we improved the software structure of the pipeline by introducing a user-friendly interface based on parameter files and simple Bash\footnote{\url{https://doc.ubuntu-fr.org/bash}} scripts, while migrating the codebase into \emph{qubicsoft}.
-A significant part of the second and third years of this thesis was therefore dedicated to software engineering tasks, including refactoring, cleaning, documenting, and optimising the code. These developments were carried out in parallel with characterisation and debugging efforts, which are discussed in the next Chapter~\ref{chap:tod}. This work resulted in approximately 650 commits to the \emph{qubicsoft} GitHub repository over this period at the time of writing.}
+A significant part of the second and third years of this thesis was therefore dedicated to software engineering tasks, including refactoring, cleaning, documenting, debugging and optimising the code. These developments were carried out in parallel with hyperparameters characterisation efforts, which are discussed in the next Chapter~\ref{chap:tod}. This work resulted in approximately 650 commits to the \emph{qubicsoft} GitHub repository over this period at the time of writing.}
 
 \section{Instrumental model} \label{section:instrumental_model}
 
@@ -399,7 +399,7 @@ We found empirically that the best way to quickly reconstruct the mixing matrix 
 
 \begin{figure}[htbp]
 \centering
-\resizebox{!}{0.9\textheight}{%
+\resizebox{!}{1\textheight}{%
 \begin{tikzpicture}[
   x=1cm, y=1cm,
   procnode/.style  = {draw, rounded corners, fill=blue!6, align=center,
@@ -421,22 +421,22 @@ We found empirically that the best way to quickly reconstruct the mixing matrix 
 \node[procnode] (Sim)     at (0, 12)    {Simulate TOD};
 \node[procnode] (Solve)   at (0, 9)  {Solve map-making equation\\(PCG)\\$\rightarrow$ update component maps};
 \node[procnode] (FitMM)   at (0, 6)    {Fit mixing matrix};
-\node[optnode] (FitGain)  at (4.5, 6)  {Update detector\\gains (optional)};
-\node[decnode] (StopCond) at (0, 3)    {Converged or\\max.\ iterations ?};
-\node[procnode] (FinalPCG) at (0, 0)  {Final PCG\\(extra iterations)};
-\node[decnode] (DecSpec)  at (0, -3)   {Power spectra ?};
-\node[optnode] (Spectra)  at (4.5, -3) {Cross angular\\power spectra};
-\node[ionode]  (Store)    at (0, -6)   {Store outputs :\\TOD, maps, mixing matrix,\\spectral indices, gains, spectra};
-\node[optnode] (Plots)    at (6, -6) {Automated plots};
-\node[optnode] (Fit)      at (0, -9)   {MCMC to\\estimate $r$};
+\node[optnode] (FitGain)  at (0, 3)  {Update detector\\gains (optional)};
+\node[decnode] (StopCond) at (0, 0)    {Converged or\\max.\ iterations ?};
+\node[procnode] (FinalPCG) at (0, -3)  {Final PCG\\(extra iterations)};
+\node[decnode] (DecSpec)  at (0, -6)   {Power spectra ?};
+\node[optnode] (Spectra)  at (4.5, -6) {Cross angular\\power spectra};
+\node[ionode]  (Store)    at (0, -9)   {Store outputs :\\TOD, maps, mixing matrix,\\spectral indices, gains, spectra};
+\node[optnode] (Plots)    at (6, -9) {Automated plots};
+\node[optnode] (Fit)      at (0, -12)   {MCMC to\\estimate $r$};
 
 \draw[flow] (Params) -- (Preset);
 \draw[flow] (Preset) -- (Build);
 \draw[flow] (Build) -- (Sim);
 \draw[flow] (Sim) -- (Solve);
 \draw[flow] (Solve) -- (FitMM);
-\draw[flow, dashed] (FitMM) -- (FitGain);
-\draw[flow] (FitMM) -- (StopCond);
+\draw[flow] (FitMM) -- (FitGain);
+\draw[flow] (FitGain) -- (StopCond);
 \draw[flow] (StopCond) -- node[left, font=\scriptsize] {yes} (FinalPCG);
 \draw[flow] (StopCond.west) to[out=180, in=180] node[left, font=\scriptsize] {no} (Solve.west);
 \draw[flow] (FinalPCG) -- (DecSpec);
@@ -454,7 +454,7 @@ We found empirically that the best way to quickly reconstruct the mixing matrix 
 \end{figure}
 
 Finally, we detail the complicated framework to reconstruct the mixing matrix. The complication comes from the necessity to handle very different foregrounds models and fitting methods. The Figure~\ref{fig:diagram_mixingmatrix} is summarising the architecture of such algorithm, assuming that the sky is composed only of CMB and Dust. In reality, it also checks for Synchrotron and Carbon Monoxyde emission line, going through the same steps for each.
-For each fitted method, a specific class handles all necessary functions : fitting, updating, plotting and printing methods. \texttt{ParametricMM} and \texttt{BlindMM} rely on the same general custom class \texttt{Chi2} to build the cost function used to fit the mixing-matrix. The Mixed fitting case, written under the class \texttt{MixedMM}, is using a specific $\texttt{MixedChi2}$ class to build its cost function. It comes from a shape limitation preventing the fit of an array containing a float on one row (parametric case, where one spectral index is fitted) and multiple value on another one (blind case, where multiple mixing matrix elements are fitted). To overcome this issue, an intermediate mapping $\texttt{MMLayout}$ is used.
+For each fitted method, a specific class handles all necessary functions : fitting, updating, plotting and printing methods. \texttt{ParametricMM} and \texttt{BlindMM} rely on the same general custom class \texttt{Chi2} to build the cost function used to fit the mixing-matrix with \textbf{scipy.optimize.minimze}\footnote{Other reconstruction methods have been implemented, but not tested on end-to-end simulations. Therefore, we are not detailing them.}. The Mixed fitting case, written under the class \texttt{MixedMM}, is using a specific $\texttt{MixedChi2}$ class to build its cost function. It comes from a shape limitation preventing the fit of an array containing a float on one row (parametric case, where one spectral index is fitted) and multiple value on another one (blind case, where multiple mixing matrix elements are fitted). To overcome this issue, an intermediate mapping $\texttt{MMLayout}$ is used.
 
 \begin{figure}[htbp]
 \centering
@@ -578,6 +578,8 @@ Several ideas emerged during this thesis that could significantly improve the me
 The most important one is the implementation of a non-linear PCG solver. Such an approach would remove the need for the alternating fitting scheme currently used in CMM and would considerably improve the prospects for atmospheric mitigation discussed in Chapter~\ref{chap:atm}. More importantly, it would provide an optimal convergence to the non-linear nature of the problem, whereas the current alternating fitting procedure can only offer an approximate (and slow) solution. This idea was initially explored by a former internship student, Victor Chabirand, but the limited duration of the internship did not allow for an implementation. We therefore strongly recommend dedicating future development efforts to this topic, as it could represent a major step forward for QUBIC spectral imaging reconstruction.
 
 An alternative to a non-linear PCG approach would be the use of a Gibbs sampling algorithm. Gibbs sampling is a Markov Chain Monte Carlo (MCMC) method that samples the joint posterior distribution of all model parameters, including the angular power spectra $C_\ell$, by iteratively drawing samples from their conditional distributions. This approach is notably employed by the Commander framework~\cite{Commander2008}. Its main advantage is the rigorous statistical treatment of uncertainties, allowing for automatic marginalisation over systematics while providing full posterior distributions for all quantities of interest, including sky maps, foreground parameters, noise properties, and power spectra. The main drawbacks are the computational cost associated with MCMC methods, their potentially slow convergence, the difficulty of assessing convergence diagnostics, and a substantially more complex implementation compared to the current PCG.
+
+\tom{Additionally, the creator of PyOperators and PySimulators, Pierre Chanial, is working on an improved version of these two packages using JAX\footnote{\url{https://github.com/jax-ml/jax}} within the SciPol ERC project}\footnote{\url{https://scipol.in2p3.fr/}, called FURAX\footnote{\url{https://github.com/CMBSciPol/furax}}. The JAX library provides tools for optimising numerical computation (parallelisation across CPU, GPU, and TPU, Just-In-Time compilation, automatic differentiation, and vectorisation, among others), enabling more advanced numerical methods to be applied to large datasets. This framework can highly improve the \emph{qubicsoft}, where computational time and memory usage is always a limitation.}
 
 A more modest improvement concerns FMM and the possibility of reconstructing a different number of sub-bands within the $150$ and $220$ GHz frequency channels. For example, one could reconstruct several sub-bands within the $220$ GHz channel, where thermal dust emission is dominant, while reconstructing only a single map within the $150$ GHz channel, where the CMB signal dominates. Such an approach would exploit the spectral imaging capabilities of QUBIC where they are most beneficial for component separation, while limiting the increase in anti-correlated noise associated with a large number of reconstructed sub-bands where little additional information is gained.
 This idea can be further extended by introducing a non-uniform distribution of sub-band bandwidths. In the current implementation, the bandwidth of each reconstructed sub-band is determined only by the total number of reconstructed maps, $N_{\text{rec}}$, resulting in uniform bandwidths across the frequency range. However, wider sub-bands at lower frequencies and narrower sub-bands at higher frequencies could potentially improve both map reconstruction and component separation by better matching the spectral complexity of the observed sky. A similar strategy could also be applied to the reconstruction of the mixing matrix within the CMM framework.
