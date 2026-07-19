@@ -383,32 +383,50 @@ The estimation of the wind vector is incorporated into the reconstruction loop, 
 As shown in Equation~\ref{eq:atm_data_model}, the shift operator is applied after the atmospheric mixing matrix. Consequently, its computational cost depends on both the map resolution and the number of frequency sub-bands used in the mixing matrix. This choice was not motivated by physical considerations. From a computational perspective, it would be preferable to apply the shift operator before the mixing matrix, reducing its dimensions from $\left(N_\text{chunk}, N_\text{freq}\right)$ to $N_\text{chunk}$ and significantly decreasing the associated computational cost.
 The current implementation was instead motivated by software design limitations. Since all the elements of the mixing matrix are fitted simultaneously, it is much simpler to manipulate a single mixing matrix of size $N_\text{freq}$ than one with dimensions $\left(N_\text{chunk}, N_\text{freq}\right)$. Applying the shift operator before the mixing matrix would therefore require constraining the mixing-matrix parameters to be identical across all chunks, preventing the optimisation from fitting unnecessary degrees of freedom. Implementing these additional constraints would have required substantial modifications to the reconstruction algorithm and could not be completed within the timeframe of this thesis. It therefore remains an important direction for future developments.
 
-\subsection{Maps' fixing}
+\subsection{Maps' fixing} \label{sub:atm_maps_fixing}
 
 An interesting idea was proposed by Ingunn Wehus, one of the Cosmoglobe\footnote{\url{https://www.cosmoglobe.uio.no/}} coordinator, to reduce the reconstruction complexity. As we are considering a non-polarised atmosphere (see \ref{subsub:atm_polarisation}), there is no need to reconstruct the pixels of the Q and U maps. Additionally, Planck data are already providing measurement which are sample-variance limited at the angular scales covered by QUBIC, meaning that we can't reconstruct Intensity map at a better level than Planck. We can limit ourselves to the reconstruction of the CMB polarisation maps, and of the atmosphere temperature map, dividing the number of pixels by 2. 
 Because of the implementation of the PCG solver in the \emph{qubicsoft}, we can't choose which map will be reconstructed. We developed, based on an idea of Pierre Chanial and an early implementation by Mathias Regnier, a Masking operator that is added in the equation \ref{eq:atm_data_model}. This operator is hiding the maps to be fixed, allowing to decrease the reconstruction unknowns. 
 
 \subsection{Atmosphere map-making}
 
-Here, we propose to show results of the atmosphere map-making, without including CMB and component separation. The goal is to observe the effect of performing the map-making in local coordinates, as well as observing the effect of not accounting for the wind displacement.
+Here, we propose to show results of the atmosphere map-making, without including CMB and component separation. The goal is to observe the effect of performing the map-making in local coordinates, as well as observing the effect of not accounting for the wind displacement. 
+
+It is important to note that the reconstruction pipelines, described in the Chapter \ref{chap:qubicsoft}, cannot be used here. Indeed, the atmosphere map, operating in both galactic and local coordinated, or the wind are not currently implemented in these pipelines. Therefore, for each different case studied, a specific pipeline was build "by hands". The method to build it was to increase incrementally the complexity. The main steps are presented in the following, but some key points are not mentioned are they do not represent further interest from the atmosphere mitigation point of view, while they remained challenging from the algorithmic point of view (for example, going from monochromatic to polychromatic, from FMM-like to CMM-like reconstruction, joint observation and reconstruction through both local and galactic coordinates, and many others).
 
 \subsubsection{No wind case}
+
+We start by performing the map-making without considering any wind. The idea here is to test our implementation of CMM in the case of local coordinates. The coordinates' system should not affect the result, but it allows to verify the implementation. 
+
+\rmk{Add scanning strategy !!!}
+
+Then, we reconstruct the atmosphere without considering noise, in order to check the correctness of the method. The result is visible in Figure~\ref{fig:atm_mm_no_wind_noiseless}, and confirm that the approach is not biased, as proved by the null residual.
 
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=1\linewidth]{atm_mapmaking_noiseless.png}
-    \caption{}
+    \caption{Noiseless reconstruction of the Intensity map of the atmosphere. The left map is the true one, the central map is the reconstructed one, and the right map is the difference between the two.}
     \label{fig:atm_mm_no_wind_noiseless}
 \end{figure}
+
+The exact same map-making is performed, but adding noise in the simulation this time, corresponding to about $10\&$ of QUBIC noise. The reconstructed maps are shown in Figure~\ref{fig:atm_mm_no_wind}. One can see reconstruction noise at the edge of the residual map. It corresponds to the edge effect (introduced in subsection~\ref{sub:fmm_external_data}). Meanwhile, the centre of the patch is very well reconstructed.
 
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=1\linewidth]{atm_mapmaking.png}  
-    \caption{}
+    \caption{Noisy reconstruction of the Intensity map of the atmosphere. The level of noise is not realistic for the QUBIC instrument.}
     \label{fig:atm_mm_no_wind}
 \end{figure}
 
 \subsubsection{Wind case} 
+
+Now that we verified the map-making of the atmosphere in local coordinates, we need to account for the wind effect. First, we run the map-making while introducing wind during TOD acquisition. The goal is then to see its effect when nothing is done to account for it. 
+
+\rmk{I still need to run that.}
+
+\rmk{Indicate wind properties here !}
+
+Figure~\ref{fig:atm_mm_wind} shows the bias introduced due to not accounting for the wind.
 
 % \begin{figure}[!htbp]
 %     \centering
@@ -419,62 +437,100 @@ Here, we propose to show results of the atmosphere map-making, without including
 
 \subsection{Atmosphere separation and map-making}
 
-\subsubsection{No wind case}
+In the previous subsection, we validated the basic principles of the atmosphere map-making algorithm. We now turn to the more challenging problem of the joint reconstruction of the CMB and atmospheric emission.
+
+To assess the feasibility of this approach, we proceed in three successive steps. First, we reconstruct the CMB and atmosphere maps while assuming that the mixing matrix is perfectly known, with a null wind. This allows us to verify that the spectral information encoded in the mixing matrix is sufficient to separate the two components successfully. Second, we reconstruct the mixing matrix itself while simultaneously performing map-making through the alternate convergence scheme. Finally, we include the wind reconstruction within the iterative process to investigate whether a simple constant wind can be accurately recovered and used to obtain an unbiased reconstruction.
+
+\subsubsection{Perfect component separation}
+
+Figures~\ref{fig:atm_cmb_I_mm_no_wind_no_mm} and \ref{fig:atm_cmb_Q_mm_no_wind_no_mm} present the joint reconstruction of the CMB and atmospheric components assuming that the mixing matrix is known exactly. For this simulation, we increased both the number of time samples and the map resolution to improve the reconstruction quality\footnote{This simulation was performed on the IN2P3 Computing Centre, as it required more than one day of computation and a large amount of memory. Such computationally demanding simulations could not be carried out for every configuration, as the emphasis of this work was on research and development, which required frequent iterations and algorithmic modifications throughout the implementation process.}. Due to this, the actual shape of the atmosphere map is not a sphere any more, as the Earth's rotation shifted it. It corresponds to the coverage presented in Figure~\ref{fig:atm_coordintates}.
+
+Several interesting features can be observed in these two figures. First, considering the intensity maps shown in Figure~\ref{fig:atm_cmb_I_mm_no_wind_no_mm}, the residual level is much lower than the signal level, demonstrating that both the CMB and atmospheric components are successfully reconstructed. As expected (see Subsection~\ref{sub:fmm_external_data}), the residual maps are dominated by reconstruction noise near the edges of the observed patch, whereas the central region exhibits only very small residuals.
+
+Another noticeable feature is the presence of stripe-like structures in the residual maps. These are most pronounced near two extremities of the spherical CMB patch and in the corresponding regions of the atmospheric patch, although fainter stripes are also slightly visible in the central region. We attribute these structures to a small degeneracy introduced by Earth's rotation. Unlike the CMB patch, the atmospheric patch rotates on the sky during the observation, which explains its non-spherical shape. As a consequence, the regions near the two extremities are sampled less uniformly throughout the scan, leading to a less constrained reconstruction and a small leakage between the reconstructed CMB and atmospheric components.
+
+At present, no satisfactory solution has been identified to mitigate these stripe-like residuals. However, we observe that they become increasingly prominent for longer observation times, suggesting that they are linked to the accumulated effects of Earth's rotation. Determining whether this behaviour reflects a fundamental limitation of the current reconstruction framework or can be mitigated through an improved observing strategy or algorithm remains an open question.
 
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=1\linewidth]{atm_cmb_I_maps.pdf}
-    \caption{}
+    \caption{Reconstruction of the Intensity maps of CMB and atmosphere, assuming a perfect component separation.}
     \label{fig:atm_cmb_I_mm_no_wind_no_mm}
 \end{figure}
+
+Alongside the intensity maps, we also reconstructed the Stokes Q and U maps for both the CMB and the atmosphere. The reconstructed Q maps are presented in Figure~\ref{fig:atm_cmb_Q_mm_no_wind_no_mm}. Interestingly, the stripe-like structures observed in the intensity residuals are not clearly visible in the polarisation residual maps, possibly because they are masked by the higher reconstruction noise.
+
+The reconstructed CMB Q map shows a satisfactory recovery within the observed patch, with residuals again dominated by the reconstruction noise toward the edges. In contrast, the reconstructed atmospheric polarisation map, which is expected to be identically zero as discussed in Subsection~\ref{subsub:atm_polarisation}, is dominated by noise.
+The origin of this behaviour is not yet fully understood. One possible explanation is the large amplitude difference between the atmospheric intensity signal and the CMB signal. Since the atmospheric intensity is approximately three orders of magnitude larger than the CMB, the PCG solver may struggle to converge toward a null polarisation solution while simultaneously reconstructing the intensity maps. A straightforward way to address this issue would be to fix the atmospheric Q and U maps to zero, rather than reconstructing them, which could improve the convergence and overall quality of the reconstruction of the remaining components without altering the physical correctness of the reconstruction\footnote{It is only valid under the assumptions presented in the subsection~\ref{subsub:atm_polarisation}.}.
 
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=1\linewidth]{atm_cmb_Q_maps.pdf}
-    \caption{}
+    \caption{Reconstruction of the Q maps of CMB and atmosphere, assuming a perfect component separation.}
     \label{fig:atm_cmb_Q_mm_no_wind_no_mm}
 \end{figure}
 
-\begin{figure}[!htbp]
-    \centering
-    \includegraphics[width=1\linewidth]{atm_mixing_matrix_low_noise.png}
-    \caption{}
-    \label{fig:atm_cmb_mixing_matrix_low_noise}
-\end{figure}
+\subsubsection{Mixing Matrix reconstruction}
+
+The reconstruction of the mixing matrix is the key element for component separation. To separate the CMB from the atmospheric emission, we adopt the Blind CMM approach introduced in Section~\ref{section:cmm_blind}, which reconstructs the mixing matrix without assuming any model for the emission spectra.
+
+Figure~\ref{fig:atm_cmb_mixing_matrix_low_noise} presents the reconstruction of the mixing matrix in a low-noise configuration. This preliminary test is intended to verify that the mixing matrix can indeed be recovered from the reconstructed maps.
 
 \begin{figure}[!htbp]
-    \centering
-    \includegraphics[width=1\linewidth]{atm_mixing_matrix.png}
-    \caption{}
-    \label{fig:atm_cmb_mixing_matrix}
+\centering
+\includegraphics[width=1\linewidth]{atm_mixing_matrix_low_noise.png}
+\caption{Reconstruction of the atmosphere mixing matrix in a low-noise configuration. The dots correspond to the input values, while the crosses denote the reconstructed ones.}
+\label{fig:atm_cmb_mixing_matrix_low_noise}
 \end{figure}
+
+Having validated this first step, we then run the complete alternate-convergence algorithm to jointly reconstruct the mixing matrix and the component maps. We found that this procedure rapidly becomes computationally prohibitive. To obtain converged results within a reasonable computation time, several simplifying assumptions were introduced.
+
+First, the observation time was reduced, which decreases both the memory required to store the data and the instrument model and the computational cost of applying the acquisition operator\footnote{This reduction can also be an issue for the reconstruction, a trade-off needs to be found.}. Second, the amplitude of the atmospheric fluctuations was artificially reduced. We observed that larger atmospheric fluctuations require significantly more iterations to converge. While this was not an issue when solving only the map-making problem with the PCG algorithm, it becomes a severe limitation once the alternate reconstruction of the mixing matrix is included. Finally, following the approach proposed in Subsection~\ref{sub:atm_limits}, the CMB intensity map was fixed to the corresponding Planck map, while the atmospheric polarisation maps were fixed to zero.
+
+With these simplifications, it becomes possible to run the atmospheric CMM algorithm with blind mixing-matrix reconstruction, even for a realistic level of instrumental noise. The reconstructed mixing matrix is shown in Figure~\ref{fig:atm_cmb_mixing_matrix}. Although the recovered coefficients are not fully consistent with the input values, especially near the edges of the frequency range, the overall agreement remains satisfactory.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=1\linewidth]{atm_mixing_matrix.png}
+\caption{Reconstruction of the atmosphere mixing matrix. The dots correspond to the input values, while the crosses denote the reconstructed ones.}
+\label{fig:atm_cmb_mixing_matrix}
+\end{figure}
+
+Despite these imperfections, the reconstructed mixing matrix is sufficiently accurate to enable a successful reconstruction of the atmospheric intensity map and the CMB polarisation maps, shown in Figures~\ref{fig:atm_cmb_mixing_matrix_I_map} and~\ref{fig:atm_cmb_mixing_matrix_Pol_map}. This result is achieved thanks to the additional constraints introduced above, namely fixing the CMB intensity map to the Planck solution and constraining the atmospheric polarisation to zero, which substantially reduces the degeneracies between the two components.
+
+It is nevertheless worth noting that the residual map of the atmospheric intensity exhibits large-scale structures. These features may indicate that the alternate-convergence algorithm has not yet fully converged, suggesting that further optimisation of the reconstruction procedure will be required.
 
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=1\linewidth]{atm_mixing_matrix_I_map.png}
-    \caption{}
+    \caption{Atmosphere Intensity map, jointly reconstructed with the mixing matrix. Large angular scale structure are visible in the residual map.}
     \label{fig:atm_cmb_mixing_matrix_I_map}
 \end{figure}
 
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=1\linewidth]{atm_mixing_matrix_Pol_maps.png}
-    \caption{}
+    \caption{CMB polarisation maps, jointly reconstructed with the mixing matrix.}
     \label{fig:atm_cmb_mixing_matrix_Pol_map}
 \end{figure}
 
-\subsubsection{Wind case}
+\subsubsection{Wind reconstruction} \label{subsub:atm_wind_reconstruction}
+
+\rmk{Need to re-run notebook...}
+
+The final step is to also include the wind reconstruction in the alternate loop. The full description of the fitting process is detailed in subsection~\ref{subsub:atm_wind_reconstruction}, and requires a map-making by chunks. As one can expect, the reconstruction is even more complicated in this case. 
+Still, the wind has been properly reconstructed, with the algorithm converging to the expected solution with the loop iterations.  
 
 \begin{figure}[!htbp]
     \centering
-    \includegraphics[width=1\linewidth]{atm_wind_reconstructoin.png}
+    \includegraphics[width=1\linewidth]{atm_wind_rec.png}
     \caption{}
     \label{fig:atm_wind_reconstruction}
 \end{figure}
 
 \section{Results analysis}
 
-\rmk{I will remove some subsections, nothing is done currently, so it is pointless trying to do everything in few days...}
+\rmk{I will remove the section, nothing is done currently, so it is pointless trying to do everything in few days...}
 
 \subsection{Noise profile}
 
