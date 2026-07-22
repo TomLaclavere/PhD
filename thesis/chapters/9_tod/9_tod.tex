@@ -17,6 +17,8 @@ The primary goal of the simulation and reconstruction pipeline is to provide a r
 
 The study is divided into two parts. First, we investigate the balance between simulation realism and computational resources. Second, we identify the parameter choices that maximise the sensitivity of the instrument to the tensor-to-scalar ratio, as quantified by the uncertainty $\sigma_r$. \\
 
+\textbf{Remark. } \tom{The study presented in this chapter does not represent an exhaustive analysis of all the simulation parameters. Its goal is to provide a solid basis on which rely for future work.}
+
 \personal{Even though parameter studies have been performed in the past, notably by Louise Mousset on $N_{\text{sub}}$ and $k_{\text{max}}$ during her PhD, no significant results or comprehensive analysis of the full set of simulation and reconstruction parameters had been reported. Performing such a study became an important step once the simulation and reconstruction pipeline reached a sufficiently mature and realistic state. In this context, I led the analysis of these parameters, starting in my second year with a study of the convergence of TODs with respect to $N_{\text{sub}}$. The absence of clear convergence, discussed in this chapter, was a major issue over several months and motivated a thorough review of the entire codebase in an attempt to understand its origin, representing a significant fraction of my work during this period. An explanation was eventually found through multiple discussions with the APC team working on QUBIC, and the underlying effect was independently demonstrated by Alexandre Huchet using the qubicsoft framework, as well as by myself through the development of a toy simulation model. During my third year, once the software had reached a more stable state, I performed a new analysis of $N_{\text{sub}}$ for both simulation and reconstruction, based on the $\sigma_r$ convergence. A similar study was then conducted for the maximum diffraction order $k_{\text{max}}$, together with an optimisation of the reconstruction hyperparameters.}
 
 \section{Realistic simulation}
@@ -97,7 +99,7 @@ After validating this explanation with the toy model, we implemented an optional
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=1\linewidth]{convergence_tod.png}
-    \caption{Convergence of TOD with the number of subbands, without and without interpolation.}
+    \caption{Convergence of TOD with the number of subbands, with and without interpolation.}
     \label{fig:tod_conv}
 \end{figure}
 
@@ -135,7 +137,7 @@ The other parameter determining the realism of the simulated TOD is the maximum 
     \label{fig:synth_beam_off_centre_bis}
 \end{figure}
 
-Unfortunatly, $k_\text{max}$ is a very costly parameter, the memory increasing quadratically with it. For $k_\text{max} = 1$ and $N_\text{sub} = 40$, the simulation costs already $\sim 40-50$ GB. So, it seems complicated to have a high $k_\text{max}$ while keeping a realistic $N_\text{sub}$. Therefore, we led a similar analysis to show the effect of $k_\text{max}$ on convegergence of $\sigma_r$. 
+Unfortunately, $k_\text{max}$ is a very costly parameter, the memory increasing quadratically with it. For $k_\text{max} = 1$ and $N_\text{sub} = 40$, the simulation costs already $\sim 40-50$ GB. So, it seems complicated to have a high $k_\text{max}$ while keeping a realistic $N_\text{sub}$. Therefore, we led a similar analysis to show the effect of $k_\text{max}$ on convergence of $\sigma_r$. 
 To avoid using too much memory, a parameter called \emph{synth\_beam\_fraction} was implemented. This parameter, with value between $0$ and $1$, corresponds to the fraction of the total synthesized beam amplitude we keep. To give a more practical example, the simulation is computing the amplitude associated with each peak, sort them, and keep the first ones until it reaches the \emph{synth\_beam\_fraction} value. This method allows to consider each peak, while saving memory by conserving only the ones contributing the most. This parameter is also included in our analysis.
 In addition, and similarly as $N_\text{sub}$, we have to define the $k_\text{max}$ used to simulate data, noted $k_{\text{max}}^{\mathrm{in}}$, and the one used for the reconstruction $k_{\text{max}}^{\mathrm{out}}$. For realism, we impose that the \emph{synth\_beam\_fraction} associated with $k_{\text{max}}^{\mathrm{out}}$ is always equal at $1$, while the one for reconstruction can vary.
 
@@ -160,7 +162,7 @@ Since the effect of $k_\text{max}$ could not be fully characterised, these resul
 
 The parameter $N_{\text{pointings}}$ corresponds to the number of sky observations, or equivalently the number of time samples acquired during an observation. For a real instrument acquiring data at 100 Hz, a 10-hour observation corresponds to approximately $3.6\times10^6$ pointings. As explained in Sections~\ref{subsub:fmm_memory} and~\ref{subsub:fmm_computation}, running simulations with such a large value of $N_{\text{pointings}}$ is computationally prohibitive.
 
-To overcome this limitation, we adopt a random-pointing scanning strategy, in which the instrument points randomly within the observed patch of radius $15^\circ$. Compared to a realistic scanning strategy, this approach requires significantly fewer time samples to achieve a homogeneous angular coverage of the observed region. Consequently, a much smaller number of pointings can be used while preserving the statistical properties of the observation, resulting in simulations that remain computationally feasible. The noise level is then rescaled to match the expected observation time by defining an effective observation duration. Nevertheless, it remains necessary to determine an appropriate value for $N_{\text{pointings}}$, even within this random pointing framework.
+To overcome this limitation in our simulations, we adopt a random-pointing scanning strategy, in which the instrument points randomly within the observed patch of radius $15^\circ$. Compared to a realistic scanning strategy, this approach requires significantly fewer time samples to achieve a homogeneous angular coverage of the observed region, \jc{similar to what would be achieved with a very long and optimised scanning strategy}. Consequently, a much smaller number of pointings can be used while preserving the statistical properties of the observation, resulting in simulations that remain computationally feasible. \jc{This approach corresponds to a \enquote{perfect} scanning strategy, which then avoid issue coming from the scanning in our simulation and reconstruction}. The noise level is then rescaled to match the expected observation time by defining an effective observation duration. Nevertheless, it remains necessary to determine an appropriate value for $N_{\text{pointings}}$, even within this random pointing framework.
 
 To do so, two complementary tests were performed. The first consists in studying the evolution of the coverage as a function of $N_{\text{pointings}}$. The objective is to obtain a sufficiently uniform coverage of the observed patch. In practice, we seek the value of $N_{\text{pointings}}$ beyond which the normalised coverage no longer changes significantly, indicating convergence.
 
@@ -211,7 +213,7 @@ In light of these two analyses, we adopt $N_{\text{pointings}} = 5000$ for all s
 
 To improve the signal-to-noise ratio, the outer pixels of the QUBIC sky patch, where the coverage is the lowest, can be excluded from the analysis. This selection is controlled by the \emph{coverage cut} parameter. Defined between 0 and 1, it corresponds to the minimum accepted coverage fraction. All pixels whose coverage fraction, defined as the coverage value at the pixel position divided by the maximum coverage over the patch, is below the chosen coverage cut are removed from the reconstruction.
 
-Applying a coverage cut generally improves the signal-to-noise ratio by discarding poorly observed regions. However, the value should remain as small as possible in order to preserve the largest possible sky area and therefore the available statistical information. To determine an appropriate value, we follow the same procedure as in the previous section: we perform simulations for some coverage cut values and study the resulting behaviour of $\sigma_r$.
+Applying a coverage cut generally improves the signal-to-noise ratio by discarding poorly observed regions. However, the value should remain as small as possible in order to preserve \jc{\sout{the largest possible sky area and therefore the available statistical information} as many large scales (small $\ell$) as possible, as most of the primordial B-modes are there}. To determine an appropriate value, we follow the same procedure as in the previous section: we perform simulations for some coverage cut values and study the resulting behaviour of $\sigma_r$.
 
 The result on the effect of the coverage cut value are presented in Figure~\ref{fig:cov_cut_sigma_r}. A sweet spot is visible for coverage cut equal to $0.2$, meaning that the pixels where the coverage is below $20\%$ of the max are discarded. Below this value, $\sigma_r$ is higher because we are adding pixels with not enough information, leading to a degradation of the signal-to-noise ratio. Above $0.2$, $\sigma_r$ value is rising, which means that we are discarding too much information, and by extension, loosing information inside the patch. We are using this value for the end-to-end simulations.
 
@@ -226,9 +228,9 @@ The result on the effect of the coverage cut value are presented in Figure~\ref{
 
 As discussed in Chapter~\ref{chap:xspectrum}, the angular power spectra are computed from $\ell_\text{min} = 40$ to $\ell_\text{max} = 2 \times N_\text{side} - 1 = 511$, with a binning given by the parameter $\Delta_\ell$.
 While $\ell_\text{max}$ is limited by NaMaster, and $\ell_\text{min}$ by the size of the observing patch, it is still necessary to optimise the size of the bins.
-The binning of the spectra is done for multiple purposes. The main one is to improve the signal-to-noise ratio. Indeed, when we are binning, we are averaging multiple modes into one, leading to a smaller covariance (it is divided by $\Delta_\ell$, see equation \ref{eq:xspec_noise_cov_matrix}). It also leads to a less costly fitting procedure, as we have to compute less cross-spectra value, leading to a runnable MCMC. More importantly, as we observe a small fraction of the sky, NaMaster~\cite{alonso2019} computes the spectra on a mask map. Doing so, it breaks the orthogonality of the spherical harmonics, mixing power between neighbouring modes. Therefore, averaging close modes is a way to have uncorrelated power spectra with masked sky. One can note that binning is possible only because foregrounds' models evolve smoothly in $\ell$. 
+\jc{The binning of the spectra is done for multiple purposes. The main one is, as we observe a small fraction of the sky, NaMaster~\cite{alonso2019} computes the spectra on a masked map. Doing so, it breaks the orthogonality of the spherical harmonics, mixing power between neighbouring modes. \jc{\sout{Therefore, averaging close modes is a way to have uncorrelated power spectra with masked sky} It allows to have an invertible mode mixing matrix, and therefore to correct for mode mixing}. \jc{Additionally, having a sky fraction different from 1 results in leakage between E and B-modes, which may produce bias on the tensor-to-scalar ratio measurement}. It also helps to improve the signal-to-noise ratio. Indeed, when we are binning, we are averaging multiple modes into one, leading to a smaller covariance (it is divided by $\Delta_\ell$, see equation \ref{eq:xspec_noise_cov_matrix}). It also leads to a less costly fitting procedure, as we have to compute less cross-spectra value, leading to a runnable MCMC. One can note that binning is possible only because foregrounds' models evolve smoothly in $\ell$. }
 
-As an empirical and extensive analysis was performed on the spectra parameters by Jean-Christophe Hamilton and Louise Mousset\cite{QUBICI, QUBICII}, we decided to only test few values to compare with $\Delta_\ell = 30$. We only ran simulations for $\Delta_\ell = \left[20, 30, 40, 50\right]$. The result is visible in Figure~\ref{fig:delta_ell_sigma_r}.
+As an empirical and extensive analysis was performed on the spectra parameters in \cite{QUBICI, QUBICII}, we decided to only test few values to compare with $\Delta_\ell = 30$, found during this previous study. We only ran simulations for $\Delta_\ell = \left[20, 30, 40, 50\right]$. The result is visible in Figure~\ref{fig:delta_ell_sigma_r}.
 
 \begin{figure}[!htbp]
     \centering
@@ -237,33 +239,26 @@ As an empirical and extensive analysis was performed on the spectra parameters b
     \label{fig:delta_ell_sigma_r}
 \end{figure}
 
-If we look only at fit with only QUBIC (blue points), the result are very close. On the other hand, looking at the fit where high frequency bands from Planck are added (orange points), we see that the lower $\sigma_r$ is achieved with $\Delta_\ell = 30$, which confirms the previous estimation. But, we see that the fit for $\Delta_\ell = 20$ fails. This behaviour can be understood by recalling the cross-spectrum debiasing procedure described in Chapter~\ref{chap:xspectrum}. For smaller bin widths, the covariance is reduced less efficiently, increasing the sensitivity to residual noise bias. Consequently, a larger number of noise realisations is required to accurately estimate and remove this bias.
+If we look only at fit with only QUBIC (blue points), the results are very close. On the other hand, looking at the fit where high frequency bands from Planck are added (orange points), we see that the lowest $\sigma_r$ is achieved with $\Delta_\ell = 30$, which confirms the previous estimation. But, we see that the fit for $\Delta_\ell = 20$ fails. This behaviour can be understood by recalling the cross-spectrum debiasing procedure described in Chapter~\ref{chap:xspectrum}. For smaller bin widths, the covariance is reduced less efficiently, increasing the sensitivity to residual noise bias. Consequently, a larger number of noise realisations is required to accurately estimate and remove this bias.
 
 Therefore, to avoid the need to increase the already large number of realisations, and as it already shows that best performance is achieved with only QUBIC information, we decided to keep $\Delta_\ell = 30$ for our end-to-end simulations. 
-
-\rmk{It would be good if I can add few other values (25, 35, ...), I will see if I have the time.}
 
 \subsection{CMM convergence parameters : $N_\text{iter}$ \& $N_\text{loop}$}
 
 In the CMM Chapter~\ref{chap:CMM}, we discussed in detail the issues related to the alternating convergence scheme used to reconstruct both the component maps and the mixing matrix (through either blind or parametric models).
 This algorithm is governed by two parameters: the number of PCG iterations $N_{\mathrm{iter}}$ used to reconstruct the component maps, and the number of outer loops $N_{\mathrm{loop}}$. These two parameters must be tuned to achieve optimal convergence in the smallest possible number of steps.
 
-The key parameter is $N_{\mathrm{iter}}$, which largely determines the convergence rate. Indeed, it controls the reconstruction accuracy of the component maps at each iteration of the outer loop. If it is too small, the maps are poorly reconstructed, and the estimation of the mixing matrix becomes biased. If it is too large, the computational cost becomes inefficient. Moreover, in the most critical case, when the mixing matrix is itself incorrectly estimated (at the beginning of the reconstruction), a large value of $N_{\mathrm{iter}}$ can lead the maps to converge towards an incorrect solution, which in turn biases the subsequent estimation of the mixing matrix. Finding the appropriate trade-off is therefore delicate and may depend on the assumed physical model of the sky.
+The key parameter is $N_{\mathrm{iter}}$, which largely determines the convergence rate. Indeed, it controls the reconstruction accuracy of the component maps at each iteration of the outer loop. If it is too small, the maps are poorly reconstructed, and the estimation of the mixing matrix becomes biased. If it is too large, the computational cost becomes \jc{\sout{inefficient} too important, preventing any pratical reconstruction}. Moreover, in the most critical case, when the mixing matrix is itself incorrectly estimated (at the beginning of the reconstruction), a large value of $N_{\mathrm{iter}}$ can lead the maps to converge towards an incorrect solution, which in turn biases the subsequent estimation of the mixing matrix. Finding the appropriate trade-off is therefore delicate and may depend on the assumed physical model of the sky.
 
-To determine the optimal combination of these parameters, we are considering the convergence of the spectral index, which characterises the reconstruction of the mixing matrix. The analysis is performed by fixing the number of loops to $100$ and running the reconstruction for different numbers of PCG iterations per loop\footnote{Initially, we fixed the total number of PCG iterations and adjusted the number of loops and the number of iterations per loop accordingly. However, since $N_{\text{iter}}$ primarily controls the reconstruction of the component maps, whereas $N_{\text{loop}}$ governs the convergence of the mixing matrix, we found it more informative to keep one parameter fixed. Moreover, the total number of iterations is not, by itself, a meaningful criterion for assessing convergence.}. The starting point is choosen randomly at $2\sigma$ from the real value, but is kept the same for all tests. After the loop, a PCG with $150$ iterations is run to properly reconstruct the maps, which is not possible with the low $N_\text{iter}$ values used inside the loop. The number will be increased for the end-to-end simulations. 
-The results are shown in Figure~\ref{fig:beta_convergence} summerised in the Table~\ref{table:niter_convergence}. In this table, the first column $N_\text{iter}$ is the number of PCG iteration per loop, the second column is the loop number where the fit of the spectral index converged, and the third one is the residual value for the spectral index (the difference between the true value and the fitted one).
+To determine the optimal combination of these parameters, we are considering the convergence of the spectral index, which characterises the reconstruction of the mixing matrix. The analysis is performed by fixing the number of loops to $100$ and running the reconstruction for different numbers of PCG iterations per loop\footnote{Initially, we fixed the total number of PCG iterations and adjusted the number of loops and the number of iterations per loop accordingly. However, since $N_{\text{iter}}$ primarily controls the reconstruction of the component maps, whereas $N_{\text{loop}}$ governs the convergence of the mixing matrix, we found it more informative to keep one parameter fixed. Moreover, the total number of iterations is not, by itself, a meaningful criterion for assessing convergence.}. The starting point is chosen randomly at $2\sigma$ from the real value, but is kept the same for all tests. After the loop, a PCG with $150$ iterations is run to properly reconstruct the maps, which is not possible with the low $N_\text{iter}$ values used inside the loop. The number will be increased for the end-to-end simulations. 
+The results are shown in Figure~\ref{fig:beta_convergence} summarised in the Table~\ref{table:niter_convergence}. In this table, the first column $N_\text{iter}$ is the number of PCG iteration per loop, the second column is the loop number where the fit of the spectral index converged, and the third one is the residual value for the spectral index (the difference between the true value and the fitted one).
 
 \begin{figure}[!htbp]
-    \begin{minipage}{0.5\linewidth}
-        \centering
-        \includegraphics[width=\linewidth]{convergence_beta.png}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.5\linewidth}
-        \centering
-        \includegraphics[width=\linewidth]{convergence_beta_residual.png}
-    \end{minipage}
-    \caption{Convergence of spectal index $\beta$ value (left) and residual (right) with the number of loop iterations.}
+    \centering
+    \includegraphics[width=1\linewidth]{convergence_beta.png}
+
+    \includegraphics[width=1\linewidth]{convergence_beta_residual.png}
+    \caption{Convergence of spectral index $\beta$ value (top) and residual (bottom) with the number of loop iterations.}
     \label{fig:beta_convergence}
 \end{figure}
 
@@ -283,7 +278,7 @@ The results are shown in Figure~\ref{fig:beta_convergence} summerised in the Tab
         30 & $> 100$ & $\varnothing$ \\
         \hline
     \end{tabular}
-    \caption{TODO: caption.}
+    \caption{Table summarising the iteration loop number at which convergence is reached and the difference between reconstructed spectral index and true one, for various number of PCG iteration within each loop.}
     \label{table:niter_convergence}
 \end{table}
 
@@ -297,7 +292,5 @@ The symbol $\varnothing$ in the $\beta$ residual column means that the fit of th
 \end{figure}
 
 One would need to be careful with these values, as they do not represent an absolute rule for CMM. Indeed, they are not performed on a large statistical sample but only on one specific case. Furthermore, we haven't yet found an explanation for diverging convergence for some $N_\text{iter}$ values and not for others. An extension of this analysis may be needed in the future, or developing a non-linear solver to remove the need for the alternate convergence.
-
-\rmk{I don't add the same plot for blind CMM, because the reconstruction was bad in all cases. Even if we can see a convergence, some mixing matrix elements were far from the true value, and the reconstructed maps look very bad.}
 
 \end{document}

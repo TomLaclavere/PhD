@@ -15,7 +15,7 @@
 
 While astrophysical foreground B-mode emission is a fundamental limitation for the detection of primordial B-modes in the CMB signal, ground-based experiments are also contaminated by atmospheric emission. Atmosphere represents the main contributions to the photon noise, due to its high temperature compared to the sky emissions. Additionally, this noise exhibits temporal and spatial correlations, creating contaminations for the map-making process. Mitigating its effects is one of the most challenging, yet essential, steps toward the detection of primordial B-modes with next-generation CMB experiments.
 
-\jc{\enquote{Add short sentence to talk about how scanning strategy offers ways to reduce atm impact + rotating HWP.}}
+\tom{Beyond dedicated map-making approaches, the scanning strategy itself and the use of a continuously rotating half-wave plate (HWP) offer complementary ways to mitigate atmospheric contamination, respectively by controlling how the slowly-varying atmospheric signal is sampled and by modulating the polarised sky signal at a frequency where atmospheric emission, being essentially unpolarised, does not contribute.}
 
 This chapter presents a new method, based on the interferometric properties of the QUBIC instrument, to remove atmospheric contamination from CMB data using an extended version of the Component Map-Making algorithm introduced in Chapter~\ref{chap:CMM}. It is organised into six sections. We begin with an introduction to the key properties of the atmosphere, the model used to describe it, and the software developed to simulate it. Next, we discuss the properties of atmospheric emission that are particularly problematic for CMB observations, namely its temporal and spatial correlations. We then describe the modifications required to the data acquisition model, followed by the presentation of the different application cases studied. The results are then analysed, allowing us to identify the limitations of using CMM to separate atmospheric and CMB signals. Finally, an alternative model is introduced to address some limitations of the previous approach. \\
 
@@ -62,7 +62,7 @@ The first difficulty is that the atmosphere is not a fully transparent medium ac
 \subsubsection{Fluctuations}
 
 Despite its average emission, the atmosphere is a dynamic and turbulent medium with fluctuations in its water vapour density distribution. These fluctuations lead to temporal and spatial correlations in the observed time-ordered data (TOD) that will bias the maps' reconstruction. 
-The water vapour density fluctuations are assumed to follow the Kolmogorov model~\cite{Kolmogorov1941,Tatarski1961}, characterised by the tridmensional power-spectrum:
+The water vapour density fluctuations are assumed to follow the Kolmogorov model~\cite{Kolmogorov1941,Tatarski1961}, characterised by the tridimensional power-spectrum:
 
 \begin{equation}
     P(\vec{k}) \propto |\vec{k}|^{-11/3}.
@@ -94,7 +94,7 @@ The emission from the atmosphere is considered to be unpolarised. However, few e
 
 The Zeeman effect occurs as the Earth's magnetic filed splits the energy levels of $O_2$ molecules, so their emission comes out slightly circularly polarised. The signal is tied to the magnetic field direction. The effect is relatively small: typical circular polarisation amplitudes are $\sim$130–500 $\mu$K depending on site and frequency \cite{petroff2020,fabbian2012}, corresponding to a fraction of order $10^{-4}$--$10^{-5}$ of the total intensity emission. It also produces a tiny fraction of linear polarisation, about $10000$ times smaller than the circular polarisation ($\sim 1$--$10$~nK)~\cite{fabbian2012}. This effect is deterministic and tied to a fixed geomagnetic pattern, and could therefore be modelled and subtracted as a template, rather than requiring dedicated hardware.
 
-Some clouds, called $\emph{cirrus clouds}$, are thin clouds present at high altitude, transparent to CMB experiment at millimetre range. Nevertheless, they yield horizontally-aligned ice crystals which backward scatter ground radiation and forward scatter sky signal, producing a linear polarisation emission~\cite{li2023}. Unlike Zeeman signal, this signal acts as a \enquote{burst} when a cirrus clouds are observed by the instrument, meaning that it can't be averaged. These events would need to be flagged, using a sky camera or a LIDAR for example, and treated in post analysis. When observing through ice clouds, the atmosphere polarisation emission can reach about $5$--$10\%$ of the intensity emission ($\lesssim 0.1$ K)~\cite{takakura2019}.
+Some clouds, called \emph{cirrus clouds}, are thin clouds present at high altitude, transparent to CMB experiment at millimetre range. Nevertheless, they yield horizontally-aligned ice crystals which backward scatter ground radiation and forward scatter sky signal, producing a linear polarisation emission~\cite{li2023}. Unlike Zeeman signal, this signal acts as a \enquote{burst} when a cirrus cloud is observed by the instrument, meaning that it can't be averaged. These events would need to be flagged, using a sky camera or a LIDAR for example, and treated in post analysis. When observing through ice clouds, the atmosphere polarisation emission can reach about $5$--$10\%$ of the intensity emission ($\lesssim 0.1$ K)~\cite{takakura2019}.
 
 During this study, we are completely neglecting these effects, and consider the atmosphere to be unpolarised. There is no fundamental limitation for including atmosphere polarisation, but as explained, the expected polarisation is too low to be properly reconstructed with our methods, and is therefore dismissed. It could be an important extension of this work to add atmosphere polarisation effect.
 
@@ -297,7 +297,7 @@ Including the atmosphere in the data acquisition requires adaptation in the mode
 
 \subsection{Coordinate system}
 
-For the previous simulation, the pointing operator $P_\text{roj}$ (described in \ref{section:instrumental_model}) is converting telescope's orientation in local coordinates (azimuth, elevation) to galactic coordinates (RA, DEC). The difficulty is that atmosphere might be expressed in local coordinates as well. It means that the atmosphere map is moving with respect to the sky due to the Earth movement.
+For the previous simulation, the pointing operator $P_\text{roj}$ (described in Section~\ref{section:instrumental_model}) is converting telescope's orientation in local coordinates (azimuth, elevation) to galactic coordinates (RA, DEC). The difficulty is that atmosphere might be expressed in local coordinates as well. It means that the atmosphere map is moving with respect to the sky due to the Earth movement.
 The result is that for a uniform pointing in a $15^\circ$ radius circle centred on the QUBIC patch position, right panel in Figure~\ref{fig:atm_coordintates}, the coverage of the atmosphere is a disk moving on the sky, as illustrated in the left panel of the same figure. 
 
 \begin{figure}[!htbp]
@@ -369,7 +369,7 @@ It is important to emphasise that this work is still at the research-and-develop
 
 \subsection{Atmosphere separation}
 
-The component separation between atmosphere and CMB is done following the exact same idea as for astrophysical component separation with CMM. We are using the different spectra of the components to separate their contribution through the reconstruction of a mixing matrix (see Chapter~\ref{chap:CMM} for explanation on astrophysical components). In $K_\text{CMB}$ units, the CMB spectrum is flat and equal to unity, while the atmosphere follows a complicated spectrum, with dependency on its temperature and PWV, presented in Figures~\ref{fig:atm_brightness} and \ref{fig:atm_spectrum}.
+The component separation between atmosphere and CMB is done following the exact same idea as for astrophysical component separation with CMM. We are using the different spectra of the components to separate their contribution through the reconstruction of a mixing matrix (see Chapter~\ref{chap:CMM} for explanation on astrophysical components). In $K_\text{CMB}$ units, the CMB spectrum is flat and equal to unity, while the atmosphere follows a complicated spectrum, with dependency on its temperature and PWV, presented in Figures~\ref{fig:atm_brightness_bis} and \ref{fig:atm_spectrum}.
 The approach developed in this work relies on the Blind-CMM algorithm (fully described in Section~\ref{section:cmm_blind}) to reconstruct the atmospheric spectrum directly from the data, thereby enabling its separation from the CMB signal. The main advantage of this method is that it does not rely on any prior model of the atmospheric spectral emission. Instead, it exploits QUBIC's spectral-imaging capabilities to estimate the atmosphere spectrum directly from the observations. \tom{This approach is made possible by two key characteristics of the instrument. First, the high spectral resolution provided by spectral imaging enables the reconstruction of the complex atmospheric emission spectrum. Second, the wide sky coverage of the synthesized beam, resulting from its multiple-peak structure, preserves strong temporal correlations in the atmospheric signal throughout the scan, providing the redundancy required for its reconstruction.}
 
 The separation algorithm works exactly like the CMM pipeline: we are iterating over loops, in which component maps' pixels and mixing matrix elements are alternatively reconstructed. The main limitation with this method is that atmosphere temperature fluctuations are on the order of $10^{5}~\mu K_\text{CMB}$, while CMB fluctuations are $\sim 100~\mu K_\text{CMB}$. This large difference of $3$ orders of magnitude makes the separation and reconstruction very complicated, and requires a very large number of loop iterations. The result is that the reconstruction is very costly from the computational point of view.
@@ -397,11 +397,33 @@ Here, we propose to show results of the atmosphere map-making, without including
 
 It is important to note that the reconstruction pipelines, described in Chapter \ref{chap:qubicsoft}, cannot be used here. Indeed, the atmosphere map, operating in both galactic and local coordinates, or the wind are not currently implemented in these pipelines. Therefore, for each different case studied, a specific pipeline was build \enquote{by hands}. The method to build it was to increase incrementally the complexity. The main steps are presented in the following, but some key points are not mentioned as they do not represent further interest from the atmosphere mitigation point of view, while they remained challenging from the algorithmic point of view (for example, going from monochromatic to polychromatic, from FMM-like to CMM-like reconstruction, joint observation and reconstruction through both local and galactic coordinates, and many others).
 
+\tom{I am adding this new subsubsection to talk about the scanning strategy in general, instead than for each case.}
+\subsubsection{Scanning strategy}
+
+All atmosphere reconstruction cases presented in this chapter use a sweeping scanning strategy. The instrument performs back-and-forth scans in azimuth at constant elevation, while the elevation is adjusted between each of them to keep the centre of the observed field aligned with the QUBIC patch. The resulting scanning pattern is illustrated in Figure~\ref{fig:atm_scanning_strategy}, which shows, from left to right, the evolution of the azimuth angle, the elevation angle, and the pointing trajectory in local (azimuth-elevation), equatorial, and Galactic coordinates.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{atm_scanning_strategy.png}
+    \caption{Scanning strategy adopted for the atmosphere reconstruction. From left to right: azimuth angle as a function of time, elevation angle as a function of time, pointing trajectory in local coordinates\protect\footnotemark, equatorial coordinates, and Galactic coordinates.}
+    \label{fig:atm_scanning_strategy}
+\end{figure}
+\footnotetext{The evolution of the elevation is simplified and does not correspond to a fully realistic telescope motion.}
+
+The corresponding pointing positions on a HEALPix map are shown in Figure~\ref{fig:atm_pointing_pos}, using both Mollweide and orthographic projections.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{atm_pointing.png}
+    \caption{Pointing positions on the sky (yellow dots) displayed on a HEALPix map using a Mollweide projection (left) and an orthographic projection (right).}
+    \label{fig:atm_pointing_pos}
+\end{figure}
+
+\textbf{Remark.} Although the same scanning principle is adopted throughout this chapter, the exact scanning strategy varies between the different case studies. In particular, the observation duration is adjusted according to the required sensitivity and the associated computational cost.
+
 \subsubsection{No wind case}
 
 We start by performing the map-making without considering any wind. The idea here is to test our implementation of CMM in the case of local coordinates. The coordinates' system should not affect the result, but it allows to verify the implementation. 
-
-\rmk{Add scanning strategy !!!}
 
 Then, we reconstruct the atmosphere without considering noise, in order to check the correctness of the method. The result is visible in Figure~\ref{fig:atm_mm_no_wind_noiseless}, and confirms that the approach is not biased, as demonstrated by the null residual.
 
@@ -425,18 +447,17 @@ The exact same map-making is performed, but adding noise in the simulation this 
 
 Now that we verified the map-making of the atmosphere in local coordinates, we need to account for the wind effect. First, we run the map-making while introducing wind during TOD acquisition. The goal is then to see its effect when nothing is done to account for it. 
 
-\rmk{I still need to run that.}
+\tom{For this test, we simulated the atmosphere acquisition with a constant wind of about $1$ m/s blowing in the North-South direction. As a result, the atmosphere gradually moves across the field of view during the observation. The instrument therefore loses information about the atmosphere observed at the beginning of the scan while simultaneously observing new atmospheric structures.
+Ignoring this displacement during the reconstruction introduces a significant bias in the reconstructed map, as illustrated in Figure~\ref{fig:atm_mm_wind}. A large reconstruction error is visible at the bottom of the observed patch, corresponding to the region where the atmosphere has moved out of the field of view. In addition, the residual map shows that even the large-scale fluctuations are not properly reconstructed. This behaviour is explained by the mismatch between the pointing positions assumed during the reconstruction and the actual atmosphere observed, which has been shifted by the wind.} 
 
-\rmk{Indicate wind properties here !}
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.7\linewidth]{atm_mapmaking_w_wind.png}
+    \caption{\tom{Input, reconstructed, and residual intensity maps of the atmosphere when wind is included during the observation but ignored during the reconstruction.}}
+    \label{fig:atm_mm_wind}
+\end{figure}
 
-Figure~\ref{fig:atm_mm_wind} shows the bias introduced due to not accounting for the wind.
-
-% \begin{figure}[!htbp]
-%     \centering
-%     \includegraphics[width=0.7\linewidth]{}
-%     \caption{}
-%     \label{fig:atm_mm_wind}
-% \end{figure}
+\tom{This example clearly highlights the importance of accounting for the wind when mitigating the atmospheric signal. Even a relatively slow and constant wind introduces significant reconstruction biases, motivating the development of the wind reconstruction method presented in the following.}
 
 \subsection{Atmosphere separation and map-making}
 
@@ -525,7 +546,7 @@ Still, the wind has been properly reconstructed, with the algorithm converging t
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=1\linewidth]{atm_wind_reconstructoin.png}
-    \caption{}
+    \caption{Fitted value of the wind speed (in m/s) as a function of loop iteration number for the two X and Y directions.}
     \label{fig:atm_wind_reconstruction}
 \end{figure}
 
@@ -563,16 +584,89 @@ The complete observation is divided into several consecutive chunks. An iterativ
 
 So far, this method has only been tested for atmosphere reconstruction alone, without including the reconstruction of the mixing matrix. Extending the method to full component separation therefore remains an open question. Two possible strategies can be envisaged: either reconstruct the mixing matrix after the PCG reconstruction of each chunk, or estimate a single mixing matrix using all chunks simultaneously. In the first approach, the mixing matrix reconstructed for one chunk could naturally be used as the initial estimate for the next, potentially improving the convergence of the algorithm.
 
-\subsection{Results \& Comparison} 
+\subsection{Results \& Comparison}
 
-% \begin{figure}[!htbp]
-%     \centering
-%     \includegraphics[width=0.7\linewidth]{}
-%     \caption{}
-%     \label{fig:atm_mm_no_wind}
-% \end{figure}
+\tom{I just added this subsection.}
 
-\rmk{Results incoming !}
+Figures~\ref{fig:atm_successive_reconstructed} and~\ref{fig:atm_successive_residual} show, respectively, the reconstructed atmosphere map and the associated residual map obtained with the Successive Map-Making algorithm for each of the six successive time chunks.
+
+In Figure~\ref{fig:atm_successive_reconstructed}, we can see the effect of wind, moving the fluctuations toward the top-right direction. 
+
+\begin{figure}[!htbp]
+    \centering
+    \begin{minipage}{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{reconstructed_frame_00.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{reconstructed_frame_01.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{reconstructed_frame_02.png}
+    \end{minipage}
+
+    \vspace{0.3cm}
+
+    \begin{minipage}{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{reconstructed_frame_03.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{reconstructed_frame_04.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{reconstructed_frame_05.png}
+    \end{minipage}
+    \caption{Reconstructed atmosphere intensity map for each of the six successive time chunks, using the Successive Map-Making algorithm.}
+    \label{fig:atm_successive_reconstructed}
+\end{figure}
+
+Still, proper reconstruction can be achieved even with a low observation time, assuming a small instrumental noise as shown in Figure~\ref{fig:atm_successive_residual}. Residual noise is visible at the edge of the patch for each chunk, corresponding to regions where atmospheric signal is not seen enough.
+
+\begin{figure}[!htbp]
+    \centering
+    \begin{minipage}{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{residual_frame_00.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{residual_frame_01.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{residual_frame_02.png}
+    \end{minipage}
+
+    \vspace{0.3cm}
+
+    \begin{minipage}{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{residual_frame_03.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{residual_frame_04.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{residual_frame_05.png}
+    \end{minipage}
+    \caption{Residual map (difference between the reconstructed and true atmosphere maps) for each of the six successive time chunks, corresponding to Figure~\ref{fig:atm_successive_reconstructed}.}
+    \label{fig:atm_successive_residual}
+\end{figure}
 
 \section{Towards further developments}
 
@@ -608,6 +702,8 @@ Furthermore, since the shift operator is implemented using PyOperators~\cite{PyO
 Finally, a more detailed study of the convergence behaviour, and of its dependence on the simulation and reconstruction parameters, would help identify optimal choices for these parameters and reduce the number of iterations required for convergence.
 
 \section*{Conclusion}
+
+\tom{In this chapter, we presented a new method for mitigating atmospheric contamination, based on an extension of the Component Map-Making algorithm to a joint reconstruction of the CMB and the atmosphere. We first described the physical properties of the atmosphere and the simulation software developed to model its mean emission and its turbulent fluctuations. We then showed that the multi-peaked synthesized beam of a bolometric interferometer preserves atmospheric correlations over longer time scales than the narrow beam of a classical imager, as well as improving the spectral resolution, motivating the use of QUBIC's spectral imaging capabilities to separate the two components. Extending the data acquisition model to account for local coordinates and wind advection, we demonstrated, as a proof of concept, that the atmosphere and the CMB can be jointly recovered with the Blind CMM algorithm, including the reconstruction of the mixing matrix and of the wind vector. This reconstruction remains, however, severely limited by its computational cost and convergence speed, which motivated the development of an alternative, wind-free approach, the Successive Map-Making. Several directions were identified to address these limitations and improve the physical realism of the method, in particular a parametric description of the atmospheric spectrum, the inclusion of external measurements from meteorological stations or a LIDAR system, and further optimisation of the reconstruction code.}
 
 \ifSubfilesClassLoaded{
     \addstarredchapter{Bibliography}

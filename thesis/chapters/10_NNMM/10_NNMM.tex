@@ -24,30 +24,30 @@ This chapter is intentionally kept concise, as the draft of the associated publi
 
 \section{Inverse problem approach}
 
-In the FMM chapter, we claimed in the subsection~\ref{sub:mm_solution} that it was not numerically possiblse to solve the equation (see equation~\ref{eq:mapmaking_inv} for details):
+In the FMM chapter, we claimed in the subsection~\ref{sub:mm_solution} that it was not numerically possible to solve the equation (see equation~\ref{eq:mapmaking_inv} for details):
 
 \begin{equation}
     \vec{\hat{s}} = (H^{~T} N^{-1} H)^{-1} H^{~T} N^{-1} \vec{d},
 \end{equation}
-because it is too expensive to invert the instrumental model $H$. To overcome this difficulty, Leonora Kardum had the idea of separating each sub-operators that composed $H$, detailed in the section \ref{section:instrumental_model}, to compute their individual inverse through analytical expression or pseudo-inverse estimation. Then, Machine Learning is used to approximate inversion for too complicated operators.
+because it is too expensive to invert the instrumental model $H$. To overcome this difficulty, Leonora Kardum had the idea of separating each sub-operator that composed $H$, detailed in the section \ref{section:instrumental_model}, to compute their individual inverse through analytical expression or pseudo-inverse estimation. Then, Machine Learning is used to approximate inversion for too complicated operators.
 
 Therefore, the goal of this approach is to compute the inverse expression of all the operators describing the instrument systems, to build $H^{-1}$. From equation \ref{eq:instrumental_model}, we have:
 \begin{equation}
-    \mathcal{H}_{\nu}^{-1} = \mathcal{U}_{\text{nit}, \nu}^{-1} \mathcal{T}_{\text{atm}}^{-1} \mathcal{A}_{\text{perture}}^{-1} \mathcal{F}_{\text{ilt}}^{-1} [\mathcal{P}_{\text{roj}, \nu}^{-1} * \mathcal{H}_{\text{WP}}^{-1}] \mathcal{P}_{\text{ol}}^{-1} \mathcal{I}_{\text{nt}}^{-1} \mathcal{T}_{\text{rans}}^{-1} \mathcal{P}_{\text{ol}}^{-1},
+    \mathcal{H}_{\nu}^{-1} = \mathcal{U}_{\text{nit}, \nu}^{-1} \mathcal{T}_{\text{atm}}^{-1} \mathcal{A}_{\text{perture}}^{-1} \mathcal{F}_{\text{ilt}}^{-1} [\mathcal{P}_{\text{roj}, \nu}^{-1} * \mathcal{H}_{\text{WP}}^{-1}] \mathcal{P}_{\text{ol}}^{-1} \mathcal{I}_{\text{nt}}^{-1} \mathcal{T}_{\text{rans}}^{-1} \mathcal{R}_{\text{esp}}^{-1}.
     \label{eq:inv_instrumental_model}
 \end{equation}
 
-The inverse approach benefits from multiple point of view. The first and main one is regarding its versatility. While the inverse approach depends on the TOD, and needs to be re-done for each data set, the inverse can be computed one time and applied for each data set. Additionally, because of the modular operators' construction, if one element from equation \ref{eq:inv_instrumental_model} happens to be wrongly estimated, only this one needs to be computed again, and not the entire instrumental model. For the same reason, operators can be added or removed from $H$ easily (in case of modification of the instrumental model). 
+The inverse approach has multiple benefits. The first and main one is regarding its versatility. While the forward approach depends on the TOD, and needs to be re-done for each data set, the inverse can be computed one time and applied for each data set. Additionally, because of the modular operators' construction, if one element from equation \ref{eq:inv_instrumental_model} happens to be wrongly estimated, only this one needs to be computed again, and not the entire instrumental model. For the same reason, operators can be added or removed from $H$ easily (in case of modification of the instrumental model). 
 
 \section{Operators inversion}
 
 The operators composing the instrumental model are not all inverted in the same manner. Depending on their mathematical properties, three different strategies are adopted. For a more detailed description, please refer to the draft article link with this chapter.
 
 \textbf{Analytical inversion.}
-Several operators correspond to simple diagonal or scalar transformations and can therefore be inverted analytically. This is the case for the unit conversion $\mathcal{U}_{\text{nit}}$, atmospheric transmission $\mathcal{T}_{\text{atm}}$, aperture integration $\mathcal{A}_{\text{perture}}$, filtering $\mathcal{F}_{\text{ilt}}$, flux integration $\mathcal{I}_{\text{nt}}$, and transmission $\mathcal{T}_{\text{rans}}$ operators. Their inverse simply consists of an element-wise scaling and is implemented as either a fixed or a learnable diagonal layer.
+Several operators correspond to simple diagonal or scalar transformations and can therefore be inverted analytically. This is the case for the unit conversion $\mathcal{U}_{\text{nit}}$, atmospheric transmission $\mathcal{T}_{\text{atm}}$, aperture integration $\mathcal{A}_{\text{perture}}$, filtering $\mathcal{F}_{\text{ilt}}$, detector integration $\mathcal{I}_{\text{nt}}$, and transmission $\mathcal{T}_{\text{rans}}$ operators. Their inverse simply consists of an element-wise scaling and is implemented as either a fixed or a learnable diagonal layer.
 
 \textbf{Model-based inversion.}
-Some operators are not diagonal but are described by well-established physical models that provide an analytical inverse under appropriate assumptions. This applies to the bolometer time-response operator $\mathcal{P}_{\text{ol}}$ and to the polarisation rotation operators $\mathcal{P}_{\text{ol}}$ and $\mathcal{H}_{\text{WP}}$. Rather than learning these transformations from scratch, the network embeds their analytical inverse while treating the associated instrumental quantities, such as the detector time constant $\tau$, as differentiable physical parameters.
+Some operators are not diagonal but are described by well-established physical models that provide an analytical inverse under appropriate assumptions. This applies to the bolometer time-response operator $\mathcal{R}_{\text{esp}}$ and to the polarisation rotation operators $\mathcal{P}_{\text{ol}}$ and $\mathcal{H}_{\text{WP}}$. Rather than learning these transformations from scratch, the network embeds their analytical inverse while treating the associated instrumental quantities, such as the detector time constant $\tau$, as differentiable physical parameters.
 
 \textbf{Learned correction of a pseudo-inverse.}
 The projection operator $\mathcal{P}_{\text{roj}, \nu}$ is the only operator for which no analytical inverse can be defined. Since it maps the sky onto the time-ordered data with incomplete and non-uniform sampling, the inverse problem is intrinsically ill-posed. As a first approximation, we compute the standard maximum-likelihood back-projection,
@@ -69,12 +69,12 @@ For a given inverse operator layer $\mathcal{L}_\theta$ acting on a parameter $\
 \begin{equation}
     \log\theta \sim \mathcal{N}(\mu_0, \sigma_0^2),
 \end{equation}
-where $\mu_0$ and $\sigma_0$ are set from the calibrated value and its expected uncertainty. Given the detector TOD $\vec{d}$ before the operator under study has been inverted, the layer produces a corrected estimate $\hat{s} = \mathcal{L}_\theta(d)$, which is compared to the TOD $\vec{s}$ obtained after inversion in the noiseless simulation chain through a Gaussian likelihood,
+where $\mu_0$ and $\sigma_0$ are set from the calibrated value and its expected uncertainty. Given the detector TOD $\vec{d}$ before the operator under study has been inverted, the layer produces a corrected estimate $\hat{\vec{s}} = \mathcal{L}_\theta(\vec{d})$, which is compared to the TOD $\vec{s}$ obtained after inversion in the noiseless simulation chain through a Gaussian likelihood,
 \begin{equation}
-    s \mid \theta \sim \mathcal{N}\big(\mathcal{L}_\theta(d),\, \sigma_n^2\big),
+    s \mid \theta \sim \mathcal{N}\big(\mathcal{L}_\theta(\vec{d}),\, \sigma_n^2\big),
     \label{eq:pyro_likelihood}
 \end{equation}
-with $\sigma_n$ a fixed observation noise controlling how tightly $\hat{s}$ is required to match $s$. This mirrors, operator by operator, the forward simulation pipeline of Section~\ref{section:instrumental_model}, providing paired $(d, s)$ examples on which the parameter can be calibrated.
+with $\sigma_n$ a fixed observation noise controlling how tightly $\hat{\vec{s}}$ is required to match $\vec{s}$. This mirrors, operator by operator, the forward simulation pipeline of Section~\ref{section:instrumental_model}, providing paired $(d, \vec{s})$ examples on which the parameter can be calibrated.
 
 \textbf{Variational inference.}
 The posterior $p(\theta \mid d, s)$ has no closed form once $\mathcal{L}_\theta$ is non-linear in $\theta$, so it is approximated by Stochastic Variational Inference (SVI). A mean-field Gaussian guide $q_\phi(\log\theta) = \mathcal{N}(m_\phi, s_\phi^2)$ is fit by maximising the Evidence Lower Bound (ELBO),
