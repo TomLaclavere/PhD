@@ -18,7 +18,7 @@ In this chapter, we present an alternative reconstruction pipeline to the FMM an
 
 We first compare the advantages and limitations of inverse methods with those of the forward-modelling approaches presented in the previous chapters. We then introduce the key concepts underlying the inversion procedure. Finally, we address one of the main limitations of neural networks in physics applications, namely uncertainty estimation, by combining physics-guided neural networks with the probabilistic programming framework Pyro\footnote{\url{https://pyro.ai/}}.
 
-This chapter is intentionally kept concise, as the draft of the associated publication is included immediately afterwards.
+This chapter is intentionally kept concise: it provides a brief overview of NNMM, while the draft of the associated publication, included immediately afterwards, should be consulted for a complete account of the method. As that draft is still at a preliminary stage and is expected to evolve, we chose nonetheless to include this overview here, to introduce this innovative method, complementary to FMM and CMM, within the manuscript.\\
 
 \personal{The NNMM project was led by Leonora Kardum during her two-year postdoctoral position at APC. I contributed to this work by helping with the understanding of the complex instrumental model, as well as the FMM and CMM algorithms, in order to develop their inverse counterparts. I also contributed to the development of the programming software used to invert the operators and was responsible for implementing the Pyro module used for uncertainty estimation. Finally, I developed the code introducing the inverse mixing matrix into the reconstruction process, allowing the extension of NNMM from the FMM framework to the CMM framework.}
 
