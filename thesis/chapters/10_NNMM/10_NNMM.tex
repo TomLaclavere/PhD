@@ -29,7 +29,7 @@ In the FMM chapter, we claimed in the subsection~\ref{sub:mm_solution} that it w
 \begin{equation}
     \vec{\hat{s}} = (H^{~T} N^{-1} H)^{-1} H^{~T} N^{-1} \vec{d},
 \end{equation}
-because it is too expensive to invert the instrumental model $H$. To overcome this difficulty, Leonora Kardum had the idea of separating each sub-operator that composed $H$, detailed in the section \ref{section:instrumental_model}, to compute their individual inverse through analytical expression or pseudo-inverse estimation. Then, Machine Learning is used to approximate inversion for too complicated operators.
+because it is too expensive to invert the instrumental model $H$ explicitely. To overcome this difficulty, Leonora Kardum had the idea of separating each sub-operator that composed $H$, detailed in the section \ref{section:instrumental_model}, to compute their individual inverse either through analytical expression when possible or pseudo-inverse estimation. Otherwise, Machine Learning is used to approximate inversion for too complicated operators.
 
 Therefore, the goal of this approach is to compute the inverse expression of all the operators describing the instrument systems, to build $H^{-1}$. From equation \ref{eq:instrumental_model}, we have:
 \begin{equation}
@@ -37,7 +37,7 @@ Therefore, the goal of this approach is to compute the inverse expression of all
     \label{eq:inv_instrumental_model}
 \end{equation}
 
-The inverse approach has multiple benefits. The first and main one is regarding its versatility. While the forward approach depends on the TOD, and needs to be re-done for each data set, the inverse can be computed one time and applied for each data set. Additionally, because of the modular operators' construction, if one element from equation \ref{eq:inv_instrumental_model} happens to be wrongly estimated, only this one needs to be computed again, and not the entire instrumental model. For the same reason, operators can be added or removed from $H$ easily (in case of modification of the instrumental model). 
+The inverse approach has multiple benefits. The first and main one is regarding its versatility. While the forward approach depends on the TOD, and needs to be re-done for each data set, the inverse can be computed once and applied for each data set. Additionally, because of the modular operators' construction, if one element from equation \ref{eq:inv_instrumental_model} happens to be wrongly estimated, only this one needs to be computed again, and not the entire instrumental model. For the same reason, operators can be added or removed from $H$ easily (in case of modification of the instrumental model). 
 
 \section{Operators inversion}
 
@@ -54,7 +54,7 @@ The projection operator $\mathcal{P}_{\text{roj}, \nu}$ is the only operator for
 \[
 \mathcal{P}_{\text{roj}}^\dagger = (\mathcal{P}_{\text{roj}}^T N^{-1}\mathcal{P}_{\text{roj}})^{-1}\mathcal{P}_{\text{roj}}^TN^{-1},
 \]
-which is itself approximated by its diagonal form $\mathcal{P}_{\text{roj}}^T1$. Instead of asking the neural network to reconstruct the full inverse operator, it is only trained to estimate the correction associated with the neglected off-diagonal couplings.
+which is itself approximated by its diagonal form $\mathcal{P}_{\text{roj}}^T1$. Instead of requiring the neural network to reconstruct the full inverse operator, it is only trained to estimate the correction associated with the neglected off-diagonal couplings.
 
 \section{Uncertainty estimation}
 
@@ -77,11 +77,7 @@ where $\mu_0$ and $\sigma_0$ are set from the calibrated value and its expected 
 with $\sigma_n$ a fixed observation noise controlling how tightly $\hat{\vec{s}}$ is required to match $\vec{s}$. This mirrors, operator by operator, the forward simulation pipeline of Section~\ref{section:instrumental_model}, providing paired $(d, \vec{s})$ examples on which the parameter can be calibrated.
 
 \textbf{Variational inference.}
-The posterior $p(\theta \mid d, s)$ has no closed form once $\mathcal{L}_\theta$ is non-linear in $\theta$, so it is approximated by Stochastic Variational Inference (SVI). A mean-field Gaussian guide $q_\phi(\log\theta) = \mathcal{N}(m_\phi, s_\phi^2)$ is fit by maximising the Evidence Lower Bound (ELBO),
-\begin{equation}
-    \mathrm{ELBO}(\phi) = \mathbb{E}_{q_\phi}\big[\log p(s \mid \theta, d)\big] - \mathrm{KL}\big(q_\phi(\log\theta) \,\|\, p(\log\theta)\big),
-\end{equation}
-with respect to the variational parameters $\phi = (m_\phi, s_\phi)$, using the Adam optimiser. In practice this only requires specifying the generative model of Eq.~\ref{eq:pyro_likelihood} as a Pyro module; the guide and the gradient-based optimisation of the ELBO are handled automatically by Pyro's \texttt{AutoNormal} guide and \texttt{SVI} routines.
+The posterior $p(\theta \mid d, s)$ has no closed form once $\mathcal{L}_\theta$ is non-linear in $\theta$, so it is approximated with Stochastic Variational Inference (SVI). A mean-field Gaussian guide $q_\phi(\log\theta) = \mathcal{N}(m_\phi, s_\phi^2)$ is fit to the true posterior by maximising the Evidence Lower Bound (ELBO) with respect to the variational parameters $\phi = (m_\phi, s_\phi)$, using the Adam optimiser. In practice this only requires specifying the generative model of Eq.~\ref{eq:pyro_likelihood} as a Pyro module; the guide and the gradient-based optimisation of the ELBO are handled automatically by Pyro's \texttt{AutoNormal} guide and \texttt{SVI} routines.
 
 \textbf{Posterior estimation.}
 Once trained, the variational distribution $q_\phi(\log\theta)$ is used as a proxy for the true posterior. Drawing samples from it and exponentiating gives samples of $\theta$ itself, from which we estimate a posterior mean and standard deviation per detector. The spread of this posterior directly quantifies how well the corresponding instrumental parameter, and hence the associated inverse operator, is constrained by the data, and can be propagated as a systematic uncertainty on the reconstructed sky signal. This procedure is applied independently to each parametrised operator (transmission, detector integration, aperture integration, ...), and is designed to generalise to any operator of the inverse chain by simply supplying its forward expression and prior.

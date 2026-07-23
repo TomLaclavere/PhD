@@ -37,9 +37,12 @@
 \addbibresource{\subfix{chapters/11_atm/11_atm.bib}}
 
 \begin{document}
+\pagestyle{empty}
 
 \input{title.tex}
-\newpage
+
+\frontmatter
+\pagestyle{plain}
 
 \input{chapters/abstract.tex}
 \newpage
@@ -47,6 +50,9 @@
 \newpage
 \thispagestyle{empty}
 \mbox{}
+\newpage
+
+\input{chapters/dedicace.tex}
 \newpage
 
 \input{chapters/remerciements.tex}
@@ -63,12 +69,26 @@
 \listoftables
 \cleardoublepage
 
+\input{chapters/abreviations.tex}
+\newpage
+
 \phantomsection
 
 \dominitoc
 \setcounter{minitocdepth}{2}
 
+\mainmatter
+\pagestyle{fancy}
+\setlength{\parskip}{.7em}
+\renewcommand{\baselinestretch}{1.1}
+
+\fancyhead{}
+\fancyhead[RO,LE]{\textsc{Introduction}}
 \subfile{chapters/0_introduction/0_introduction.tex}
+\clearpage
+\fancyhead{}
+\fancyhead[RO]{\leftmark}
+\fancyhead[LE]{\textsc{\chaptername~\thechapter}}
 
 \part{Cosmological Context}
 

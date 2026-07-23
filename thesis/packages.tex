@@ -1,6 +1,11 @@
 % Core packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[a4paper,left=3cm,right=2.5cm,top=3cm,bottom=3cm,twoside]{geometry}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{stmaryrd}
+% \usepackage{libertine} % requires texlive-fontsextra (not installed) - see notes
 \usepackage{csquotes}
 \usepackage{physics}
 \usepackage{graphicx}
@@ -11,23 +16,50 @@
 % caption/subcaption: load caption before subcaption
 \usepackage{caption}
 \usepackage[labelformat=simple]{subcaption}
+\usepackage{float}
 
 \usepackage{multirow}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{arydshln}
 \usepackage{xcolor}
 % \usepackage{titlesec}
 
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta, shapes.geometric, positioning}
 
+\usepackage[strict]{changepage}
+\usepackage{siunitx}
+\usepackage{enumitem}
+\usepackage{epigraph}
+\usepackage{lscape}
+% \usepackage{titletoc} % incompatible with minitoc, which is already used per-chapter
+\usepackage{mdframed}
+\usepackage{tabu}
+\usepackage{pdfpages}
+\usepackage{calc}
+
 \emergencystretch=1em
 \interfootnotelinepenalty=10000
 
-\usepackage[style=numeric, backend=biber, sorting=none]{biblatex}
+\usepackage[style=numeric, backend=biber, natbib=true, sorting=none]{biblatex}
 \usepackage{subfiles}
 
 \usepackage[hidelinks]{hyperref}
 \usepackage{xr-hyper}
 \ifSubfilesClassLoaded{\externaldocument{../../output/thesis}}{}
 \usepackage{minitoc}
-\setcounter{minitocdepth}{2} 
+\setcounter{minitocdepth}{2}
 \dominitoc
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\setlength{\headheight}{14.5pt}
+\fancyhead{}
+\fancyfoot{}
+\fancyfoot[C]{--~\thepage~--}
+\fancyhead[RO]{\leftmark}
+\fancyhead[LE]{\textsc{\chaptername~\thechapter}}
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
