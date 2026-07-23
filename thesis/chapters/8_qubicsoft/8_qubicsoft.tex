@@ -26,7 +26,7 @@ A significant part of the second and third years of this thesis was therefore de
 
 \section{Instrumental model} \label{section:instrumental_model}
 
-The instrumental model, denoted by $H$ and extensively used in Chapters~\ref{chap:FMM} and~\ref{chap:CMM}, is a complex numerical object based on the work of Mikhail Stolpovskiy during his PhD thesis~\cite{thesismikhail}. It is constructed as a sequence of operators, each describing a specific stage of the instrument response.
+The instrumental model, denoted by $H$ and extensively used in Chapters~\ref{chap:FMM} and~\ref{chap:CMM}, is a complex numerical object based on the work of Mikhail Stolpovskiy during his PhD thesis~\cite{thesismikhail}, \jc{based on a first mono-frequency implementation from Pierre Chanial}. It is constructed as a sequence of operators, each describing a specific stage of the instrument response.
 These operators are implemented using the PyOperators package~\cite{PyOperators}\footnote{\url{https://github.com/pchanial/pyoperators}}, which provides numerical operators and solvers for high-performance computing, with optimised memory management and efficient computations. Building upon PyOperators, \emph{qubicsoft} also relies on the PySimulators package\footnote{\url{https://github.com/pchanial/pysimulators}}, which provides tools for instrument modelling and map manipulation.
 
 The complete monochromatic acquisition operator used to model the QUBIC instrument can be written as :
@@ -63,9 +63,6 @@ The Filter Operator integrates the signal over the considered frequency bandwidt
 The Projection Operator is the central operator of $\mathcal{H}_{\nu}$, and also the most complicated one. It consists of a coordinate rotation between the instrument frame to the galactic one, which is used to compute the position and amplitude of each peak of the synthesized beam for each detector and for each time sample. The input shape of this operator is the one of HEALPix map $\left(N_{\text{pix}}, N_{\text{stk}}\right)$, with $N_{\text{stk}}=3$, the Stokes parameters, and returns TOD with dimension $\left(N_{\text{det}}, N_{\text{pointings}}, N_{\text{stk}}\right)$. A detailed description of this operator can be found in an internal document written by Thibaut Louis.\footnote{\url{https://github.com/qubicsoft/qubic/blob/master/qubic/doc/doc_pdf/doc_QUBICsoft.pdf}}
 
 This operator is responsible for the memory needed by the simulation algorithm, described in subsection \ref{sub:FMM_numerical_limits}, as well as the majority of the computation time. For these reasons, this part of the code relies on Fortran\footnote{With Pierre Chanial, the author and maintainer of PyOperators and PySimulators, we moved the Fortran part from the qubicsoft to PyOperators, to simplify the installation and compilation process for QUBIC software.}, to handle properly memory and improve efficiency through multiprocessing via OpenMP.
-
-\rmk{Should I describe mathematically this operator ? It is very complicated...}
-\steve{\enquote{You should cite a reference}. Unfortunately, there is no reference, it is a code written by Pierre and the only document is the PDF by Thibaut Louis (and this part is particularly confusing). For now, I will just add this document as a reference, and if I have time, I will write my own explanation.}
 
 \subsubsection{HWP Operator}
 
@@ -123,7 +120,7 @@ with $\rho_{\text{det}}$ is the detector efficiency and $\eta_i$ the transmissio
 
 \subsubsection{Detector Response Operator}
 
-The Detector Response operator accounts for the time constant introduced by the Electro-Thermal Feedback (see \ref{sub:TES}), of the order $\sim 0.01$ sec, by convolving the signal by a truncated exponential.
+The Detector Response operator accounts for the time constant introduced by the bolometers (see \ref{sub:TES}), of the order $\sim 0.01$ sec, by convolving the signal by a truncated exponential.
 
 \section{qubicsoft framework}
 
@@ -131,16 +128,15 @@ In this section, we aim at defining the software architecture of the simulation 
 
 \subsection{Software Architecture - Instrument Simulation}
 
-qubicsoft is written mainly in Python~\footnote{\url{https://www.python.org/}}, with some key parts written in Fortran~\footnote{\url{https://fortran-lang.org/}} for computation efficiency. The main advantages of Python are to be a simple language to use and learn, as well as being the majority within the scientific community. It is an object-oriented programming language, which is a feature widely used across the qubicsoft for its practicality, as well as its ability to simplify the overall organisation of the code.
+\emph{qubicsoft} is written mainly in Python~\footnote{\url{https://www.python.org/}}, with some key parts written in Fortran~\footnote{\url{https://fortran-lang.org/}} for computation efficiency. The main advantages of Python are to be a simple language to use and learn, as well as being the majority within the scientific community. It is an object-oriented programming language, which is a feature widely used across the qubicsoft for its practicality, as well as its ability to simplify the overall organisation of the code.
 
 \subsubsection{Fundamental classes}
 
-The fundamental class in the qubicsoft is \texttt{QubicInstrument}, which defines all the physical elements of QUBIC instrument : detectors, horns, optics, beams, filters. It includes the methods to build all the operators described in the previous section, as well as the instrumental and photon noise properties. The class only depends on a parameter file defining all the instrumental properties of QUBIC, allowing easy modification of characteristics (to simulate either the TD or the FI for example). \texttt{QubicInstrument} is a subclass of \texttt{Instrument} from PySimulators.
+The fundamental class in the \emph{qubicsoft} is \texttt{QubicInstrument}, which defines all the physical elements of QUBIC instrument : detectors, horns, optics, beams, filters. It includes the methods to build all the operators described in the previous section, as well as the instrumental and photon noise properties. The class only depends on a parameter file defining all the instrumental properties of QUBIC, allowing easy modification of characteristics (to simulate either the TD or the FI for example). \texttt{QubicInstrument} is a subclass of \texttt{Instrument} from PySimulators.
 
 Then, \texttt{QubicAcquisition}, a subclass of \texttt{Acquisition} from PySimulators, combines an instrument, a scanning strategy and a sky scene to assemble the instrument's individual operators into the full measurement chain. The operator $\mathcal{H_\nu}$ is built from this class.
 
 These two objects form the core of the simulation and reconstruction pipeline, but are limited to a single frequency range. We denote them as monochromatic instrument and monochromatic acquisition operator.
-\steve{\enquote{Do you mean "a single frequency" ?  If it's monochromatic, then it's single frequency.} It is complicated because monochromatic means one frequency with very narrow bandwidth, while here, the bandwidth is large. I used the word monochromatic, but I should not, it was just in opposition with the Polychromatic case. Do you have a better suggestion ?}
 
 \subsubsection{Polychromatic classes}
 
@@ -303,8 +299,7 @@ Finally, a dedicated script can be run separately to perform a fit through MCMC 
 
 \end{tikzpicture}%
 }
-\caption{Diagram of the FMM pipeline.
-\rmk{Is it useful ?}}
+\caption{Diagram of the FMM pipeline.}
 \label{fig:diagram_fmm}
 \end{figure}
 
@@ -388,8 +383,7 @@ After the initialisation through these files, all quantities are accessible thro
 
 \end{tikzpicture}%
 }
-\caption{Diagram of the \texttt{Preset} initialisation used by the CMM pipeline.
-\rmk{Is it useful ?}}
+\caption{Diagram of the \texttt{Preset} initialisation used by the CMM pipeline.}
 \label{fig:diagram_preset}
 \end{figure}
 
@@ -448,8 +442,7 @@ We found empirically that the best way to quickly reconstruct the mixing matrix 
 
 \end{tikzpicture}%
 }
-\caption{Diagram of the CMM pipeline.
-\rmk{Is it useful ?}}
+\caption{Diagram of the CMM pipeline.}
 \label{fig:diagram_cmm}
 \end{figure}
 
@@ -504,8 +497,7 @@ For each fitted method, a specific class handles all necessary functions : fitti
 
 \end{tikzpicture}%
 }
-\caption{Diagram of the mixing-matrix fitting dispatch.
-\rmk{Is it useful ?}}
+\caption{Diagram of the mixing-matrix fitting dispatch.}
 \label{fig:diagram_mixingmatrix}
 \end{figure}
 
@@ -520,7 +512,7 @@ This transition led to a reduction of approximately 60\% in memory usage\footnot
 
 A set of testing notebooks was developed to quickly validate simulation outputs. Each notebook targets a specific component of the pipeline: maps, noise, cross-spectra, parameter fitting, and noise realisations, and provides dedicated plotting tools to verify each stage. Most figures presented in this thesis are generated or adapted from these routines.
 
-\subsubsection{Computation Center}
+\subsubsection{Computing Center}
 
 Given the memory requirements of the map-making algorithms, their computational cost, and the need for a large number of noise realisations, it became necessary to run the pipeline on a computing cluster, in particular the Centre de Calcul de l'IN2P3\footnote{\url{https://cc.in2p3.fr/}}. The code was therefore adapted to this environment by developing dedicated submission scripts and implementing data management tools to handle large-scale parallel simulations.
 
@@ -535,7 +527,6 @@ In addition, since both data simulation and reconstruction are performed within 
 To support this workflow, a chunk-based simulation strategy was implemented for generating time-ordered data. This approach addresses the primary limitation of full-scale simulations, namely memory usage, which becomes critical for realistic configurations. The TOD is generated iteratively in small chunks, each of manageable size, allowing the construction of large datasets without exceeding memory constraints. Once a simulated TOD is produced, multiple noise realisations can be generated efficiently by adding random noise, avoiding repeated full simulation runs.
 
 This approach enables the use of more realistic simulation parameters while maintaining computational feasibility, and provides a flexible framework to study the impact of different instrumental and analysis choices. This analysis is presented in Chapter~\ref{chap:tod}.
-It should be noted that this functionality was developed during the writing of this thesis and therefore required continuous testing and refinement. Nevertheless, it has already been used in some cases discussed in Chapter~\ref{chap:tod}. \steve{Previous sentence is not useful.}
 
 \subsection{Additional improvements}
 
@@ -545,7 +536,7 @@ To conclude this chapter, we briefly discuss additional software improvements ma
 
 \emph{qubicsoft} has been developed over many years by several generations of students and researchers. As a consequence, the codebase accumulated heterogeneous coding practices and varying software engineering standards, motivating a substantial refactoring effort. A significant amount of time was dedicated to cleaning the entire software ($\sim 30$k lines of code).
 This global refactoring includes the adoption of a uniform coding style following PEP8\footnote{\url{https://peps.python.org/pep-0008/}}, a standard established in 2001 based on the principle that \enquote{readability counts}. The PEP8 guidelines are complemented by PEP328\footnote{\url{https://peps.python.org/pep-0328/}}, which addresses import conventions.
-To enforce these conventions, a general cleaning of the codebase was performed, including the removal of unused variables and code snippets, the renaming of variables and classes, the addition of comments and docstrings (only in the files I contributed to), and improvements to import statements by importing only the required methods rather than entire modules. This refactoring effort was complemented by the use of automated linters\footnote{\tom{A linter is a static analysis tool that automatically detects potential errors, bad practices, and style inconsistencies in the code without executing it.}} such as Black\footnote{\url{https://github.com/psf/black}} and isort\footnote{\url{https://github.com/PyCQA/isort/}}, used respectively to enforce code style and sort imports. These tools were later replaced by Ruff\footnote{\url{https://github.com/astral-sh/ruff}}, a faster linter combining their functionality.
+To enforce these conventions, a general cleaning of the codebase was performed, including the removal of unused variables and code snippets, the renaming of variables and classes, the addition of comments and docstrings (only in the files I contributed to), and improvements to import statements by importing only the required methods rather than entire modules. This refactoring effort was complemented by the use of automated linters\footnote{A linter is a static analysis tool that automatically detects potential errors, bad practices, and style inconsistencies in the code without executing it.} such as Black\footnote{\url{https://github.com/psf/black}} and isort\footnote{\url{https://github.com/PyCQA/isort/}}, used respectively to enforce code style and sort imports. These tools were later replaced by Ruff\footnote{\url{https://github.com/astral-sh/ruff}}, a faster linter combining their functionality.
 
 \subsubsection{Automated documentation}
 
@@ -579,7 +570,7 @@ The most important one is the implementation of a non-linear PCG solver. Such an
 
 An alternative to a non-linear PCG approach would be the use of a Gibbs sampling algorithm. Gibbs sampling is a Markov Chain Monte Carlo (MCMC) method that samples the joint posterior distribution of all model parameters, including the angular power spectra $C_\ell$, by iteratively drawing samples from their conditional distributions. This approach is notably employed by the Commander framework~\cite{Commander2008}. Its main advantage is the rigorous statistical treatment of uncertainties, allowing for automatic marginalisation over systematics while providing full posterior distributions for all quantities of interest, including sky maps, foreground parameters, noise properties, and power spectra. The main drawbacks are the computational cost associated with MCMC methods, their potentially slow convergence, the difficulty of assessing convergence diagnostics, and a substantially more complex implementation compared to the current PCG.
 
-\tom{Additionally, the creator of PyOperators and PySimulators, Pierre Chanial, is working on an improved version of these two packages using JAX\footnote{\url{https://github.com/jax-ml/jax}} within the SciPol ERC project}\footnote{\url{https://scipol.in2p3.fr/}, called FURAX\footnote{\url{https://github.com/CMBSciPol/furax}}. The JAX library provides tools for optimising numerical computation (parallelisation across CPU, GPU, and TPU, Just-In-Time compilation, automatic differentiation, and vectorisation, among others), enabling more advanced numerical methods to be applied to large datasets. This framework can highly improve the \emph{qubicsoft}, where computational time and memory usage is always a limitation.}
+Additionally, the creator of PyOperators and PySimulators, Pierre Chanial, is working on an improved version of these two packages using JAX\footnote{\url{https://github.com/jax-ml/jax}} within the SciPol ERC project\footnote{\url{https://scipol.in2p3.fr/}, called FURAX\footnote{\url{https://github.com/CMBSciPol/furax}}. The JAX library provides tools for optimising numerical computation (parallelisation across CPU, GPU, and TPU, Just-In-Time compilation, automatic differentiation, and vectorisation, among others), enabling more advanced numerical methods to be applied to large datasets. This framework can highly improve the \emph{qubicsoft}, where computational time and memory usage is always a limitation.}
 
 A more modest improvement concerns FMM and the possibility of reconstructing a different number of sub-bands within the $150$ and $220$ GHz frequency channels. For example, one could reconstruct several sub-bands within the $220$ GHz channel, where thermal dust emission is dominant, while reconstructing only a single map within the $150$ GHz channel, where the CMB signal dominates. Such an approach would exploit the spectral imaging capabilities of QUBIC where they are most beneficial for component separation, while limiting the increase in anti-correlated noise associated with a large number of reconstructed sub-bands where little additional information is gained.
 This idea can be further extended by introducing a non-uniform distribution of sub-band bandwidths. In the current implementation, the bandwidth of each reconstructed sub-band is determined only by the total number of reconstructed maps, $N_{\text{rec}}$, resulting in uniform bandwidths across the frequency range. However, wider sub-bands at lower frequencies and narrower sub-bands at higher frequencies could potentially improve both map reconstruction and component separation by better matching the spectral complexity of the observed sky. A similar strategy could also be applied to the reconstruction of the mixing matrix within the CMM framework.
