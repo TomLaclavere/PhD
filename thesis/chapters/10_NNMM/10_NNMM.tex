@@ -10,11 +10,9 @@
     \minitoc
 }
 
-\rmk{Should we really keep the name NNMM ? I don't think so, but I can't find a good name. Just use Inverse Map-Making ?}
-
 \section*{Introduction}
 
-In this chapter, we present an alternative reconstruction pipeline to the FMM and CMM methods discussed in Chapters~\ref{chap:FMM} and \ref{chap:CMM}, respectively. While both of these methods rely on forward modelling, this new algorithm, called \emph{Neural Network Map-Making} (NNMM), aims to solve the inverse map-making problem. Although we previously argued that the inverse operator $H^{-1}$ cannot be computed under realistic conditions, NNMM uses physics-guided neural networks to approximate this inverse mapping. Following this approach, we develop inverse counterparts of both FMM and CMM based on neural networks.
+In this chapter, we present an alternative reconstruction pipeline to the FMM and CMM methods discussed in Chapters~\ref{chap:FMM} and \ref{chap:CMM}, respectively. While both of these methods rely on forward modelling, this new algorithm, that we internaly call \emph{Neural Network Map-Making} (NNMM), aims to solve the inverse map-making problem. Although we previously argued that the inverse operator $H^{-1}$ cannot be computed under realistic conditions, NNMM uses physics-guided neural networks to approximate this inverse mapping. Following this approach, we develop inverse counterparts of both FMM and CMM based on neural networks.
 
 We first compare the advantages and limitations of inverse methods with those of the forward-modelling approaches presented in the previous chapters. We then introduce the key concepts underlying the inversion procedure. Finally, we address one of the main limitations of neural networks in physics applications, namely uncertainty estimation, by combining physics-guided neural networks with the probabilistic programming framework Pyro\footnote{\url{https://pyro.ai/}}.
 
@@ -58,8 +56,6 @@ which is itself approximated by its diagonal form $\mathcal{P}_{\text{roj}}^T1$.
 
 \section{Uncertainty estimation}
 
-\rmk{Wait for Leonora's draft to correct this part.}
-
 From the three methods to invert the operators, one can see that we are relying on the physical description of each operator to compute their inverse (except for the projection operator). Our goal is not to use machine learning as a black box to compute $H^{-1}$, we want to keep the interpretability as well as the uncertainty estimation of key instrumental parameters by applying this method.
 
 Each analytically or model-based inverted operator depends on one or several physical quantities, such as the detector efficiency $\eta$, the beam solid angle $\Omega$, or the effective horn radius $r$, that are only known from calibration or optical simulations, and therefore carry a systematic uncertainty. Rather than fixing these quantities to their nominal calibrated value, we treat them as latent random variables and infer their posterior distribution directly from the TOD, using the probabilistic programming framework Pyro~\cite{bingham2019pyro}, built on top of PyTorch\footnote{\url{https://pytorch.org/}}.
@@ -81,5 +77,25 @@ The posterior $p(\theta \mid d, s)$ has no closed form once $\mathcal{L}_\theta$
 
 \textbf{Posterior estimation.}
 Once trained, the variational distribution $q_\phi(\log\theta)$ is used as a proxy for the true posterior. Drawing samples from it and exponentiating gives samples of $\theta$ itself, from which we estimate a posterior mean and standard deviation per detector. The spread of this posterior directly quantifies how well the corresponding instrumental parameter, and hence the associated inverse operator, is constrained by the data, and can be propagated as a systematic uncertainty on the reconstructed sky signal. This procedure is applied independently to each parametrised operator (transmission, detector integration, aperture integration, ...), and is designed to generalise to any operator of the inverse chain by simply supplying its forward expression and prior.
+
+\section{Associated Publication (Draft)}
+
+The following pages reproduce the complete draft of the publication associated with this chapter. \textbf{This is an unpublished preliminary manuscript}: it has not yet been submitted, peer-reviewed, or approved by the QUBIC collaboration. Consequently, its content, including the notation, figures, methodology, and conclusions, remains subject to change before submission, and some results are still missing. The draft is included here, with an appropriate watermark, solely to provide the reader with the complete technical description of this promising approach.
+
+\ifSubfilesClassLoaded{
+    \includepdf[pages=-, pagecommand={%
+        \thispagestyle{empty}%
+        \begin{tikzpicture}[remember picture, overlay]
+            \node[rotate=45, scale=8, text opacity=0.6, black, font=\bfseries] at (current page.center) {DRAFT};
+        \end{tikzpicture}%
+    }]{../../draft_nnmm/main.pdf}
+}{
+    \includepdf[pages=-, pagecommand={%
+        \thispagestyle{empty}%
+        \begin{tikzpicture}[remember picture, overlay]
+            \node[rotate=45, scale=8, text opacity=0.6, black, font=\bfseries] at (current page.center) {DRAFT};
+        \end{tikzpicture}%
+    }]{draft_nnmm/main.pdf}
+}
 
 \end{document}

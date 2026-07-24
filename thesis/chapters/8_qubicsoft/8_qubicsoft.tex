@@ -26,7 +26,7 @@ A significant part of the second and third years of this thesis was therefore de
 
 \section{Instrumental model} \label{section:instrumental_model}
 
-The instrumental model, denoted by $H$ and extensively used in Chapters~\ref{chap:FMM} and~\ref{chap:CMM}, is a complex numerical object based on the work of Mikhail Stolpovskiy during his PhD thesis~\cite{thesismikhail}, \jc{based on a first mono-frequency implementation from Pierre Chanial}. It is constructed as a sequence of operators, each describing a specific stage of the instrument response.
+The instrumental model, denoted by $H$ and extensively used in Chapters~\ref{chap:FMM} and~\ref{chap:CMM}, is a complex numerical object based on the work of Mikhail Stolpovskiy during his PhD thesis~\cite{thesismikhail}, based on a first mono-frequency implementation from Pierre Chanial. It is constructed as a sequence of operators, each describing a specific stage of the instrument response.
 These operators are implemented using the PyOperators package~\cite{PyOperators}\footnote{\url{https://github.com/pchanial/pyoperators}}, which provides numerical operators and solvers for high-performance computing, with optimised memory management and efficient computations. Building upon PyOperators, \emph{qubicsoft} also relies on the PySimulators package\footnote{\url{https://github.com/pchanial/pysimulators}}, which provides tools for instrument modelling and map manipulation.
 
 The complete monochromatic acquisition operator used to model the QUBIC instrument can be written as :
