@@ -32,7 +32,7 @@ We introduced in Subsection~\ref{subsection:atm} a preliminary description of at
 
 \subsection{Atmosphere properties}
 
-At millimetre wavelengths and for ground based instruments, the atmosphere is the main source of contamination for astrophysical and cosmological observations. Observations through the atmosphere are affected by several physical properties: the atmosphere temperature, pressure, and more importantly the precipitable water vapour (PWV). As detailed below, significant emission lines from $H_2O$ exist in the vicinity of CMB observation frequencies, which emision are affected by the water vapour density, parametrised by the PWV. The PWV is defined from the water vapour density at a given location as:
+At millimetre wavelengths and for ground based instruments, the atmosphere is the main source of contamination for astrophysical and cosmological observations. Observations through the atmosphere are affected by several physical properties: the atmosphere temperature, pressure, and more importantly the precipitable water vapour (PWV). As detailed below, significant emission lines from $H_2O$ exist in the vicinity of CMB observation frequencies, which emission is affected by the water vapour density, parametrised by the PWV. The PWV is defined from the water vapour density at a given location as:
 
 \begin{equation}
     \mathrm{PWV} = \frac{1}{\rho_w} \int_0^{\infty} \rho_v(z)\, dz,
@@ -68,7 +68,7 @@ The water vapour density fluctuations are assumed to follow the Kolmogorov model
     P(\vec{k}) \propto |\vec{k}|^{-11/3}.
 \end{equation}
 
-However, this spectrum is not integrable at low spatial frequencies, which implies that the fully scale-invariant turbulence cannot extend to arbitrarily large spatial scales. In practice, this is regularised by introducing a low-wavenumber cutoff $k_\text{min} = r_0^{-1}$, where $r_0^{-1}$ represents the largest scale over which the turbulence can be considered scale-invariant. Typical values for the Atacama Desert are several hundred metres, according to~\cite{errard2015, morris2022}. We assume similar properties for the atmosphere at the QUBIC observation site. This leads to the modified spectrum:
+However, this spectrum is not integrable at low spatial frequencies, which implies that the fully scale-invariant turbulence cannot extend to arbitrarily large spatial scales. In practice, this is regularised by introducing a low-wavenumber cutoff $k_\text{min} = r_0^{-1}$, where $r_0$ represents the largest scale over which the turbulence can be considered scale-invariant. Typical values for the Atacama Desert are several hundred metres, according to~\cite{errard2015, morris2022}. We assume similar properties for the atmosphere at the QUBIC observation site. This leads to the modified spectrum:
 
 \begin{equation} \label{eq:Kolmogorov}
     P_\text{adj}(\vec{k}) \propto (r_0^{-2} + |\vec{k}|^2)^{-11/6},
@@ -90,9 +90,9 @@ The normalised spectrum is plotted in Figure~\ref{fig:kolmogorov_spectrum}.
 
 \subsubsection{Polarisation} \label{subsub:atm_polarisation}
 
-The emission from the atmosphere is considered to be unpolarised. However, few effects are producing polarised emission, such as the Zeeman splitting of $O_2$ by the Earth magnetic field~\cite{hanany2003, spinelli2011, petroff2020, fujino2025} or the ice crystals in clouds~\cite{takakura2019, li2023, coerver2025}.
+The emission from the atmosphere is considered to be unpolarised. However, few effects are producing polarised emission, such as the Zeeman splitting of $O_2$ by the Earth's magnetic field~\cite{hanany2003, spinelli2011, petroff2020, fujino2025} or the ice crystals in clouds~\cite{takakura2019, li2023, coerver2025}.
 
-The Zeeman effect occurs as the Earth's magnetic filed splits the energy levels of $O_2$ molecules, so their emission comes out slightly circularly polarised. The signal is tied to the magnetic field direction. The effect is relatively small: typical circular polarisation amplitudes are $\sim$130–500 $\mu$K depending on site and frequency \cite{petroff2020,fabbian2012}, corresponding to a fraction of order $10^{-4}$--$10^{-5}$ of the total intensity emission. It also produces a tiny fraction of linear polarisation, about $10000$ times smaller than the circular polarisation ($\sim 1$--$10$~nK)~\cite{fabbian2012}. This effect is deterministic and tied to a fixed geomagnetic pattern, and could therefore be modelled and subtracted as a template, rather than requiring dedicated hardware.
+The Zeeman effect occurs as the Earth's magnetic field splits the energy levels of $O_2$ molecules, so their emission comes out slightly circularly polarised. The signal is tied to the magnetic field direction. The effect is relatively small: typical circular polarisation amplitudes are $\sim$130–500 $\mu$K depending on site and frequency \cite{petroff2020,fabbian2012}, corresponding to a fraction of order $10^{-4}$--$10^{-5}$ of the total intensity emission. It also produces a tiny fraction of linear polarisation, about $10000$ times smaller than the circular polarisation ($\sim 1$--$10$~nK)~\cite{fabbian2012}. This effect is deterministic and tied to a fixed geomagnetic pattern, and could therefore be modelled and subtracted as a template, rather than requiring dedicated hardware.
 
 Some clouds, called \emph{cirrus clouds}, are thin clouds present at high altitude, transparent to CMB experiment at millimetre range. Nevertheless, they yield horizontally-aligned ice crystals which backward scatter ground radiation and forward scatter sky signal, producing a linear polarisation emission~\cite{li2023}. Unlike Zeeman signal, this signal acts as a \enquote{burst} when a cirrus cloud is observed by the instrument, meaning that it can't be averaged. These events would need to be flagged, using a sky camera or a LIDAR for example, and treated in post analysis. When observing through ice clouds, the atmosphere polarisation emission can reach about $5$--$10\%$ of the intensity emission ($\lesssim 0.1$ K)~\cite{takakura2019}.
 
@@ -109,7 +109,7 @@ Both tools rely on the same calibration of the turbulence outer scale derived fr
 
 Unfortunately, these frameworks were developed for classical imagers and cannot be directly applied to the specific case of QUBIC\footnote{In her PhD thesis, Louise Mousset proposed an approach to adapt TOAST to the QUBIC instrument. Such an implementation would greatly facilitate the development of realistic simulations, as TOAST already provides many advanced features, particularly for modelling instrumental systematics. However, this approach was not explored further due to time constraints~\cite{thesislouise}.}. Instead, we chose to develop our own simplified atmospheric model, inspired by the formalisms of~\cite{errard2015} and~\cite{morris2022}, rather than investing significant effort into adapting TOAST or \emph{maria} to QUBIC. The assumptions and implemented features of this model are described in the following.
 
-To account for the impact of atmospheric emission on QUBIC's observations, we simulate the atmosphere as a thin, turbulent layer of water vapour above the instrument\footnote{The software also allows to simulate a 3D volume, similarly than TOAST, but which cannot be used for data acquisition because $H$ only accept HEALPix maps.}. The simulation proceeds in four stages: computing the mean physical properties of the atmosphere as a function of altitude, generating spatially-correlated fluctuations of the water vapour density that mimic atmospheric turbulence, converting these fluctuations into a frequency-dependent brightness temperature using the atmosphere's absorption spectrum, and simulating the temporal evolution of the atmosphere through wind advection. The simulation code is added in the \emph{qubicsoft} library\footnote{\url{https://github.com/qubicsoft/qubic/blob/master/qubic/lib/MapMaking/Qatmosphere.py}}, but is not implemented in the simulation and reconstruction pipeline yet.
+To account for the impact of atmospheric emission on QUBIC's observations, we simulate the atmosphere as a thin, turbulent layer of water vapour above the instrument\footnote{The software also allows the simulation of a 3D volume, similarly to TOAST, but which cannot be used for data acquisition because $H$ only accepts HEALPix maps.}. The simulation proceeds in four stages: computing the mean physical properties of the atmosphere as a function of altitude, generating spatially-correlated fluctuations of the water vapour density that mimic atmospheric turbulence, converting these fluctuations into a frequency-dependent brightness temperature using the atmosphere's absorption spectrum, and simulating the temporal evolution of the atmosphere through wind advection. The simulation code is added in the \emph{qubicsoft} library\footnote{\url{https://github.com/qubicsoft/qubic/blob/master/qubic/lib/MapMaking/Qatmosphere.py}}, but is not implemented in the simulation and reconstruction pipeline yet.
 
 \subsubsection{Physical properties}
 
@@ -135,14 +135,14 @@ After defining the average properties of the atmosphere, we need to implement it
 
 \begin{itemize}
     \item \textbf{Flat-sky (Fourier) method: }random phases are drawn on a 2D Fourier grid, weighted by $\sqrt{P(\mathbf{k})}$, and inverse-Fourier-transformed to real space to obtain a fluctuation map $\delta\rho(x,y)$. This flat map is then projected onto a healpix map, which creates geometrical distortions far from the zenith. 
-    \item \textbf{Full-sky (spherical harmonics) method: }the Kolmogorov spectrum is first translated into an angular correlation function $C(\theta)$ (using the relation between real-space separation and pointing angle, $r = 2h_{atm}\sin(\theta/2)$), then converted into an angular power spectrum $C_\ell$ (computed with CAMB), from which a HEALPix map is drawn with the \texttt{synfast} function from healpy. This method is directly creating a HEALPix map of the atmosphere without projection, but it is not physically motivated to represent the atmophere as the surface of a sphere centred on the observer. This representation still may be correct close to the zenith, but should be treated carefully before making the comparison with the 2D case.
+    \item \textbf{Full-sky (spherical harmonics) method: }the Kolmogorov spectrum is first translated into an angular correlation function $C(\theta)$ (using the relation between real-space separation and pointing angle, $r = 2h_{atm}\sin(\theta/2)$), then converted into an angular power spectrum $C_\ell$ (computed with CAMB), from which a HEALPix map is drawn with the \texttt{synfast} function from healpy. This method is directly creating a HEALPix map of the atmosphere without projection, but it is not physically motivated to represent the atmosphere as the surface of a sphere centred on the observer. This representation still may be correct close to the zenith, but should be treated carefully before making the comparison with the 2D case.
 \end{itemize}
 
 Both approaches, presented in Figure~\ref{fig:amt_rho_fluctuation}, produce a fluctuation map $\delta\rho$ representing the turbulent structure of the water vapour field at a given time.
 
 \textbf{Remark: }Both methods to create an atmospheric map compatible with the QUBIC acquisition operator present potential problems. It is a current limitation from our current simulation software, totally out of the scope of this thesis, which will require extra attention in the future.
 
-Most atmospheric publications do not measure directly the fluctuations of the water vapour density, but mainly the fluctuations of PWV. We are using this standard deviation $\sigma_{PWV}$ to compute a density fluctuation scale $\sigma_\rho = \sigma_\text{PWV}/h$ (with $h = \frac{h_{H_2O}}{\log(2)}$).
+Most atmospheric publications do not measure directly the fluctuations of the water vapour density, but mainly the fluctuations of PWV. We are using this standard deviation $\sigma_\text{PWV}$ to compute a density fluctuation scale $\sigma_\rho = \sigma_\text{PWV}/h$ (with $h = \frac{h_{H_2O}}{\log(2)}$).
 
 \begin{figure}[!htbp]
     \begin{minipage}{0.5\linewidth}
@@ -180,7 +180,7 @@ From all these elements, we can compute the atmosphere emission, in Kelvin, from
 \end{equation}
 with $\vec{r}$ the pointing direction, $\alpha_b$ the absorption spectrum, $\rho$ the water vapour density, $B$ the instrument beam, and $T_\text{atm}$ the temperature of the atmosphere. By integrating this expression on the volume seen by the beam, we have the emission of the atmosphere in Kelvin. 
 
-As bolometers are sensible to temperature fluctuations, we can replace $\rho$ by the fluctuation map $\delta\rho$, which builds the temperature map of the atmosphere $\delta T$, shown in Figure~\ref{fig:atm_map}.
+As bolometers are sensitive to temperature fluctuations, we can replace $\rho$ by the fluctuation map $\delta\rho$, which builds the temperature map of the atmosphere $\delta T$, shown in Figure~\ref{fig:atm_map}.
 
 \begin{figure}[!htbp]
     \centering
@@ -236,7 +236,7 @@ For both instruments, the correlation decreases as the line of sight moves away 
 \label{fig:atm_corr}
 \end{figure}
 
-\subsubsection{Turbulence typical scale}
+\subsubsection{Turbulence outer scale}
 
 The main atmospheric parameter governing the correlation is the characteristic turbulence outer scale $r_0$. It represents the typical distance beyond which atmospheric fluctuations become decorrelated. Still neglecting the wind, we compute the temporal correlations for different values of $r_0$. The results are shown in Figure~\ref{fig:atm_corr_r0}.
 
@@ -290,7 +290,7 @@ Overall, this analysis indicates that the synthesized beam of a bolometric inter
 
 \section{Data acquisition simulation} \label{section:atm_tod_simulation}
 
-Including the atmosphere in the data acquisition requires adaptation in the model described earlier. Two modifications are needed to account for the atmophere evolving in local coordinates, while CMB is observed in galactic coordinates, and for the movement of atmosphere with respect to the wind.
+Including the atmosphere in the data acquisition requires adaptation in the model described earlier. Two modifications are needed to account for the atmosphere evolving in local coordinates, while CMB is observed in galactic coordinates, and for the movement of atmosphere with respect to the wind.
 
 \subsection{Coordinate system}
 
@@ -390,7 +390,7 @@ Because of the implementation of the PCG solver in the \emph{qubicsoft}, we can'
 
 Here, we propose to show results of the atmosphere map-making, without including CMB and component separation. The goal is to observe the effect of performing the map-making in local coordinates, as well as observing the effect of not accounting for the wind displacement. 
 
-It is important to note that the reconstruction pipelines, described in Chapter \ref{chap:qubicsoft}, cannot be used here. Indeed, the atmosphere map, operating in both galactic and local coordinates, or the wind are not currently implemented in these pipelines. Therefore, for each different case studied, a specific pipeline was build \enquote{by hands}. The method to build it was to increase incrementally the complexity. The main steps are presented in the following, but some key points are not mentioned as they do not represent further interest from the atmosphere mitigation point of view, while they remained challenging from the algorithmic point of view (for example, going from monochromatic to polychromatic, from FMM-like to CMM-like reconstruction, joint observation and reconstruction through both local and galactic coordinates, and many others).
+It is important to note that the reconstruction pipelines, described in Chapter \ref{chap:qubicsoft}, cannot be used here. Indeed, the atmosphere map, operating in both galactic and local coordinates, or the wind are not currently implemented in these pipelines. Therefore, for each different case studied, a specific pipeline was built \enquote{by hands}. The method to build it was to increase incrementally the complexity. The main steps are presented in the following, but some key points are not mentioned as they do not represent further interest from the atmosphere mitigation point of view, while they remained challenging from the algorithmic point of view (for example, going from monochromatic to polychromatic, from FMM-like to CMM-like reconstruction, joint observation and reconstruction through both local and galactic coordinates, and many others).
 
 \subsubsection{Scanning strategy}
 
@@ -417,7 +417,7 @@ The corresponding pointing positions on a HEALPix map are shown in Figure~\ref{f
 
 \subsubsection{No wind case}
 
-We start by performing the map-making without considering any wind. The idea here is to test our implementation of CMM in the case of local coordinates. The coordinates' system should not affect the result, but it allows to verify the implementation. 
+We start by performing the map-making without considering any wind. The idea here is to test our implementation of CMM in the case of local coordinates. The coordinates' system should not affect the result, but it allows us to verify the implementation. 
 
 Then, we reconstruct the atmosphere without considering noise, in order to check the correctness of the method. The result is visible in Figure~\ref{fig:atm_mm_no_wind_noiseless}, and confirms that the approach is not biased, as demonstrated by the null residual.
 
@@ -428,7 +428,7 @@ Then, we reconstruct the atmosphere without considering noise, in order to check
     \label{fig:atm_mm_no_wind_noiseless}
 \end{figure}
 
-The exact same map-making is performed, but adding noise in the simulation this time, corresponding to about $10\&$ of QUBIC noise. The reconstructed maps are shown in Figure~\ref{fig:atm_mm_no_wind}. One can see reconstruction noise at the edge of the residual map. It corresponds to the edge effect (introduced in subsection~\ref{sub:fmm_external_data}). Meanwhile, the centre of the patch is very well reconstructed.
+The exact same map-making is performed, but adding noise in the simulation this time, corresponding to about $10\%$ of QUBIC noise. The reconstructed maps are shown in Figure~\ref{fig:atm_mm_no_wind}. One can see reconstruction noise at the edge of the residual map. It corresponds to the edge effect (introduced in subsection~\ref{sub:fmm_external_data}). Meanwhile, the centre of the patch is very well reconstructed.
 
 \begin{figure}[!htbp]
     \centering

@@ -12,7 +12,7 @@
 
 \section*{Introduction}
 
-In this chapter, we present an alternative reconstruction pipeline to the FMM and CMM methods discussed in Chapters~\ref{chap:FMM} and \ref{chap:CMM}, respectively. While both of these methods rely on forward modelling, this new algorithm, that we internaly call \emph{Neural Network Map-Making} (NNMM), aims to solve the inverse map-making problem. Although we previously argued that the inverse operator $H^{-1}$ cannot be computed under realistic conditions, NNMM uses physics-guided neural networks to approximate this inverse mapping. Following this approach, we develop inverse counterparts of both FMM and CMM based on neural networks.
+In this chapter, we present an alternative reconstruction pipeline to the FMM and CMM methods discussed in Chapters~\ref{chap:FMM} and \ref{chap:CMM}, respectively. While both of these methods rely on forward modelling, this new algorithm, that we internally call \emph{Neural Network Map-Making} (NNMM), aims to solve the inverse map-making problem. Although we previously argued that the inverse operator $H^{-1}$ cannot be computed under realistic conditions, NNMM uses physics-guided neural networks to approximate this inverse mapping. Following this approach, we develop inverse counterparts of both FMM and CMM based on neural networks.
 
 We first compare the advantages and limitations of inverse methods with those of the forward-modelling approaches presented in the previous chapters. We then introduce the key concepts underlying the inversion procedure. Finally, we address one of the main limitations of neural networks in physics applications, namely uncertainty estimation, by combining physics-guided neural networks with the probabilistic programming framework Pyro\footnote{\url{https://pyro.ai/}}.
 
@@ -27,7 +27,7 @@ In the FMM chapter, we claimed in the subsection~\ref{sub:mm_solution} that it w
 \begin{equation}
     \vec{\hat{s}} = (H^{~T} N^{-1} H)^{-1} H^{~T} N^{-1} \vec{d},
 \end{equation}
-because it is too expensive to invert the instrumental model $H$ explicitely. To overcome this difficulty, Leonora Kardum had the idea of separating each sub-operator that composed $H$, detailed in the section \ref{section:instrumental_model}, to compute their individual inverse either through analytical expression when possible or pseudo-inverse estimation. Otherwise, Machine Learning is used to approximate inversion for too complicated operators.
+because it is too expensive to invert the instrumental model $H$ explicitly. To overcome this difficulty, Leonora Kardum had the idea of separating each sub-operator that composed $H$, detailed in the section \ref{section:instrumental_model}, to compute their individual inverse either through analytical expression when possible or pseudo-inverse estimation. Otherwise, Machine Learning is used to approximate inversion for too complicated operators.
 
 Therefore, the goal of this approach is to compute the inverse expression of all the operators describing the instrument systems, to build $H^{-1}$. From equation \ref{eq:instrumental_model}, we have:
 \begin{equation}

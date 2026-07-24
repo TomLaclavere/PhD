@@ -22,7 +22,7 @@ Particular emphasis is placed on the architecture of \emph{qubicsoft} and on the
 The chapter also presents the implemented simulation and reconstruction capabilities, discusses the currently known issues and limitations, and outlines the most important developments planned for future releases of the framework. \\
 
 \personal{At the beginning of this thesis, the simulation and reconstruction pipeline was still at an R\&D stage, with many hard-coded or \enquote{work-in-progress} components, and was maintained in a separate repository from \emph{qubicsoft}. In collaboration with Mathias Regnier, we improved the software structure of the pipeline by introducing a user-friendly interface based on parameter files and simple Bash\footnote{\url{https://doc.ubuntu-fr.org/bash}} scripts, while migrating the codebase into \emph{qubicsoft}.
-A significant part of the second and third years of this thesis was therefore dedicated to software engineering tasks, including refactoring, cleaning, documenting, debugging and optimising the code. These developments were carried out in parallel with hyperparameters characterisation efforts, which are discussed in the next Chapter~\ref{chap:tod}. This work resulted in approximately 650 commits to the \emph{qubicsoft} GitHub repository over this period at the time of writing.}
+A significant part of the second and third years of this thesis was therefore dedicated to software engineering tasks, including refactoring, cleaning, documenting, debugging and optimising the code. These developments were carried out in parallel with hyperparameter characterisation efforts, which are discussed in the next Chapter~\ref{chap:tod}. This work resulted in approximately 650 commits to the \emph{qubicsoft} GitHub repository over this period at the time of writing.}
 
 \section{Instrumental model} \label{section:instrumental_model}
 
@@ -60,7 +60,7 @@ The Filter Operator integrates the signal over the considered frequency bandwidt
 
 \subsubsection{Projection Operator}
 
-The Projection Operator is the central operator of $\mathcal{H}_{\nu}$, and also the most complicated one. It consists of a coordinate rotation between the instrument frame to the galactic one, which is used to compute the position and amplitude of each peak of the synthesized beam for each detector and for each time sample. The input shape of this operator is the one of HEALPix map $\left(N_{\text{pix}}, N_{\text{stk}}\right)$, with $N_{\text{stk}}=3$, the Stokes parameters, and returns TOD with dimension $\left(N_{\text{det}}, N_{\text{pointings}}, N_{\text{stk}}\right)$. A detailed description of this operator can be found in an internal document written by Thibaut Louis.\footnote{\url{https://github.com/qubicsoft/qubic/blob/master/qubic/doc/doc_pdf/doc_QUBICsoft.pdf}}
+The Projection Operator is the central operator of $\mathcal{H}_{\nu}$, and also the most complicated one. It consists of a coordinate rotation between the instrument frame to the galactic one, which is used to compute the position and amplitude of each peak of the synthesized beam for each detector and for each time sample. The input shape of this operator is that of the HEALPix map $\left(N_{\text{pix}}, N_{\text{stk}}\right)$, with $N_{\text{stk}}=3$, the Stokes parameters, and returns TOD with dimension $\left(N_{\text{det}}, N_{\text{pointings}}, N_{\text{stk}}\right)$. A detailed description of this operator can be found in an internal document written by Thibaut Louis.\footnote{\url{https://github.com/qubicsoft/qubic/blob/master/qubic/doc/doc_pdf/doc_QUBICsoft.pdf}}
 
 This operator is responsible for the memory needed by the simulation algorithm, described in subsection \ref{sub:FMM_numerical_limits}, as well as the majority of the computation time. For these reasons, this part of the code relies on Fortran\footnote{With Pierre Chanial, the author and maintainer of PyOperators and PySimulators, we moved the Fortran part from the qubicsoft to PyOperators, to simplify the installation and compilation process for QUBIC software.}, to handle properly memory and improve efficiency through multiprocessing via OpenMP.
 
@@ -107,7 +107,7 @@ The Detector Integration operator integrates the flux in the detector solid angl
     {\cal I}_{\rm det}= \frac{\Omega_{\rm det}}{\Omega_{\rm beam}} B^{\rm sec}(\phi_{\rm det}, \theta_{\rm det}).
 \end{equation}
 
-The solid angle of the detectors is $\Omega_{\text{det}}=\frac{A_{\text{det}}}{D_f^2}\cos^3(\theta_{\text{det}})$, $\Omega_{\text{beam}}$ the solid angle of the secondary beam, and $B^{\rm sec}(\phi_{\rm det}, \theta_{\rm det})$ is the beam amplitude associated with the detector pointing angles.   
+The solid angle of the detectors is $\Omega_{\rm det}=\frac{A_{\rm det}}{D_f^2}\cos^3(\theta_{\rm det})$, $\Omega_{\rm beam}$ the solid angle of the secondary beam, and $B^{\rm sec}(\phi_{\rm det}, \theta_{\rm det})$ is the beam amplitude associated with the detector pointing angles.   
 
 \subsubsection{Instrument Transmission Operator}
 
@@ -128,7 +128,7 @@ In this section, we aim at defining the software architecture of the simulation 
 
 \subsection{Software Architecture - Instrument Simulation}
 
-\emph{qubicsoft} is written mainly in Python~\footnote{\url{https://www.python.org/}}, with some key parts written in Fortran~\footnote{\url{https://fortran-lang.org/}} for computation efficiency. The main advantages of Python are to be a simple language to use and learn, as well as being the majority within the scientific community. It is an object-oriented programming language, which is a feature widely used across the qubicsoft for its practicality, as well as its ability to simplify the overall organisation of the code.
+\emph{qubicsoft} is written mainly in Python~\footnote{\url{https://www.python.org/}}, with some key parts written in Fortran~\footnote{\url{https://fortran-lang.org/}} for computation efficiency. The main advantages of Python are to be a simple language to use and learn, as well as being the majority within the scientific community. It is an object-oriented programming language, which is a feature widely used across \emph{qubicsoft} for its practicality, as well as its ability to simplify the overall organisation of the code.
 
 \subsubsection{Fundamental classes}
 
@@ -136,19 +136,19 @@ The fundamental class in the \emph{qubicsoft} is \texttt{QubicInstrument}, which
 
 Then, \texttt{QubicAcquisition}, a subclass of \texttt{Acquisition} from PySimulators, combines an instrument, a scanning strategy and a sky scene to assemble the instrument's individual operators into the full measurement chain. The operator $\mathcal{H_\nu}$ is built from this class.
 
-These two objects form the core of the simulation and reconstruction pipeline, but are limited to a single frequency range. We denote them as monochromatic instrument and monochromatic acquisition operator.
+These two objects form the core of the simulation and reconstruction pipeline, but are limited to a single frequency range. We denote them as the monochromatic instrument and the monochromatic acquisition operator.
 
 \subsubsection{Polychromatic classes}
 
 To describe the frequency capabilities of QUBIC, in particular regarding its beam, we define the \texttt{QubicMultibandInstrument}. This class holds an array of \texttt{QubicInstrument} instances, one per frequency sub-band. It also includes methods to define properly the bandwidth of each of them. 
 
-Based on this extension, \texttt{Qubic\allowbreak MultiAcquisitions} build one \texttt{Qubic\allowbreak Acquisition} object per sub-band from \texttt{Qubic\allowbreak MultibandInstrument}. This class builds the multifrequency operator $H$.
+Based on this extension, \texttt{Qubic\allowbreak MultiAcquisitions} builds one \texttt{Qubic\allowbreak Acquisition} object per sub-band from \texttt{Qubic\allowbreak MultibandInstrument}. This class builds the multifrequency operator $H$.
 
 \subsubsection{Map-Making classes}
 
 As discussed during the map-making chapters (\ref{chap:FMM} and \ref{chap:CMM}), we explored the addition of external data during reconstruction. For the addition of Planck, we created the class \texttt{PlanckAcquisition}, which contains methods to build the acquisition operator, the noise and the inverse covariance matrix $N^{-1}$ for Planck. 
 
-Additionally, we defined the class \texttt{QubicInstrumentType}, a subclass of \texttt{QubicMultiAcquisitions}. Its purpose is to handle the various instrumental design of QUBIC (Ultra Wide Band, Dual Bands and Mono Band), which necessitate extra care regarding the shape of the operators.
+Additionally, we defined the class \texttt{QubicInstrumentType}, a subclass of \texttt{QubicMultiAcquisitions}. Its purpose is to handle the various instrumental designs of QUBIC (Ultra Wide Band, Dual Bands and Mono Band), which necessitate extra care regarding the shape of the operators.
 
 Finally, these two classes are joined in two classes : \texttt{JointAcquisition\allowbreak FrequencyMapMaking} and \texttt{JointAcquisition\allowbreak ComponentsMapMaking}, which build all the operators, based on their subclasses, for the FMM and CMM.
 
@@ -242,8 +242,8 @@ A significant part of the software development effort that led to the present ar
 
 \subsection{Software Architecture - Frequency Map-Making}
 
-Within this thesis framework, the pipeline to use the FMM has been fundamentaly simplified. It only necessitates modifying a parameters file, in YAML\footnote{\url{https://yaml.org/}} format, to describe the simulation. Then, the simulation and reconstruction can be run with only one command line. 
-The configuration file allows to set the physical context of the simulation (composition of the sky, instrumental configuration), as well as the numerical parameters (number of subbands, number of iterations, ...). The FMM is mainly written within one file, where the simulation, the reconstruction, and the computation of the angular power spectra (if asked, see Chapter~\ref{chap:xspectrum}) are performed.
+Within this thesis framework, the pipeline to use the FMM has been fundamentally simplified. It only necessitates modifying a parameters file, in YAML\footnote{\url{https://yaml.org/}} format, to describe the simulation. Then, the simulation and reconstruction can be run with only one command line. 
+The configuration file allows setting the physical context of the simulation (composition of the sky, instrumental configuration), as well as the numerical parameters (number of subbands, number of iterations, ...). The FMM is mainly written within one file, where the simulation, the reconstruction, and the computation of the angular power spectra (if asked, see Chapter~\ref{chap:xspectrum}) are performed.
 
 \subsubsection{Algorithm}
 
@@ -305,7 +305,7 @@ Finally, a dedicated script can be run separately to perform a fit through MCMC 
 
 \subsection{Software Architecture - Component Map-Making}
 
-The CMM is very similar with FMM algorithm, and therefore, shares the same general steps. But, its programming complexity is much higher, mainly because the component separation is done alongside the maps' reconstruction. CMM holds the exact same parameters as FMM, but with additional ones: to describe the foregrounds models, to describe the fitting of the mixing matrix (Parametric or Blind reconstruction) and to handle the alternate fitting.
+The CMM is very similar to the FMM algorithm, and therefore, shares the same general steps. But, its programming complexity is much higher, mainly because the component separation is done alongside the maps' reconstruction. CMM holds the exact same parameters as FMM, but with additional ones: to describe the foreground models, to describe the fitting of the mixing matrix (Parametric or Blind reconstruction) and to handle the alternate fitting.
 The result is a much more complicated algorithm, in particular regarding the mixing matrix. Therefore, a different architecture has been adopted for the CMM.
 
 First, the check of parameters and the initialisation of all the required objects and variables is done in a series of $8$ files, called \texttt{Preset}, as summarised in Figure~\ref{fig:diagram_preset}:
@@ -387,8 +387,8 @@ After the initialisation through these files, all quantities are accessible thro
 \label{fig:diagram_preset}
 \end{figure}
 
-The algorithm steps of the CMM are very similar with the FMM ones. The main difference stands with the alternate fitting of the mixing matrix and component maps. This extra operation is done within a loop, where both are fitted. 
-We found empirically that the best way to quickly reconstruct the mixing matrix is to perform a lot of iterations within this loop. To keep reasonable computation time, very few PCG iterations to reconstruct component pixels are performed. To ensure  correctly reconstructed component maps, we add an extra PCG with a large iterations number once outside the loop. This stage is optional, but still included in the diagram summarised the complete CMM algorithm in Figure~\ref{fig:diagram_cmm}. 
+The algorithm steps of the CMM are very similar to the FMM ones. The main difference stands with the alternate fitting of the mixing matrix and component maps. This extra operation is done within a loop, where both are fitted. 
+We found empirically that the best way to quickly reconstruct the mixing matrix is to perform a lot of iterations within this loop. To keep reasonable computation time, very few PCG iterations to reconstruct component pixels are performed. To ensure  correctly reconstructed component maps, we add an extra PCG with a large iterations number once outside the loop. This stage is optional, but still included in the diagram summarising the complete CMM algorithm in Figure~\ref{fig:diagram_cmm}. 
 
 
 \begin{figure}[htbp]
@@ -446,8 +446,8 @@ We found empirically that the best way to quickly reconstruct the mixing matrix 
 \label{fig:diagram_cmm}
 \end{figure}
 
-Finally, we detail the complicated framework to reconstruct the mixing matrix. The complication comes from the necessity to handle very different foregrounds models and fitting methods. The Figure~\ref{fig:diagram_mixingmatrix} is summarising the architecture of such algorithm, assuming that the sky is composed only of CMB and Dust. In reality, it also checks for Synchrotron and Carbon Monoxyde emission line, going through the same steps for each.
-For each fitted method, a specific class handles all necessary functions : fitting, updating, plotting and printing methods. \texttt{ParametricMM} and \texttt{BlindMM} rely on the same general custom class \texttt{Chi2} to build the cost function used to fit the mixing-matrix with \textbf{scipy.optimize.minimze}\footnote{Other reconstruction methods have been implemented, but not tested on end-to-end simulations. Therefore, we are not detailing them.}. The Mixed fitting case, written under the class \texttt{MixedMM}, is using a specific $\texttt{MixedChi2}$ class to build its cost function. It comes from a shape limitation preventing the fit of an array containing a float on one row (parametric case, where one spectral index is fitted) and multiple value on another one (blind case, where multiple mixing matrix elements are fitted). To overcome this issue, an intermediate mapping $\texttt{MMLayout}$ is used.
+Finally, we detail the complicated framework to reconstruct the mixing matrix. The complication comes from the necessity to handle very different foreground models and fitting methods. The Figure~\ref{fig:diagram_mixingmatrix} is summarising the architecture of such algorithm, assuming that the sky is composed only of CMB and Dust. In reality, it also checks for Synchrotron and Carbon Monoxide emission line, going through the same steps for each.
+For each fitted method, a specific class handles all necessary functions : fitting, updating, plotting and printing methods. \texttt{ParametricMM} and \texttt{BlindMM} rely on the same general custom class \texttt{Chi2} to build the cost function used to fit the mixing-matrix with \textbf{scipy.optimize.minimize}\footnote{Other reconstruction methods have been implemented, but not tested on end-to-end simulations. Therefore, we are not detailing them.}. The Mixed fitting case, written under the class \texttt{MixedMM}, is using a specific $\texttt{MixedChi2}$ class to build its cost function. It comes from a shape limitation preventing the fit of an array containing a float on one row (parametric case, where one spectral index is fitted) and multiple value on another one (blind case, where multiple mixing matrix elements are fitted). To overcome this issue, an intermediate mapping $\texttt{MMLayout}$ is used.
 
 \begin{figure}[htbp]
 \centering
@@ -558,7 +558,7 @@ Several developments initiated during this thesis could not be completed within 
 
 \textbf{d1 reconstruction:} The reconstruction of the d1 dust model (or equivalently, the s1 model for synchrotron emission) corresponds to the case where the spectral index varies spatially across the sky (see Subsection~\ref{sub:cmm_d1}). This specific case is not yet functioning correctly in the CMM algorithm. The code runs and successfully reconstructs all spectral indices across the QUBIC patch, but the fitting procedure diverges when noise is included, even when initialised with the true maps. At the time of writing, it remains unclear whether this issue originates from a bug in the implementation or from an intrinsic limitation in reconstructing spatially varying indices in the presence of noise. Further work is required to clarify this point.
 
-\textbf{CO reconstruction:} The reconstruction of the carbon monoxyde emission line (described in Subsection~\ref{sub:cmm_co}) is not fully implemented. No fundamental limitation prevents its inclusion, and only minimal effort would be required to restore this functionality. However, for prioritisation reasons, this case was deferred to future work, as it is not directly relevant to the primary scientific goal of QUBIC, namely the observation of primordial CMB B-modes.
+\textbf{CO reconstruction:} The reconstruction of the carbon monoxide emission line (described in Subsection~\ref{sub:cmm_co}) is not fully implemented. No fundamental limitation prevents its inclusion, and only minimal effort would be required to restore this functionality. However, for prioritisation reasons, this case was deferred to future work, as it is not directly relevant to the primary scientific goal of QUBIC, namely the observation of primordial CMB B-modes.
 
 \textbf{CMM convolution:} The final and most significant unfinished aspect concerns the understanding of the free convolution treatment in CMM. This issue is discussed in Subsection~\ref{sub:cmm_free_convo}.
 

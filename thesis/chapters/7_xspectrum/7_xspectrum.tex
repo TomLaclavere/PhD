@@ -34,7 +34,7 @@ For a sky composed of CMB, thermal dust, and synchrotron emission, the cross-spe
 \begin{equation}
     \begin{split}
         \mathcal{D}_{\ell}^{\nu_i \times \nu_j} &= \mathcal{D}_{\ell, CMB}^{\nu_i \times \nu_j} + \mathcal{D}_{\ell, Dust}^{\nu_i \times \nu_j} + \mathcal{D}_{\ell, Sync}^{\nu_i \times \nu_j} + \mathcal{D}_{\ell, Dust\times Sync}^{\nu_i \times \nu_j} \\
-        &= r \times \mathcal{D}_{\ell}^{\text{tensor}} + A_{\text{lens}} \times \mathcal{D}_{\ell}^{\text{lensed}} \\
+        &= r \times \mathcal{D}_{\ell}^{\text{tensor}} + A_{\mathrm{lens}} \times \mathcal{D}_{\ell}^{\text{lensed}} \\
         &+ A_d \Delta_d f_d^{\nu_i}(\beta_d, T_d) f_d^{\nu_j}(\beta_d, T_d) \left( \frac{\ell}{\ell_0} \right)^{\alpha_d} + A_s \Delta_s f_s^{\nu_i}(\beta_s, T_s) f_s^{\nu_j}(\beta_s, T_s) \left( \frac{\ell}{\ell_0} \right)^{\alpha_s} \\
         &+ \varepsilon \sqrt{A_d A_s} \left( f_d^{\nu_i}(\beta_d, T_d) f_s^{\nu_j}(\beta_s, T_s) + f_s^{\nu_i}(\beta_s, T_s) f_d^{\nu_j}(\beta_d, T_d)\right) \left( \frac{\ell}{\ell_0} \right)^{\frac{\alpha_d + \alpha_s}{2}}.
     \end{split}
@@ -45,7 +45,7 @@ This expression combines the contributions of the CMB (tensor and lensed scalar 
 
 The CMB B-modes contribution depends on two parameters, fixing the other parameters to Planck's best fit~\cite{planck2018VI}: the tensor-to-scalar ratio $r$, which is the primary scientific target of QUBIC, and the gravitational lensing amplitude $A_{\mathrm{lens}}$. In the simulations, $r$ is set to zero, while $A_{\mathrm{lens}}$ is fixed to unity, since QUBIC is not expected to have sufficient sensitivity to constrain lensing effects (see subsection~\ref{sub:lensing}).
 The thermal dust component depends on several parameters. These include the dust amplitude $A_d$, defined at a reference frequency $\nu_{0,d} = 353~\mathrm{GHz}$, corresponding to the most dust-dominated polarised Planck channel; the angular power-law index $\alpha_d$; the spectral index $\beta_d$; the dust temperature $T_d$; and the frequency decorrelation parameter $\Delta_d$. Following \cite{Planck2018XI}, the dust temperature is fixed to $T_d = 20~\mathrm{K}$ and the spectral index to $\beta_d = 1.54$ in our simulation. In addition, the decorrelation parameter $\Delta_d$ is not independently fitted, as it is fully degenerate with the amplitude $A_d$.
-The synchrotron component is described by an analogous set of parameters, with a reference frequency fixed at $\nu_{0,s} = 23~\mathrm{GHz}$. It is characterized by its amplitude $A_s$, spectral index $\beta_s$, angular power-law index $\alpha_s$, and frequency decorrelation parameter $\Delta_s$, following the same formalism as for dust.
+The synchrotron component is described by an analogous set of parameters, with a reference frequency fixed at $\nu_{0,s} = 23~\mathrm{GHz}$. It is characterised by its amplitude $A_s$, spectral index $\beta_s$, angular power-law index $\alpha_s$, and frequency decorrelation parameter $\Delta_s$, following the same formalism as for dust.
 Finally, the spatial correlation between dust and synchrotron emissions is parametrised by $\varepsilon$.
 
 \subsubsection{Cross-spectra computation}
@@ -69,7 +69,7 @@ Adding external frequency channels therefore increases the number of spectra ent
 \subsection{Noise debiasing}
 
 The power spectrum of the reconstructed maps can be written as the sum of the signal power spectrum, noted $S_\ell$, and the noise power spectrum, $N_\ell$. To remove the bias introduced by $N_\ell$ during the parameters' estimation, we will perform multiple end-to-end simulations while varying the noise seed. 
-Then, we compute the average cross-power spectrum of the reconstructed maps $\overline{D_\ell}^{\nu_i \times \nu_j}$ and the average cross-power spectrum of the residual maps, which is equivalent to $\overline{N_\ell}^{\nu_i \times \nu_j}$. By simply computing the difference between the two, we can compute the unbiased cross-power spectrum of the signal $\overline{S_\ell}^{\nu_i \times \nu_j} \equiv \overline{D_\ell}^{\nu_i \times \nu_j} - \overline{N_\ell}^{\nu_i \times \nu_j}$. The Figure \ref{fig:xspectra_unbiasing} shows the unbiasing process. The diagonal plots are the auto-spectra, while the off-diagonal term is the cross-spectrum between the two frequency maps. The orange points are $\overline{D_\ell}^{\nu_i \times \nu_j}$, with contribution from sky signals and noise bias, while blue points are the unbiased cross-sepctra $\overline{S_\ell}^{\nu_i \times \nu_j}$. We also added the theoretical model for cross-power spectra, based on equation \ref{eq:xspec_model} for a sky composed of Dust and CMB, with the red dashed line. The orange line completely drifts away from the model, while the blue line (zoomed in the right figure), are correctly centered around it. These spectra are computed from two frequency maps using the UWB design, meaning that spectral imaging is used to split the large band into the two sub-bands. This splitting introduces anti-correlation, as discussed in Chapter~\ref{chap:spectral_imaging}, which are visible looking at the off-digonal spectrum $\overline{D_\ell}^{150 \times 220}$.
+Then, we compute the average cross-power spectrum of the reconstructed maps $\overline{D_\ell}^{\nu_i \times \nu_j}$ and the average cross-power spectrum of the residual maps, which is equivalent to $\overline{N_\ell}^{\nu_i \times \nu_j}$. By simply computing the difference between the two, we can compute the unbiased cross-power spectrum of the signal $\overline{S_\ell}^{\nu_i \times \nu_j} \equiv \overline{D_\ell}^{\nu_i \times \nu_j} - \overline{N_\ell}^{\nu_i \times \nu_j}$. The Figure \ref{fig:xspectra_unbiasing} shows the unbiasing process. The diagonal plots are the auto-spectra, while the off-diagonal term is the cross-spectrum between the two frequency maps. The orange points are $\overline{D_\ell}^{\nu_i \times \nu_j}$, with contribution from sky signals and noise bias, while blue points are the unbiased cross-spectra $\overline{S_\ell}^{\nu_i \times \nu_j}$. We also added the theoretical model for cross-power spectra, based on equation \ref{eq:xspec_model} for a sky composed of dust and CMB, with the red dashed line. The orange line completely drifts away from the model, while the blue line (zoomed in the right figure) is correctly centred around it. These spectra are computed from two frequency maps using the UWB design, meaning that spectral imaging is used to split the large band into the two sub-bands. This splitting introduces anti-correlation, as discussed in Chapter~\ref{chap:spectral_imaging}, which are visible looking at the off-diagonal spectrum $\overline{D_\ell}^{150 \times 220}$.
 
 \begin{figure}[!htbp]
     \begin{minipage}{0.5\linewidth}
@@ -79,13 +79,13 @@ Then, we compute the average cross-power spectrum of the reconstructed maps $\ov
     \begin{minipage}{0.5\linewidth}
         \centerline{\includegraphics[width=1\linewidth]{xspectra_unbiasing_wo_noise.png}}
     \end{minipage}
-    \caption{Comparison between biased and unbiased BB cross-power spectra computed over two frequency maps. (left) The orange points are spectra containing sky signal and noise, while blue points are the spectra where we removed the noise bias. Red dash line shows the theoretical model for the signal spectra. (right) Same figure without the biased spectra, to show that the results are indeed centered around the model.}
+    \caption{Comparison between biased and unbiased BB cross-power spectra computed over two frequency maps. (left) The orange points are spectra containing sky signal and noise, while blue points are the spectra where we removed the noise bias. Red dash line shows the theoretical model for the signal spectra. (right) Same figure without the biased spectra, to show that the results are indeed centred around the model.}
     \label{fig:xspectra_unbiasing}
 \end{figure}
 
 \subsection{Noise covariance matrix}
 
-To estimate the foreground and CMB parameters, we construct a noise covariance matrix that is used to weight the cost function entering the fitting procedure. Several contributions are included in this covariance matrix. The first is the covariance of the noise realisations, $Cov(N_\ell^{\mathrm{sim}})$, which is required to correctly account for the uncertainty on the measured power spectra and to debias the signal spectra. An example of the corresponding correlation matrix is shown in Figure~\ref{fig:xspectra_corr_matrix}.
+To estimate the foreground and CMB parameters, we construct a noise covariance matrix that is used to weight the cost function entering the fitting procedure. Several contributions are included in this covariance matrix. The first is the covariance of the noise realisations, $\mathrm{Cov}(N_\ell^{\mathrm{sim}})$, which is required to correctly account for the uncertainty on the measured power spectra and to debias the signal spectra. An example of the corresponding correlation matrix is shown in Figure~\ref{fig:xspectra_corr_matrix}.
 
 \begin{figure}[!htbp]
 \centering
@@ -170,13 +170,13 @@ The resulting covariance matrix is :
 \section{Cosmological parameters' estimation}
 
 
-From the set of auto- and cross- spectra, the associated noise estimation from equation \ref{eq:xspec_noise_cov_matrix}, and the theoretical model defined in equation \ref{eq:xspec_model}, we perform a MCMC estimation, to estimate the CMB and foregrounds parameters. Since each bandpower averages a large number of nearly independent multipoles within a bin, its distribution is well approximated by a Gaussian~\cite{hamimeche2008}, justifying the use of a Gaussian likelihood in the parameter estimation that follows.\\
+From the set of auto- and cross-spectra, the associated noise estimation from equation \ref{eq:xspec_noise_cov_matrix}, and the theoretical model defined in equation \ref{eq:xspec_model}, we perform an MCMC estimation, to estimate the CMB and foregrounds parameters. Since each bandpower averages a large number of nearly independent multipoles within a bin, its distribution is well approximated by a Gaussian~\cite{hamimeche2008}, justifying the use of a Gaussian likelihood in the parameter estimation that follows.\\
 
-\textbf{Remark.} A chapter dedicated to sensitivity forecasts for the QUBIC instrument was initially planned as part of this thesis. Its objective was to compare the different reconstruction methods and instrumental configurations under various sky models and simulation settings, in particular the parameters $N_\text{rec}$ for FMM and $N_\text{freq}$ for CMM. Unfortunately, due to time constraints, the results are still too preliminary to be included with sufficient confidence. Although the forecasting pipelines are fully implemented, further work is required to optimise their convergence and to achieve a deeper understanding of the obtained results before drawing robust scientific conclusions. 
+\textbf{Remark.} A chapter dedicated to sensitivity forecasts for the QUBIC instrument was initially planned as part of this thesis. Its objective was to compare the different reconstruction methods and instrumental configurations under various sky models and simulation settings, in particular the parameters $N_\text{rec}$ for FMM and $N_{\mathrm{freq}}$ for CMM. Unfortunately, due to time constraints, the results are still too preliminary to be included with sufficient confidence. Although the forecasting pipelines are fully implemented, further work is required to optimise their convergence and to achieve a deeper understanding of the obtained results before drawing robust scientific conclusions. 
 
 \subsection{Simulation parameters}
 
-In this section, we will use the simulation parameters estimated in Chapter \ref{chap:tod}. We simulate a full 3 years observation campaign for the QUBIC instrument, using the UWB configuration (see \ref{sub:UWB_design}). QUBIC observes its target patch of $15^\circ$, located in $(RA=0^\circ, DEC=57^\circ)$. We consider a sky composed of only CMB and Dust\footnote{It is a reasonable assumption to neglect the contribution from synchrotron inside the considered frequency range}, and we fix the amplitude of lensing $A_{\text{lens}}$ to $0$. In addition, the $147$, $213$ and $353$ GHz bands from Planck are added during the cross-spectra analysis. 
+In this section, we will use the simulation parameters estimated in Chapter \ref{chap:tod}. We simulate a full 3 years observation campaign for the QUBIC instrument, using the UWB configuration (see \ref{sub:UWB_design}). QUBIC observes its target patch of $15^\circ$, located in $(RA=0^\circ, DEC=57^\circ)$. We consider a sky composed of only CMB and dust\footnote{It is a reasonable assumption to neglect the contribution from synchrotron inside the considered frequency range}, and we fix the amplitude of lensing $A_{\mathrm{lens}}$ to $0$. In addition, the $147$, $213$ and $353$ GHz bands from Planck are added during the cross-spectra analysis. 
 
 \subsection{FMM cross-spectrum}
 
@@ -210,7 +210,7 @@ With the Component Map-Making, we are computing component maps from QUBIC data. 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=1\linewidth]{cmm_db_sigma_r.png}
-\caption{Triangle plot of the posterior distribution of the parameters fitted on the cross-spectra obtained with CMM. In this plot, the reference frequency for dust emission is $150$ GHz, instead of the most common $353$ GHz, ence the small value for $A_d$.}
+\caption{Triangle plot of the posterior distribution of the parameters fitted on the cross-spectra obtained with CMM. In this plot, the reference frequency for dust emission is $150$ GHz, instead of the most common $353$ GHz, hence the small value for $A_d$.}
 \label{fig:cmm_UWB_sigma_r}
 \end{figure}
 
