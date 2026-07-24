@@ -140,17 +140,17 @@ These two objects form the core of the simulation and reconstruction pipeline, b
 
 \subsubsection{Polychromatic classes}
 
-To describe the frequency capabilities of QUBIC, in particular regarding its beam, we define the \texttt{QubicMultibandInstrument}. This class holds an array of \texttt{QubicInstrument} instances, one per frequency sub-band. It also includes methods to define properly the bandwidth of each of them. 
+To describe the frequency capabilities of QUBIC, in particular regarding its beam, we define the \texttt{\seqsplit{QubicMultibandInstrument}}. This class holds an array of \texttt{QubicInstrument} instances, one per frequency sub-band. It also includes methods to define properly the bandwidth of each of them. 
 
-Based on this extension, \texttt{Qubic\allowbreak MultiAcquisitions} builds one \texttt{Qubic\allowbreak Acquisition} object per sub-band from \texttt{Qubic\allowbreak MultibandInstrument}. This class builds the multifrequency operator $H$.
+Based on this extension, \texttt{\seqsplit{QubicMultiAcquisitions}} builds one \texttt{QubicAcquisition} object per sub-band from \texttt{\seqsplit{QubicMultibandInstrument}}. This class builds the multifrequency operator $H$.
 
 \subsubsection{Map-Making classes}
 
 As discussed during the map-making chapters (\ref{chap:FMM} and \ref{chap:CMM}), we explored the addition of external data during reconstruction. For the addition of Planck, we created the class \texttt{PlanckAcquisition}, which contains methods to build the acquisition operator, the noise and the inverse covariance matrix $N^{-1}$ for Planck. 
 
-Additionally, we defined the class \texttt{QubicInstrumentType}, a subclass of \texttt{QubicMultiAcquisitions}. Its purpose is to handle the various instrumental designs of QUBIC (Ultra Wide Band, Dual Bands and Mono Band), which necessitate extra care regarding the shape of the operators.
+Additionally, we defined the class \texttt{\seqsplit{QubicInstrumentType}}, a subclass of \texttt{\seqsplit{QubicMultiAcquisitions}}. Its purpose is to handle the various instrumental designs of QUBIC (Ultra Wide Band, Dual Bands and Mono Band), which necessitate extra care regarding the shape of the operators.
 
-Finally, these two classes are joined in two classes : \texttt{JointAcquisition\allowbreak FrequencyMapMaking} and \texttt{JointAcquisition\allowbreak ComponentsMapMaking}, which build all the operators, based on their subclasses, for the FMM and CMM.
+Finally, these two classes are joined in two classes : \texttt{\seqsplit{JointAcquisitionFrequencyMapMaking}} and \texttt{\seqsplit{JointAcquisitionComponentsMapMaking}}, which build all the operators, based on their subclasses, for the FMM and CMM.
 
 The complete software architecture of the qubicsoft's instrument simulation is summarised in Figure~\ref{fig:diagram_qubicsoft}
 
@@ -248,7 +248,7 @@ The configuration file allows setting the physical context of the simulation (co
 \subsubsection{Algorithm}
 
 The architecture of the FMM, summarised in Figure~\ref{fig:diagram_fmm}, is the following. First, the parameters file is read and checked for wrong values, to avoid un-implemented cases (for example, wrong instrument configuration), or inconsistent parameters, (for example, if the number of integration sub-bands $N_{\text{sub}}$ is not a multiple of the number of reconstructed sub-bands $N_{\text{rec}}$). This prevents running the code with parameters out of its scope, and gives a message to user with feedback of the issue, instead of a raw Python error.
-If the tests pass, all the necessary objects and variables are created, based on the parameters file. In particular, the class \texttt{JointAcquisitionFrequencyMapMaking} is built, which is used to define all the parameters. In the code, a distinction is made between the simulation and the reconstruction, the two not sharing the same parameters to improve realism (this case is discussed in detail in Chapter~\ref{chap:tod}). The input maps are also created, based on PySM3~\cite{PySM}, using a wrapper shared between FMM and CMM.
+If the tests pass, all the necessary objects and variables are created, based on the parameters file. In particular, the class \texttt{\seqsplit{JointAcquisitionFrequencyMapMaking}} is built, which is used to define all the parameters. In the code, a distinction is made between the simulation and the reconstruction, the two not sharing the same parameters to improve realism (this case is discussed in detail in Chapter~\ref{chap:tod}). The input maps are also created, based on PySM3~\cite{PySM}, using a wrapper shared between FMM and CMM.
 Once all necessary objects initialised, the simulated TOD is created, and the PCG algorithm is used to reconstruct the associated frequency maps. If asked by the user, the cross angular power spectra of the reconstructed maps are computed after the map-making process. The code to compute cross-spectra is designed to run for both FMM and CMM.
 All the relevant information is stored using HDF5\footnote{\url{https://www.hdfgroup.org/solutions/hdf5/}} format, including TOD, parameters, input and reconstructed maps, coverage map, resolutions, noise and sky cross-spectra with their associated parameters. 
 Automated plots are also run at the same time, to allow quick visualisation of the reconstruction results.
@@ -313,7 +313,7 @@ First, the check of parameters and the initialisation of all the required object
 \begin{itemize}
   \item \texttt{PresetTools} : reads and checks the parameters file and initialises the MPI tools.
   \item \texttt{PresetExternal} : selects the Planck frequency bands used as external data.
-  \item \texttt{PresetQubic} : builds the QUBIC dictionary and the \texttt{JointAcquisition\allowbreak ComponentsMapMaking} object, for both simulation and reconstruction.
+  \item \texttt{PresetQubic} : builds the QUBIC dictionary and the \texttt{\seqsplit{JointAcquisitionComponentsMapMaking}} object, for both simulation and reconstruction.
   \item \texttt{PresetComponents} : sets the sky configuration and builds the component models and true maps, based on PySM3.
   \item \texttt{PresetSky} : defines the patch center, the coverage, the seen pixels, and the NaMaster objects.
   \item \texttt{PresetGain} : initialises the input and iterated detector gains (optional).
