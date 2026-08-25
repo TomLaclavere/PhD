@@ -58,14 +58,15 @@
 % \input{chapters/remerciements.tex}
 % \newpage
 
+\pdfbookmark[0]{Table of Contents}{toc}
 \tableofcontents
 \cleardoublepage
 
-\phantomsection
+\pdfbookmark[0]{List of Figures}{lof}
 \listoffigures
 \cleardoublepage
 
-\phantomsection
+\pdfbookmark[0]{List of Tables}{lot}
 \listoftables
 \cleardoublepage
 
@@ -121,11 +122,7 @@
 \part{Atmospheric Mitigation}
 
 \subfile{chapters/11_atm/11_atm.tex}
-\clearpage
 
-\fancyhead{}
-\fancyhead[RO,LE]{\textsc{Conclusion}}
-\markboth{Conclusion}{}
 \subfile{chapters/conclusion/conclusion.tex}
 \clearpage
 \fancyhead{}
@@ -134,5 +131,7 @@
 % Bibliography
 \addstarredpart{Bibliography}
 \printbibliography
+
+\input{chapters/resume_etendu.tex}
 
 \end{document}
