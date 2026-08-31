@@ -11,7 +11,6 @@
 \usepackage{multicol}
 %\usepackage{subcaption}
 \usepackage{comment}
-\usepackage{dsfont}
 \usepackage{soul}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{txfonts}
@@ -21,7 +20,10 @@
 %\linenumbers
 \newcommand{\xmark}{\ding{55}}
 \newcommand{\cmark}{\ding{51}}
-\newcommand{\todo}[1]{{\textcolor[rgb]{1, 0, 1}{[TODO: #1]}}}
+% Remark in blue
+\newcommand{\rmk}[1]{%
+  {\textcolor{blue}{\underline{\textbf{Remark/Question:}} #1}}
+}
 
 %\arxivnumber{arXiv:XXXX.XXXXX} % Only if you have one
 \title{\boldmath Spectral Imaging with QUBIC: Atmospheric Reconstruction from Time-Ordered-Data using Bolometric Interferometry}
@@ -55,20 +57,21 @@
 %% \affiliation[b]{Institution_2,\\Address, Country}
 %% \affiliation[c]{Institution_3,\\Address, Country}
 
-\author[a]{T.~Laclavere,}
-%% TODO: complete author list and affiliations (see FMM/CMM main.tex for the current QUBIC collaboration list)
+\author[a]{T.~Laclavere}
+\author[a]{, J-Ch.~Hamilton}
+
 \affiliation[a]{Université de Paris, CNRS, Astroparticule et Cosmologie, F-75006 Paris, France}
 
 % E-mail addresses: only for the corresponding author
 \emailAdd{laclavere@apc.in2p3.fr}
 
-\abstract{\todo{Context: 1-2 sentences on B-mode searches and why atmospheric contamination from ground-based CMB observations, and QUBIC in particular, matters.}
+\abstract{
   % aims heading (mandatory)
-   {\todo{Aims: state that this article presents a method to reconstruct and separate the atmospheric signal from the sky signal directly at the Time-Ordered-Data level using Bolometric Interferometry.}}
+   {Aims: }
   % methods heading (mandatory)
-   {\todo{Methods: summarize the acquisition model (coordinate system, wind operator), the atmosphere model/simulations, and the reconstruction/separation algorithm.}}
+   {Methods: }
   % conclusions heading (optional), leave it empty if necessary
-   {\todo{Conclusions: summarize the main quantitative result(s).}}}
+   {Conclusions: }}
 
 
 \begin{document}
@@ -81,32 +84,22 @@
 \subsection{Motivations}
 \label{sec:motivations}
 
-\todo{Motivate the need to reconstruct and remove the atmospheric contribution from ground-based CMB observations, and why this is a specific challenge/opportunity for QUBIC. Cite the QUBIC instrument papers~\citep{2020.QUBIC.PAPER1, 2020.QUBIC.PAPER2,2020.QUBIC.PAPER3, 2020.QUBIC.PAPER4, 2020.QUBIC.PAPER5, 2020.QUBIC.PAPER6, 2020.QUBIC.PAPER7, 2020.QUBIC.PAPER8} as well as the companion Frequency Map-Making~\citep{fmm} (hereafter FMM) and Component Map-Making~\citep{cmm} (hereafter CMM) articles.}
-
 \subsection{Goals}
 \label{sec:goals}
-
-\todo{State the goals of this article: reconstructing frequency (or component) maps of the atmosphere jointly with, or separately from, the sky signal, and/or reconstructing the wind, using Bolometric Interferometry's spectral-imaging capability.}
 
 \section{Bolometric Interferometry}
 \label{sec:bi}
 
-\todo{Short reminder of Bolometric Interferometry, as introduced in FMM section~2 and CMM section~2, adapted to the atmospheric reconstruction context.}
-
 \subsection{Instrument}
 \label{sec:instrument}
 
-\todo{Recall the QUBIC instrument main parameters (see FMM Table~1).}
 
 \subsection{Synthesized beam}
 \label{sec:synthesized_beam}
 
-\todo{Recall the frequency dependence of the QUBIC synthesized beam (see FMM section~2.2) and why it is relevant to separate the atmosphere from the sky signal.}
 
-\subsection{Map-Making principle (with BI)}
+\subsection{Map-Making principle with BI}
 \label{sec:mapmaking_principle}
-
-\todo{Recall the general inverse-problem map-making framework (see FMM section~2.1 and CMM section~2.2) that will be extended in section~\ref{sec:algorithm} to include the atmosphere.}
 
 \section{Atmospheric model and simulations}
 \label{sec:atm_model}
@@ -114,21 +107,14 @@
 \subsection{Atmospheric properties}
 \label{sec:atm_properties}
 
-\todo{Describe the physical properties of the atmospheric signal relevant to QUBIC (emission mechanism, frequency dependence, spatial/temporal correlation structure, typical amplitude).}
 
 \subsection{Numerical simulations}
 \label{sec:atm_simulations}
 
-\todo{Describe how the atmosphere is numerically simulated (e.g.\ frozen screen advected by wind, power spectrum used, software/tools).}
 
-\subsection{Atmospheric correlations (Imager vs BI)}
+\subsection{Atmospheric correlations: Imager vs BI (\rmk{Appendix ?})}
 \label{sec:atm_correlations}
-%% Note: in the outline this subsection was circled with a question mark
-%% suggesting it might instead be moved to the appendix -- keeping it here
-%% as a regular subsection for now, move to appendix if it ends up being a
-%% secondary/technical point rather than a main result.
 
-\todo{Compare the correlation structure of the atmospheric signal as seen by a classical imager versus a Bolometric Interferometer.}
 
 \section{Atmospheric reconstruction and separation algorithm}
 \label{sec:algorithm}
@@ -136,49 +122,58 @@
 \subsection{Data acquisition model}
 \label{sec:acquisition_model}
 
-\todo{Extend the acquisition model of Eq.~(FMM~2.1)/(CMM~2.1) to include an atmospheric contribution alongside the sky signal.}
 
 \subsubsection{Coordinate system}
 \label{sec:coord_system}
 
-\todo{Describe the coordinate system used to describe the atmospheric screen with respect to the instrument's pointing (e.g.\ horizontal/az-el frame vs.\ sky frame).}
 
 \subsubsection{Wind operator}
 \label{sec:wind_operator}
 
-\todo{Describe the operator modeling the advection of the atmospheric screen by the wind across the field of view during the observation.}
 
 \subsection{Atmospheric separation}
 \label{sec:atm_separation}
 
-\todo{Describe how the atmospheric component is separated from the sky signal within the map-making/component-separation framework (see CMM section~5 for the analogous astrophysical component separation algorithm).}
 
 \subsection{Wind reconstruction}
 \label{sec:wind_reconstruction}
 
-\todo{Describe how the wind parameters (speed, direction) are estimated as part of the reconstruction.}
+Describe how the wind parameters (speed, direction) are estimated as part of the reconstruction.
 
 \subsection{Forcing maps features}
 \label{sec:forcing_features}
 
-\todo{Describe any priors/regularization imposed on the reconstructed maps (analogous to FMM section~2.4 use of external data, or CMM's parametric priors in Table~5).}
 
 \section{Results}
 \label{sec:results}
 
-\todo{Present the results obtained from end-to-end simulations: reconstructed atmosphere maps, reconstructed sky maps after atmosphere removal, reconstructed wind, and residuals/noise characterization (see FMM section~3 and CMM section~7 for the analogous presentation).}
 
-\section{Alternative method: successive map-making}
+\subsection{Atmosphere map-making}
+
+\subsection{Atmosphere separation}
+
+
+\subsection{Joint atmospheric separation and reconstruction}
+
+\subsection{Wind reconstruction}
+
+\section{Alternative method: successive map-making (\rmk{Appendix ?})}
 \label{sec:successive_mapmaking}
 
-\todo{Present the alternative approach where the atmosphere and the sky are reconstructed in two successive map-making steps rather than jointly, and compare its performance to the joint approach of section~\ref{sec:algorithm}.}
+\subsection{Motivation \& principle}
 
-\section{Conclusions}
+\subsection{Implementation}
+
+\subsection{Results \& comparison}
+
+\section{Conclusions \& further developments}
 \label{sec:conclusions}
 
-\todo{Summarize the main results and their implications for QUBIC's B-mode measurement.}
+\subsection{Parametric reconstruction}
 
-\todo{Further developments: list planned improvements (e.g.\ more realistic atmosphere model, combination with spectral-imaging component separation from CMM, etc.).}
+\subsection{External data}
+
+\subsection{Reconstruction optimisation}
 
 \acknowledgments
 QUBIC is funded by the following agencies. France: ANR (Agence Nationale de la
@@ -190,9 +185,7 @@ Antartide) until 2016, INFN (Istituto Nazionale di Fisica Nucleare) since 2017. 
 
 \appendix
 
-\section{\todo{Appendix title, e.g.\ Atmospheric correlations: Imager vs BI, if moved out of section~\ref{sec:atm_correlations}}}
+\section{Appendix}
 \label{sec:appendixA}
-
-\todo{Appendix content.}
 
 \end{document}
