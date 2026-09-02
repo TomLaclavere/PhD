@@ -6,6 +6,7 @@
 \usepackage{siunitx}
 \usepackage{multirow}
 \usepackage{graphicx}
+\graphicspath{{Figures/}}
 %\usepackage{floatrow}
 \usepackage{subfig}
 \usepackage{multicol}
@@ -84,6 +85,8 @@
 \subsection{Motivations}
 \label{sec:motivations}
 
+\subsection{Classical solutions}
+
 \subsection{Goals}
 \label{sec:goals}
 
@@ -107,13 +110,265 @@
 \subsection{Atmospheric properties}
 \label{sec:atm_properties}
 
+At millimetre wavelengths and for ground based instruments, the atmosphere is the main source of contamination for astrophysical and cosmological observations. Observations through the atmosphere are affected by several physical properties: the atmosphere temperature, pressure, and more importantly the precipitable water vapour (PWV). As detailed below, significant emission lines from $H_2O$ exist in the vicinity of CMB observation frequencies, which emission is affected by the water vapour density, parametrised by the PWV. The PWV is defined from the water vapour density at a given location as:
 
-\subsection{Numerical simulations}
+\begin{equation}
+    \mathrm{PWV} = \frac{1}{\rho_w} \int_0^{\infty} \rho_v(z)\, dz,
+\end{equation}
+where $\rho_w$ is the density of liquid water ($1000\,\mathrm{kg/m^3}$), and $\rho_v(z)$ is the water vapour density at altitude $z$.
+
+\subsubsection{Atmosphere transmission \& brightness}
+
+The first difficulty is that the atmosphere is not a fully transparent medium across the relevant frequency range. Its transmission spectrum, shown in Figure~\ref{fig:atm_transmitivity}, contains absorption lines from $O_2$ and $H_2O$, limiting observations to the atmospheric windows between these lines. For this reason, the QUBIC instrument operates in two bands, between $131$ and $169$ GHz and between $192.5$ and $247.5$ GHz. Additionally, the atmospheric transmittance decreases at higher frequencies even within these windows due to PWV absorption. This is one of the main motivations for observing from a dry, high-altitude site, which reduces the water vapour density $\rho_v$.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{atm_transmittance_pwv.pdf}
+    \caption{Zenith atmospheric transmittance as a function of frequency for different PWV values. The two observational bands and the main absorption lines and their associated molecules are indicated. Simulated using the \emph{am} software~\cite{paine2024}.}
+    \label{fig:atm_transmitivity}
+\end{figure}
+
+From atmosphere transmission, we can compute the atmospheric brightness (using equation \ref{eq:atm_emission}), which is shown in Figure~\ref{fig:atm_brightness_bis}, and represents a major source of noise. The higher the brightness temperature, the larger the photon noise induced in the detectors. It also contributes to the thermal load of the detectors, meaning that it is more challenging to cool down the detectors at the temperature required for superconductivity while observing through atmosphere. The brightness similarly scales with the PWV at the observation site, further reinforcing the need for a dry location.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{atm_brightness_pwv.pdf}
+    \caption{Zenith brightness temperature as a function of frequency for different PWV values. The two observational bands and the main absorption lines and their associated molecules are indicated. Simulated using the \emph{am} software~\cite{paine2024}.}
+    \label{fig:atm_brightness_bis}
+\end{figure}
+
+\subsubsection{Fluctuations}
+
+Despite its average emission, the atmosphere is a dynamic and turbulent medium with fluctuations in its water vapour density distribution. These fluctuations lead to temporal and spatial correlations in the observed time-ordered data (TOD) that will bias the maps' reconstruction. 
+The water vapour density fluctuations are assumed to follow the Kolmogorov model~\cite{Kolmogorov1941,Tatarski1961}, characterised by the tridimensional power-spectrum:
+
+\begin{equation}
+    P(\vec{k}) \propto |\vec{k}|^{-11/3}.
+\end{equation}
+
+However, this spectrum is not integrable at low spatial frequencies, which implies that the fully scale-invariant turbulence cannot extend to arbitrarily large spatial scales. In practice, this is regularised by introducing a low-wavenumber cutoff $k_\text{min} = r_0^{-1}$, where $r_0$ represents the largest scale over which the turbulence can be considered scale-invariant. Typical values for the Atacama Desert are several hundred metres, according to~\cite{errard2015, morris2022}. We assume similar properties for the atmosphere at the QUBIC observation site. This leads to the modified spectrum:
+
+\begin{equation} \label{eq:Kolmogorov}
+    P_\text{adj}(\vec{k}) \propto (r_0^{-2} + |\vec{k}|^2)^{-11/6},
+\end{equation}
+which interpolates between a constant behaviour at low $k$ and the Kolmogorov turbulences at high $k$. The proportional constant is chosen so that the spectrum is normalised, as:
+
+\begin{equation}
+    \int P_\text{adj}(\vec{k})d\vec{k}=1.
+\end{equation}
+
+The normalised spectrum is plotted in Figure~\ref{fig:kolmogorov_spectrum}.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{kolmogorov_spectrum.png}
+    \caption{Kolmogorov power spectrum. The orange line shows the effect of adding the characteristic turbulences' scale $r_0$.}
+    \label{fig:kolmogorov_spectrum}
+\end{figure}
+
+\subsubsection{Polarisation} \label{subsub:atm_polarisation}
+
+The emission from the atmosphere is considered to be unpolarised. However, few effects are producing polarised emission, such as the Zeeman splitting of $O_2$ by the Earth's magnetic field~\cite{hanany2003, spinelli2011, petroff2020, fujino2025} or the ice crystals in clouds~\cite{takakura2019, li2023, coerver2025}.
+
+The Zeeman effect occurs as the Earth's magnetic field splits the energy levels of $O_2$ molecules, so their emission comes out slightly circularly polarised. The signal is tied to the magnetic field direction. The effect is relatively small: typical circular polarisation amplitudes are $\sim$130–500 $\mu$K depending on site and frequency \cite{petroff2020,fabbian2012}, corresponding to a fraction of order $10^{-4}$--$10^{-5}$ of the total intensity emission. It also produces a tiny fraction of linear polarisation, about $10000$ times smaller than the circular polarisation ($\sim 1$--$10$~nK)~\cite{fabbian2012}. This effect is deterministic and tied to a fixed geomagnetic pattern, and could therefore be modelled and subtracted as a template, rather than requiring dedicated hardware.
+
+Some clouds, called \emph{cirrus clouds}, are thin clouds present at high altitude, transparent to CMB experiment at millimetre range. Nevertheless, they yield horizontally-aligned ice crystals which backward scatter ground radiation and forward scatter sky signal, producing a linear polarisation emission~\cite{li2023}. Unlike Zeeman signal, this signal acts as a ``burst'' when a cirrus cloud is observed by the instrument, meaning that it can't be averaged. These events would need to be flagged, using a sky camera or a LIDAR for example, and treated in post analysis. When observing through ice clouds, the atmosphere polarisation emission can reach about $5$--$10\%$ of the intensity emission ($\lesssim 0.1$ K)~\cite{takakura2019}.
+
+During this study, we are completely neglecting these effects, and consider the atmosphere to be unpolarised. There is no fundamental limitation for including atmosphere polarisation, but as explained, the expected polarisation is too low to be properly reconstructed with our methods, and is therefore dismissed. It could be an important extension of this work to add atmosphere polarisation effect.
+
+\subsection{Existing simulation frameworks}
+
+
+\subsection{Numerical simulation description}
 \label{sec:atm_simulations}
 
+Now that we have described the various effects of the atmosphere that are problematic for CMB observations, we present the simulation software used to generate atmospheric emission. Since our objective is to apply the CMM algorithm to atmospheric contamination, we first need to simulate maps of the atmosphere.
+The state-of-the-art software for modelling the mean atmospheric properties is the \emph{am} model~\cite{paine2024}. However, \emph{am} is limited to modelling the average atmospheric properties along a given line of sight and does not include turbulent fluctuations. Additional models are therefore required to simulate atmospheric turbulence. Two main tools, both based on the formalism introduced in the previously discussed studies, have been developed for this purpose.
 
-\subsection{Atmospheric correlations: Imager vs BI (\rmk{Appendix ?})}
-\label{sec:atm_correlations}
+The most widely adopted is \emph{TOAST}\footnote{\url{https://toast-cmb.readthedocs.io/en/latest/intro.html}} (Time Ordered Astrophysics Scalable Tools)~\cite{TOAST}, a framework for simulating and processing time-ordered data for experiments such as Planck, LiteBIRD, Simons Array, and the Simons Observatory. Its atmospheric module generates a full three-dimensional turbulent volume following the formalism of~\cite{errard2015}. This volume is then advected according to the wind velocity and propagated through the focal plane, reproducing both the temporal correlations along the scan and the spatial correlations between detectors. The implementation is designed to scale to the hundreds of thousands of detectors expected in next-generation CMB experiments.
+A more recent and lightweight alternative is \emph{maria}\footnote{\url{https://thomaswmorris.com/maria/index.html}}~\cite{maria}, a general-purpose (sub-)millimetre observation simulator developed for survey forecasting across a range of single-dish facilities, including MUSTANG-2, AtLAST, and several configurations of ACT, SPT, and the Simons Observatory. Rather than simulating a full three-dimensional turbulent volume, \emph{maria} relies on the two-dimensional frozen-turbulence approximation introduced by~\cite{morris2022}, in which the atmosphere is represented as a set of thin, wind-advected turbulent layers. This approximation enables significantly more efficient simulations of long scanning observations, at the expense of a simplified turbulence model. In addition, \emph{maria} couples this turbulence model with site- and time-dependent weather conditions derived from the ECMWF ERA5 reanalysis database and has been successfully validated against observations from MUSTANG-2~\cite{maria}.
+Both tools rely on the same calibration of the turbulence outer scale derived from POLARBEAR and ACT observations~\cite{errard2015}. They also share conceptual similarities with the simulation approach adopted in this thesis, which favours a simplified, self-contained implementation of the Kolmogorov turbulence model rather than the full TOAST framework.
+
+Unfortunately, these frameworks were developed for classical imagers and cannot be directly applied to the specific case of QUBIC\footnote{In her PhD thesis, Louise Mousset proposed an approach to adapt TOAST to the QUBIC instrument. Such an implementation would greatly facilitate the development of realistic simulations, as TOAST already provides many advanced features, particularly for modelling instrumental systematics. However, this approach was not explored further due to time constraints~\cite{thesislouise}.}. Instead, we chose to develop our own simplified atmospheric model, inspired by the formalisms of~\cite{errard2015} and~\cite{morris2022}, rather than investing significant effort into adapting TOAST or \emph{maria} to QUBIC. The assumptions and implemented features of this model are described in the following.
+
+To account for the impact of atmospheric emission on QUBIC's observations, we simulate the atmosphere as a thin, turbulent layer of water vapour above the instrument\footnote{The software also allows the simulation of a 3D volume, similarly to TOAST, but which cannot be used for data acquisition because $H$ only accepts HEALPix maps.}. The simulation proceeds in four stages: computing the mean physical properties of the atmosphere as a function of altitude, generating spatially-correlated fluctuations of the water vapour density that mimic atmospheric turbulence, converting these fluctuations into a frequency-dependent brightness temperature using the atmosphere's absorption spectrum, and simulating the temporal evolution of the atmosphere through wind advection. The simulation code is added in the \emph{qubicsoft} library\footnote{\url{https://github.com/qubicsoft/qubic/blob/master/qubic/lib/MapMaking/Qatmosphere.py}}, but is not implemented in the simulation and reconstruction pipeline yet.
+
+\subsubsection{Physical properties}
+
+The main physical properties responsible for the atmospheric emission are the temperature and the water vapour density. They are described by two mean quantities that decrease exponentially with altitude $h$ :
+
+\begin{itemize}
+    \item \textbf{Temperature: } $T_{atm}(h) = T_{atm}(0) e^{-h/h_T}$, where $T_{atm}(0)$ is the average ground temperature and $h_T$ a characteristic scale height~\cite{morris2022}.
+    \item \textbf{Water vapour density: } $\langle \rho(h) \rangle = \rho_0 e^{-\ln 2 \frac{(h-5190)}{h_{H_2O}}}$, where $\rho_0$ is a reference density at 5190 m, the QUBIC altitude, and $h_{H_2O}$ the water vapour half-height.
+\end{itemize}
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{atm_temp_rho.png}
+    \caption{(left) Mean atmosphere temperature and (right) mean water vapour density with altitude. QUBIC altitude is illustrated with the black dashed line. Parameters value are taken from \cite{morris2022}.}
+    \label{fig:atm_temp_rho}
+\end{figure}
+
+As no recent measurement of PWV has been performed at the QUBIC observing site, we are using results from Atacama Desert, located at $\sim 200$ km from QUBIC and widely documented, to initialise the simulation parameters. This can be adjusted in the future with on-site measurements.
+
+\subsubsection{Fluctuations}
+
+After defining the average properties of the atmosphere, we need to implement its fluctuation, following the Kolmogorov power spectrum, from equation~\ref{eq:Kolmogorov}. During this procedure, we faced an important limitation: the Kolmogorov spectrum is written for Cartesian unit, while our acquisition operator $H$ needs HEALPix map. We developed two alternative implementations:
+
+\begin{itemize}
+    \item \textbf{Flat-sky (Fourier) method: }random phases are drawn on a 2D Fourier grid, weighted by $\sqrt{P(\mathbf{k})}$, and inverse-Fourier-transformed to real space to obtain a fluctuation map $\delta\rho(x,y)$. This flat map is then projected onto a healpix map, which creates geometrical distortions far from the zenith. 
+    \item \textbf{Full-sky (spherical harmonics) method: }the Kolmogorov spectrum is first translated into an angular correlation function $C(\theta)$ (using the relation between real-space separation and pointing angle, $r = 2h_{atm}\sin(\theta/2)$), then converted into an angular power spectrum $C_\ell$ (computed with CAMB), from which a HEALPix map is drawn with the \texttt{synfast} function from healpy. This method is directly creating a HEALPix map of the atmosphere without projection, but it is not physically motivated to represent the atmosphere as the surface of a sphere centred on the observer. This representation still may be correct close to the zenith, but should be treated carefully before making the comparison with the 2D case.
+\end{itemize}
+
+Both approaches, presented in Figure~\ref{fig:amt_rho_fluctuation}, produce a fluctuation map $\delta\rho$ representing the turbulent structure of the water vapour field at a given time.
+
+\textbf{Remark: }Both methods to create an atmospheric map compatible with the QUBIC acquisition operator present potential problems. It is a current limitation from our current simulation software, totally out of the scope of this thesis, which will require extra attention in the future.
+
+Most atmospheric publications do not measure directly the fluctuations of the water vapour density, but mainly the fluctuations of PWV. We are using this standard deviation $\sigma_\text{PWV}$ to compute a density fluctuation scale $\sigma_\rho = \sigma_\text{PWV}/h$ (with $h = \frac{h_{H_2O}}{\log(2)}$).
+
+\begin{figure}[!htbp]
+    \begin{minipage}{0.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{atm_rho_fluctuation_flat.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{atm_rho_fluctuations_spherical.png}
+    \end{minipage}
+    \caption{Water vapour density fluctuations using Fourier transform (left) and spherical harmonics (right).}
+    \label{fig:amt_rho_fluctuation}
+\end{figure}
+
+\subsubsection{Frequency dependence}    
+
+The absorbing power of the atmosphere is captured by an absorption spectrum. It is built from precomputed transmission tables (generated with the \emph{am} atmospheric model~\cite{paine2024}) combining three contributions: line-by-line molecular absorption from $H_2O$ and $O_2$, and two continuum terms from $H_2O$–$H_2O$ self-collisions and $H_2O$–air collisions. Combined with the local gas densities (computed via CoolProp\footnote{\url{https://coolprop.org/}} from pressure and temperature), these give the absorption coefficient $\alpha_b(\nu) = \frac{1}{m_{H_2O}}(k_\text{lines} + n_{H_2O}k_\text{self}(\nu) + n_\text{air}k_\text{air}(\nu))$, in $m^2$/g, which quantifies how efficiently the atmosphere absorbs/emits radiation at frequency $\nu$. The result is shown in Figure~\ref{fig:atm_spectrum}. An example of the integrated sub-bands is also displayed for $N_\text{sub}=8$. In practice, this spectrum is also used to compute the atmosphere mixing matrix elements for the CMM algorithm.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{atm_spectrum.png}
+    \caption{Atmosphere absorption spectrum computed using \emph{am}. The QUBIC frequency bands at 150 and 220 GHz are shown, as well as the $N_\text{freq}=8$ integration sub-bands with their relative bandwidth.}
+    \label{fig:atm_spectrum}
+\end{figure}
+
+The spectrum is adjusted, depending on PWV, temperature and pressure. 
+
+\subsubsection{Atmosphere emission}
+
+From all these elements, we can compute the atmosphere emission, in Kelvin, from: 
+
+\begin{equation} \label{eq:atm_emission}
+    dT(\vec{r}, \nu) = \alpha_b(\nu) \rho(\vec{r}) B(\vec{r}, \nu) T_\text{atm}(\vec{r})dV, 
+\end{equation}
+with $\vec{r}$ the pointing direction, $\alpha_b$ the absorption spectrum, $\rho$ the water vapour density, $B$ the instrument beam, and $T_\text{atm}$ the temperature of the atmosphere. By integrating this expression on the volume seen by the beam, we have the emission of the atmosphere in Kelvin. 
+
+As bolometers are sensitive to temperature fluctuations, we can replace $\rho$ by the fluctuation map $\delta\rho$, which builds the temperature map of the atmosphere $\delta T$, shown in Figure~\ref{fig:atm_map}.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{atm_map.png}
+    \caption{Atmosphere emission map in $\mu K_\text{CMB}$ at 150 GHz. This HEALPix map has to be understood as centred on the observer in local coordinates with horizon being the equator, not as a sky map. Therefore, the South hemisphere has no physical meaning.}
+    \label{fig:atm_map}
+\end{figure}
+
+\subsubsection{Wind}
+
+The final atmospheric property to be modelled is the advection induced by the wind. Two methods have been developed to account for this effect.
+
+The most intuitive approach consists of directly advecting the simulated atmospheric map. The entire realisation is shifted by an amount corresponding to the physical displacement induced by the wind, and the telescope samples this shifted map instead of the original one. In practice, every point of the sky map is displaced by the same angular offset, obtained by converting the physical wind displacement (accumulated over time, in metres) into an angular quantity using the altitude of the atmospheric layer as the relevant length scale. Each point is moved along the shortest path on the sphere (a great circle) by an angle equal to the magnitude of this shift. A complete mathematical description of this method, known as the \emph{exponential map}, can be found in \cite{boumal2023} (Example~5.37 and Section~10.21). The displacement is applied in the direction opposite to the wind since, for each point of the shifted map, we seek the location on the original map from which its content originated. The shifted map is then obtained by interpolating the original realisation at these displaced positions, independently for each frequency and Stokes parameter. Although conceptually straightforward, this approach is computationally expensive because it must be applied to every pixel of the map.
+
+To reduce this computational cost, we developed a simpler alternative in which the pointing directions are shifted instead of the atmospheric map itself, which therefore remains unchanged. This approach relies on the frozen-screen hypothesis, commonly used to describe atmospheric turbulence, according to which a time-evolving, wind-advected atmosphere is equivalent to a single frozen realisation observed from displaced positions. Rather than recomputing the entire atmospheric map at every time sample, only the much smaller set of pointing directions sampled by the instrument is shifted, making this the default and considerably more efficient implementation.
+
+The wind is modelled as a cumulative horizontal displacement that increases throughout the observation. For a constant wind velocity, the displacement grows linearly with time, whereas for a fluctuating wind it follows a random walk. Two geometrical implementations are used, depending on the atmospheric representation. When the atmosphere is modelled as a flat layer, the wind-induced displacement is computed exactly: each pointing direction is projected onto the atmospheric plane, the horizontal wind displacement is added directly to the projected position, and the resulting coordinates are projected back onto the celestial sphere. When the atmosphere is represented by a full-sky map, the same physical displacement is converted into a single angular shift, assumed to be uniform across the sky and independent of the pointing elevation. This angular displacement is then applied along the surface of the sphere, following the shortest path and in the direction opposite to the wind, consistently with the map-advection method described above.
+
+Both implementations are mathematically equivalent under these assumptions, as demonstrated in Figure~\ref{fig:atm_wind}. This equivalence has been verified using high-resolution maps and for sky regions sufficiently far from the poles, where projection distortions remain negligible. At coarser resolution, the difference between the methods is more important, due to pixelisation effect, but not related to the code. The deviated scanning strategy is by far the most efficient method, as it only consists in adding the wind displacement to the pointing coordinates, and can easily be applied on large datasets. In contrast, shifting the map requires extensive computation to move each pixel at each time. The computation speed depends on the map's resolution and on the total observation time, making it complicated to be used for realistic observations. More robust implementations could be developed in the future, for example by relying on the \texttt{Rotator}\footnote{\url{https://healpy.readthedocs.io/en/latest/generated/healpy.rotator.Rotator.html}} class provided by \emph{healpy}, or the function \emph{shift} from SciPy \texttt{ndimage}\footnote{\url{https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.shift.html}}. \\
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{amt_wind.png}
+    \caption{TOD computed with and without wind. The two different methods used to simulate the wind are displayed, and are consistent with each other.}
+    \label{fig:atm_wind}
+\end{figure}
+
+\textbf{Remark.} Incorporating wind into the QUBIC acquisition model, for both data simulation and map reconstruction, requires further adaptation, discussed later in this chapter (Sections~\ref{sub:wind_operator} and~\ref{sub:wind}). The difficulty is a mismatch in how time is treated: wind acts sequentially, continuously advecting the atmosphere between successive pointing samples, whereas the acquisition operator $H$ computes the full time-ordered data for all pointing directions at once. Consequently, neither the map-advection nor the pointing-shift method described above can be plugged directly into $H$: the wind displacement must instead be applied through a dedicated operator acting before $H$, and $H$ itself must be evaluated over short chunks of time samples rather than the full observation at once.
+
+\section[Atmosphere Correlations]{Atmosphere temporal and spatial correlations} \label{section:atm_correlations}
+
+In this section, we investigate the atmospheric correlation formalism developed by Josquin Errard in \cite{errard2015}, adapted to the specific case of the QUBIC instrument. This analysis provides a better understanding of the temporal and spatial correlations of the atmosphere when observed through the frequency-dependent, multi-peaked synthesized beam of a bolometric interferometer. Since the atmospheric map-making algorithm relies on the redundancy of the atmospheric signal, understanding these correlations is an important preliminary step.
+
+Starting from Equation~\ref{eq:atm_emission}, we derive the correlation between the signals measured by two detectors, denoted $i$ and $j$, at two different times $t$ and $t^\prime$ (Equation~14 of \cite{errard2015}):
+
+\begin{align}
+    \textbf{C}_\text{ij}^\text{t$t^\prime$} (\nu) &\equiv \langle T_i(t, \nu) T_j(t^\prime, \nu) \rangle \equiv \langle T(\vec{r}_i(t), \nu) T(\vec{r}_j(t^\prime), \nu) \rangle \notag \\ 
+    &= \frac{\alpha_b^2(\nu)}{\lambda^4} \int\frac{\vec{dr}}{r^2} \int\frac{\vec{dr^\prime}}{{r^\prime}^2} B(\vec{r}, \nu) B(\vec{r^\prime}, \nu) T_\text{atm}(\vec{r}) T_\text{atm}(\vec{r^\prime}) \langle \rho(\vec{r}) \rho(\vec{r^\prime}) \rangle .
+\end{align}
+
+This expression allows the temporal correlation of the atmospheric signal to be computed as a function of the atmospheric parameters. In \cite{errard2015}, the beam $B$ was assumed to be Gaussian, leading to Figure~5 of that paper, where the correlations are studied as a function of several atmospheric and observational parameters, including the turbulence outer scale $r_0$, the scanning speed, the azimuthal scanning range, the characteristic altitude $z_0$, the wind speed, and the wind direction.
+
+Here, we reproduce the same analysis while replacing the Gaussian beam by the synthesized beam of QUBIC. Throughout this section, we consider the temporal auto-correlation of a single detector, $C_{ii}^{0t}$, corresponding to the correlation between the signal measured at time $t$ and that measured at the initial time.
+
+The telescope is assumed to perform a back-and-forth azimuthal scan at constant elevation, with a scanning speed of $ss = 5^\circ\,\mathrm{s}^{-1}$ over an azimuthal range of $\Delta \text{az} = 40^\circ$\footnote{These values are chosen only for the purpose of illustrating the correlations and do not necessarily correspond to the QUBIC scanning strategy. In particular, the expected scanning speed is expected to be far slower, around $1^\circ\,\mathrm{s}^{-1}$.}. In the absence of wind, the atmosphere remains static, and the correlation pattern is therefore identical for each scan. This reference case is shown in Figure~\ref{fig:atm_corr}. Correlations obtained with the QUBIC synthesized beam are shown with solid lines, while those obtained for a classical imager are shown with dashed lines. The imager beam is modelled as a Gaussian corresponding to the Small Aperture Telescope (SAT) of the Simons Observatory.
+
+For both instruments, the correlation decreases as the line of sight moves away from its initial position before increasing again during the return scan. The most striking difference lies in the beam shape. Because the Gaussian beam of the imager probes a much smaller region of the atmosphere, the temporal correlation decreases much more rapidly than for QUBIC. Consequently, the correlation peaks are significantly narrower and the minimum correlation reached during the scan is much lower than in the bolometric interferometer case. It means that, for a BI instrument, the atmosphere remains correlated during scanning, allowing for higher reconstruction capabilities.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=1\linewidth]{atm_corr.png}
+\caption{Temporal auto-correlation $C_{ii}^{0t}$ of the atmospheric signal measured by a single detector during a back-and-forth azimuthal scan, in the absence of wind. Solid lines correspond to the QUBIC synthesized beam, while dashed lines correspond to a Gaussian beam of the Simons Observatory Small Aperture Telescope (SAT).}
+\label{fig:atm_corr}
+\end{figure}
+
+\subsubsection{Turbulence outer scale}
+
+The main atmospheric parameter governing the correlation is the characteristic turbulence outer scale $r_0$. It represents the typical distance beyond which atmospheric fluctuations become decorrelated. Still neglecting the wind, we compute the temporal correlations for different values of $r_0$. The results are shown in Figure~\ref{fig:atm_corr_r0}.
+
+Besides the faster decorrelation observed for the imager, decreasing $r_0$ naturally leads to a more rapid loss of correlation during the scan.
+
+The solid blue and orange curves obtained for QUBIC exhibit a distinctive non-linear behaviour. We interpret this feature as a consequence of the multiple peaks of the synthesized beam. As the telescope scans across the atmosphere, turbulent structures initially observed by one peak can later be observed by another synthesized-beam peak, producing secondary increases in the correlation. This interpretation explains both the small secondary peaks visible near the correlation minimum for the blue curve and the evolution of the orange curve. Again, this figure exhibits the potential of BI-like instrument to reconstruct atmosphere map, as its signal stays highly correlated during the scanning.
+
+This effect is highlighted in Figure~\ref{fig:atm_bump}, where the scan is performed along the West direction, corresponding to the axis of the horn array and therefore to the direction along which the synthesized beam peaks are aligned. In this configuration, the secondary correlation bump becomes particularly visible.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.6\linewidth]{atm_corr_lenght_qubic.png}
+    \caption{Temporal auto-correlation $C_{ii}^{0t}$ for different values of the turbulence outer scale $r_0$, assuming no wind. Solid lines correspond to the QUBIC synthesized beam and dashed lines to the Gaussian imager beam. Smaller values of $r_0$ lead to faster decorrelation.}
+    \label{fig:atm_corr_r0}
+\end{figure}
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.6\linewidth]{atm_corr_bump.png}
+    \caption{Highlighting of the temporal correlation obtained with the QUBIC synthesized beam for a scan performed along the principal axis of the horn array (West-East direction). The secondary bump arises from the multiple peaks of the synthesized beam, which successively observe the same turbulent structures during the scan.}
+    \label{fig:atm_bump}
+\end{figure}
+
+\subsubsection{Wind speed}
+
+Another key parameter is the wind speed, which determines how rapidly the observed atmospheric structures are replaced by new ones. The resulting correlations are shown in Figure~\ref{fig:atm_corr_wind_speed}. As expected, the correlation gradually decreases with time until the atmosphere initially observed has been completely advected away.
+
+The QUBIC synthesized beam maintains significantly higher correlations over longer time intervals than the Gaussian beam of the imager, while also producing broader correlation peaks.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.7\linewidth]{atm_corr_wind_speed_qubic.png}
+    \caption{Temporal auto-correlation $C_{ii}^{0t}$ for different wind velocities. Increasing the wind speed accelerates the decorrelation of the atmospheric signal.}
+    \label{fig:atm_corr_wind_speed}
+\end{figure}
+
+\subsubsection{Wind direction}
+
+The direction of the wind relative to the scanning direction also affects the temporal correlations. When the wind is not aligned with the scan, the apparent wind direction changes with respect to the line of sight during the back-and-forth motion. This produces secondary oscillations within the main correlation pattern, which are particularly visible for the imager in Figure~\ref{fig:atm_corr_wind_direction}.
+
+For QUBIC, these secondary oscillations are strongly smoothed by the broader synthesized beam, which preserves higher temporal correlations. Similar oscillations would nevertheless be expected for sufficiently large wind velocities.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.7\linewidth]{atm_corr_wind_dir_qubic.png}
+    \caption{Temporal auto-correlation $C_{ii}^{0t}$ for different wind directions relative to the scanning direction. Secondary oscillations appear when the wind is not aligned with the scan, particularly for the imager.}
+    \label{fig:atm_corr_wind_direction}
+\end{figure}
+
+Overall, this analysis indicates that the synthesized beam of a bolometric interferometer preserves atmospheric correlations over longer time scales than the narrow beam of a classical imager. This behaviour results from the broader and multi-peaked structure of the synthesized beam, which allows different peaks to probe overlapping atmospheric structures during the scan. Such a property is expected to be beneficial for atmospheric mitigation using map-making techniques, especially when combined with the spectral imaging capabilities of QUBIC for separating atmospheric emission from the CMB.
 
 
 \section{Atmospheric reconstruction and separation algorithm}
@@ -126,23 +381,116 @@
 \subsubsection{Coordinate system}
 \label{sec:coord_system}
 
+For the previous simulation, the pointing operator $P_\text{roj}$ (described in Section~\ref{section:instrumental_model}) is converting telescope's orientation in local coordinates (azimuth, elevation) to galactic coordinates (RA, DEC). The difficulty is that atmosphere might be expressed in local coordinates as well. It means that the atmosphere map is moving with respect to the sky due to the Earth movement.
+The result is that for a uniform pointing in a $15^\circ$ radius circle centred on the QUBIC patch position, right panel in Figure~\ref{fig:atm_coordintates}, the coverage of the atmosphere is a disk moving on the sky, as illustrated in the left panel of the same figure. 
+
+\begin{figure}[!htbp]
+    \begin{minipage}{0.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{atm_coverage_galactic.pdf}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{atm_coverage_local.pdf}
+    \end{minipage}
+\caption{Coverage for a uniform pointing of a $15^\circ$ radius circle located in (RA=$0^\circ$, DEC=$-57^\circ$) in galactic coordinates (left) and local coordinates (right). The coverage in local coordinates (azimuth, elevation) is no longer a circle because of Earth's rotation with respect to galactic frame.}
+    \label{fig:atm_coordintates}
+\end{figure}
+
+The consequence is that the general data acquisition equation \ref{eq:acquisition} needs to be adjusted, by computing one acquisition operator that is observing in galactic coordinates as before, and one observing in local coordinates, such that: 
+
+\begin{align}
+    \vec{d} = H\vec{s} + \vec{n} &= H_\text{gal}\vec{s_\text{CMB}} + H_\text{local}\vec{s_\text{atm}} + \vec{n} \notag \\
+    &= \vec{d_\text{cmb}} + \vec{d_\text{atm}}.
+\end{align}
+
+The \emph{qubicsoft} already includes the possibility to observe in local coordinates, but the joint map-making of atmosphere and CMB (or any other astrophysical emission) requires the definition of two acquisition operators. Consequently, memory usage is doubled, as is algorithmic complexity, because we are forced to define different coverage and noise matrices, and redefine the dimension of all operators to account for this change.
+
 
 \subsubsection{Wind operator}
 \label{sec:wind_operator}
 
+In the previous section, we discussed the simulation of wind advection on the atmosphere map and proposed two mathematically equivalent approaches: shifting the atmosphere map itself or modifying the scanning strategy. However, to perform atmosphere map-making, it is necessary to include a method for estimating the wind responsible for the map displacement in order to obtain an unbiased reconstruction.
+The wind reconstruction, described in Section~\ref{sub:wind}, is based on a $\chi^2$ minimisation, in which the wind vector is estimated by comparing the observed TOD with the TOD predicted from the current reconstructed atmosphere map shifted according to different wind direction candidates.
+Although modifying the scanning strategy is computationally much cheaper than shifting the atmosphere map and is perfectly suited for simulated data, this approach cannot be used for wind reconstruction. Indeed, each wind candidate would require rebuilding the acquisition operator $H$, since the pointing directions would change. This operation is prohibitively expensive from a computational point of view.
+For this reason, we introduced a dedicated wind operator acting before the acquisition operator $H$. This operator shifts the atmosphere map according to a given wind vector before it is observed by the instrument. During the $\chi^2$ minimisation, only this lightweight operator needs to be updated for each wind candidate, while the costly acquisition operator $H$ remains unchanged.
+
+Furthermore, the standard implementation of $H$ computes the TOD for all time samples simultaneously. In contrast, wind reconstruction requires processing the data in shorter time intervals to capture possible variations in the wind speed and direction throughout the observation. To address this issue, we developed a chunked implementation of $H$, allowing the acquisition operator to be constructed independently for successive blocks of time samples. Fortunately, this implementation requires approximately the same amount of memory as the standard version, although it significantly increases the computational time. It also increases the complexity of the reconstruction algorithm, since all quantities manipulated by the PCG solver must now include an additional dimension corresponding to the number of chunks, $N_{\mathrm{chunk}}$.
+
+The acquisition operator observing in local coordinates can be written:
+
+\begin{equation}
+    \vec{d_\text{atm}} = H_\text{atm}\vec{s_\text{atm}} = \begin{pmatrix}
+        H_{\text{atm}}^{1} W(\vec{w_1}) \\
+        H_{\text{atm}}^{2} W(\vec{w_2}) \\
+        \cdots \\
+        H_{\text{atm}}^{N_\text{chunk}} W(\vec{w_{N_\text{chunk}}})
+        \end{pmatrix} \vec{s_\text{atm}},
+\end{equation}
+where $W$ is the wind, or shifting, operator, and $\vec{w_i}$ the effective wind vector corresponding to chunk $i$.
+
+As a reminder, each $H_{\text{atm}}^{i}$ has dimensions $\left(N_\text{sub}, N_\text{pix}, N_\text{stk}\right)$ and does not include the operator projecting the atmosphere into Galactic coordinates. This highlights how the algorithmic complexity becomes problematic.
+
+Finally, the full data acquisition is:
+
+\begin{align} \label{eq:atm_data_model}
+    \vec{d} &= H\vec{s} + \vec{n} \notag \\
+    &= \begin{pmatrix}
+        H_\text{local} W(\vec{w}) A_\text{atm} & H_\text{gal}
+    \end{pmatrix} \begin{pmatrix}
+        \vec{s_\text{atm}} \\
+        \vec{s_\text{CMB}}
+    \end{pmatrix} + \vec{n}.
+\end{align}
+
+\subsubsection{Scanning strategy}
+
+All atmosphere reconstruction cases presented in this chapter use a sweeping scanning strategy. The instrument performs back-and-forth scans in azimuth at constant elevation, while the elevation is adjusted between each of them to keep the centre of the observed field aligned with the QUBIC patch. The resulting scanning pattern is illustrated in Figure~\ref{fig:atm_scanning_strategy}, which shows, from left to right, the evolution of the azimuth angle, the elevation angle, and the pointing trajectory in local (azimuth-elevation), equatorial, and Galactic coordinates.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{atm_scanning_strategy.png}
+    \caption{Scanning strategy adopted for the atmosphere reconstruction. From left to right: azimuth angle as a function of time, elevation angle as a function of time, pointing trajectory in local coordinates\protect\footnotemark, equatorial coordinates, and Galactic coordinates.}
+    \label{fig:atm_scanning_strategy}
+\end{figure}
+\footnotetext{The evolution of the elevation is simplified and does not correspond to a fully realistic telescope motion.}
+
+The corresponding pointing positions on a HEALPix map are shown in Figure~\ref{fig:atm_pointing_pos}, using both Mollweide and orthographic projections.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{atm_pointing.png}
+    \caption{Pointing positions on the sky (yellow dots) displayed on a HEALPix map using a Mollweide projection (left) and an orthographic projection (right).}
+    \label{fig:atm_pointing_pos}
+\end{figure}
+
+\textbf{Remark.} Although the same scanning principle is adopted throughout this chapter, the exact scanning strategy varies between the different case studies. In particular, the observation duration is adjusted according to the required sensitivity and the associated computational cost.
 
 \subsection{Atmospheric separation}
 \label{sec:atm_separation}
 
+The component separation between atmosphere and CMB is done following the exact same idea as for astrophysical component separation with CMM. We are using the different spectra of the components to separate their contribution through the reconstruction of a mixing matrix (see Chapter~\ref{chap:CMM} for explanation on astrophysical components). In $K_\text{CMB}$ units, the CMB spectrum is flat and equal to unity, while the atmosphere follows a complicated spectrum, with dependency on its temperature and PWV, presented in Figures~\ref{fig:atm_brightness_bis} and \ref{fig:atm_spectrum}.
+The approach developed in this work relies on the Blind-CMM algorithm (fully described in Section~\ref{section:cmm_blind}) to reconstruct the atmospheric spectrum directly from the data, thereby enabling its separation from the CMB signal. The main advantage of this method is that it does not rely on any prior model of the atmospheric spectral emission. Instead, it exploits QUBIC's spectral-imaging capabilities to estimate the atmosphere spectrum directly from the observations. This approach is made possible by two key characteristics of the instrument. First, the high spectral resolution provided by spectral imaging enables the reconstruction of the complex atmospheric emission spectrum. Second, the wide sky coverage of the synthesized beam, resulting from its multiple-peak structure, preserves strong temporal correlations in the atmospheric signal throughout the scan, providing the redundancy required for its reconstruction.
+
+The separation algorithm works exactly like the CMM pipeline: we are iterating over loops, in which component maps' pixels and mixing matrix elements are alternatively reconstructed. The main limitation with this method is that atmosphere temperature fluctuations are on the order of $10^{5}~\mu K_\text{CMB}$, while CMB fluctuations are $\sim 100~\mu K_\text{CMB}$. This large difference of $3$ orders of magnitude makes the separation and reconstruction very complicated, and requires a very large number of loop iterations. The result is that the reconstruction is very costly from the computational point of view.
 
 \subsection{Wind reconstruction}
 \label{sec:wind_reconstruction}
 
-Describe how the wind parameters (speed, direction) are estimated as part of the reconstruction.
+Wind reconstruction is the most challenging part of the atmosphere reconstruction, while also being intrinsically necessary for applying the map-making algorithm. Since the wind continuously shifts the atmosphere map, the pixels observed by the instrument during the scan are no longer those corresponding to the pointing directions. Consequently, the wind vector must be reconstructed alongside the map pixels to account for this displacement, and to avoid mismatch between reconstructed and seen pixels.
+Because the wind continuously moves the atmosphere, only relatively short time intervals can be used for its reconstruction. If too many time samples are considered simultaneously, the atmosphere initially observed will have moved too much, making a reliable reconstruction impossible. As discussed in Section~\ref{sub:wind_operator}, we therefore developed a chunk-based implementation, in which the wind is reconstructed independently over successive time intervals.
+
+The estimation of the wind vector is incorporated into the reconstruction loop, resulting in a three-step iterative algorithm: reconstruction of the map pixels, reconstruction of the mixing matrix, and reconstruction of the wind vector. This last step is by far the most computationally demanding part of the reconstruction. The main limitation arises from the need to apply the wind shift operator (described in Section~\ref{sub:wind_operator}) for every wind-vector estimate evaluated by SciPy's \texttt{minimize} function.
+
+As shown in Equation~\ref{eq:atm_data_model}, the shift operator is applied after the atmospheric mixing matrix. Consequently, its computational cost depends on both the map resolution and the number of frequency sub-bands used in the mixing matrix. This choice was not motivated by physical considerations. From a computational perspective, it would be preferable to apply the shift operator before the mixing matrix, reducing its dimensions from $\left(N_\text{chunk}, N_\text{freq}\right)$ to $N_\text{chunk}$ and significantly decreasing the associated computational cost.
+The current implementation was instead motivated by software design limitations. Since all the elements of the mixing matrix are fitted simultaneously, it is much simpler to manipulate a single mixing matrix of size $N_\text{freq}$ than one with dimensions $\left(N_\text{chunk}, N_\text{freq}\right)$. Applying the shift operator before the mixing matrix would therefore require constraining the mixing-matrix parameters to be identical across all chunks, preventing the optimisation from fitting unnecessary degrees of freedom. Implementing these additional constraints would have required substantial modifications to the reconstruction algorithm and could not be completed within the timeframe of this thesis. It therefore remains an important direction for future developments.
 
 \subsection{Forcing maps features}
 \label{sec:forcing_features}
 
+An interesting idea was proposed by Ingunn Wehus and Hans Kristian Eriksen, Cosmoglobe\footnote{\url{https://www.cosmoglobe.uio.no/}} coordinators, to reduce the reconstruction complexity. As we are considering a non-polarised atmosphere (see \ref{subsub:atm_polarisation}), there is no need to reconstruct the pixels of the Q and U maps. Additionally, Planck data are already providing measurement which are sample-variance limited at the angular scales covered by QUBIC, meaning that we can't reconstruct Intensity map at a better level than Planck. We can limit ourselves to the reconstruction of the CMB polarisation maps, and of the atmosphere temperature map, dividing the number of unknowns by 2, as well as reducing degeneracies. 
+Because of the implementation of the PCG solver in the \emph{qubicsoft}, we can't choose which map will be reconstructed. We developed, based on an idea of Pierre Chanial and an early implementation by Mathias Regnier, a Masking operator that is added in the equation \ref{eq:atm_data_model}. This operator is hiding the maps to be fixed, allowing to decrease the reconstruction unknowns. 
 
 \section{Results}
 \label{sec:results}
@@ -150,30 +498,276 @@ Describe how the wind parameters (speed, direction) are estimated as part of the
 
 \subsection{Atmosphere map-making}
 
+\subsubsection{Atmosphere without wind}
+
+We start by performing the map-making without considering any wind. The idea here is to test our implementation of CMM in the case of local coordinates. The coordinates' system should not affect the result, but it allows us to verify the implementation. 
+
+Then, we reconstruct the atmosphere without considering noise, in order to check the correctness of the method. The result is visible in Figure~\ref{fig:atm_mm_no_wind_noiseless}, and confirms that the approach is not biased, as demonstrated by the null residual.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{atm_mapmaking_noiseless.png}
+    \caption{Noiseless reconstruction of the Intensity map of the atmosphere. The left map is the true one, the central map is the reconstructed one, and the right map is the difference between the two.}
+    \label{fig:atm_mm_no_wind_noiseless}
+\end{figure}
+
+The exact same map-making is performed, but adding noise in the simulation this time, corresponding to about $10\%$ of QUBIC noise. The reconstructed maps are shown in Figure~\ref{fig:atm_mm_no_wind}. One can see reconstruction noise at the edge of the residual map. It corresponds to the edge effect (introduced in subsection~\ref{sub:fmm_external_data}). Meanwhile, the centre of the patch is very well reconstructed.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{atm_mapmaking.png}  
+    \caption{Noisy reconstruction of the Intensity map of the atmosphere. The level of noise is not realistic for the QUBIC instrument.}
+    \label{fig:atm_mm_no_wind}
+\end{figure}
+
+\subsubsection{Atmosphere with wind}
+
+Now that we verified the map-making of the atmosphere in local coordinates, we need to account for the wind effect. First, we run the map-making while introducing wind during TOD acquisition. The goal is then to see its effect when nothing is done to account for it. 
+
+For this test, we simulated the atmosphere acquisition with a constant wind of about $1$ m/s blowing in the North-South direction. As a result, the atmosphere gradually moves across the field of view during the observation. The instrument therefore loses information about the atmosphere observed at the beginning of the scan while simultaneously observing new atmospheric structures.
+Ignoring this displacement during the reconstruction introduces a significant bias in the reconstructed map, as illustrated in Figure~\ref{fig:atm_mm_wind}. A large reconstruction error is visible at the bottom of the observed patch, corresponding to the region where the atmosphere has moved out of the field of view. In addition, the residual map shows that even the large-scale fluctuations are not properly reconstructed. This behaviour is explained by the mismatch between the pointing positions assumed during the reconstruction and the actual atmosphere observed, which has been shifted by the wind. 
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.7\linewidth]{atm_mapmaking_w_wind.png}
+    \caption{Input, reconstructed, and residual intensity maps of the atmosphere when wind is included during the observation but ignored during the reconstruction.}
+    \label{fig:atm_mm_wind}
+\end{figure}
+
+This example clearly highlights the importance of accounting for the wind when mitigating the atmospheric signal. Even a relatively slow and constant wind introduces significant reconstruction biases, motivating the development of the wind reconstruction method presented in the following.
+
 \subsection{Atmosphere separation}
 
+\subsubsection{Perfect component separation}
+
+Figures~\ref{fig:atm_cmb_I_mm_no_wind_no_mm} and \ref{fig:atm_cmb_Q_mm_no_wind_no_mm} present the joint reconstruction of the CMB and atmospheric components assuming that the mixing matrix is known exactly. For this simulation, we increased both the duration of the TOD and the map resolution to improve the reconstruction quality\footnote{This simulation was performed on the IN2P3 Computing Centre, as it required more than one day of computation and a large amount of memory. Such computationally demanding simulations could not be carried out for every configuration, as the emphasis of this work was on research and development, which required frequent iterations and algorithmic modifications throughout the implementation process.}. Due to this, the actual shape of the atmosphere map is not a disk any more, as the Earth's rotation shifted it. It corresponds to the coverage presented in Figure~\ref{fig:atm_coordintates}.
+
+Several interesting features can be observed in these two figures. First, considering the intensity maps shown in Figure~\ref{fig:atm_cmb_I_mm_no_wind_no_mm}, the residual level is much lower than the signal level, demonstrating that both the CMB and atmospheric components are successfully reconstructed. As expected (see Subsection~\ref{sub:fmm_external_data}), the residual maps are dominated by reconstruction noise near the edges of the observed patch, whereas the central region exhibits only very small residuals.
+
+Another noticeable feature is the presence of stripe-like structures in the residual Intensity maps. These are most pronounced near two opposite edges of the CMB patch, along the direction in which the atmospheric patch drifts on the sky (see Figure~\ref{fig:atm_coordintates}), and in the corresponding regions of the atmospheric patch; fainter stripes are also visible near the centre. We attribute these structures to a small degeneracy between the reconstructed CMB and atmosphere at these locations. Because the atmospheric patch rotates on the sky during the observation while the CMB patch does not, these two edge regions are crossed by the drifting atmosphere for only part of the observation, and are therefore sampled less uniformly than the centre. This weaker, less uniform sampling constrains the reconstruction less, producing the observed leakage between the two components.
+
+At present, no satisfactory solution has been identified to mitigate these stripe-like residuals. However, we observe that they become increasingly prominent for longer observation times, suggesting that they are linked to the accumulated effects of Earth's rotation. Determining whether this behaviour reflects a fundamental limitation of the current reconstruction framework or can be mitigated through an improved observing strategy or algorithm remains an open question.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{atm_cmb_I_maps.pdf}
+    \caption{Reconstruction of the Intensity maps of CMB and atmosphere, assuming a perfect component separation.}
+    \label{fig:atm_cmb_I_mm_no_wind_no_mm}
+\end{figure}
+
+Alongside the intensity maps, we also reconstructed the Stokes Q and U maps for both the CMB and the atmosphere. The reconstructed Q maps are presented in Figure~\ref{fig:atm_cmb_Q_mm_no_wind_no_mm}. Interestingly, the stripe-like structures observed in the intensity residuals are not clearly visible in the polarisation residual maps, possibly because they are masked by the higher reconstruction noise.
+
+The reconstructed CMB Q map shows a satisfactory recovery within the observed patch, with residuals again dominated by the reconstruction noise toward the edges. In contrast, the reconstructed atmospheric polarisation map, which is expected to be identically zero as discussed in Subsection~\ref{subsub:atm_polarisation}, is dominated by noise.
+The origin of this behaviour is not yet fully understood. One possible explanation is the large amplitude difference between the atmospheric intensity signal and the CMB signal. Since the atmospheric intensity is approximately three orders of magnitude larger than the CMB, the PCG solver may struggle to converge toward a null polarisation solution while simultaneously reconstructing the intensity maps. A straightforward way to address this issue would be to fix the atmospheric Q and U maps to zero, rather than reconstructing them, which could improve the convergence and overall quality of the reconstruction of the remaining components without altering the physical correctness of the reconstruction\footnote{It is only valid under the assumptions presented in the subsection~\ref{subsub:atm_polarisation}.}, but is not done in this case.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{atm_cmb_Q_maps.pdf}
+    \caption{Reconstruction of the Q maps of CMB and atmosphere, assuming a perfect component separation.}
+    \label{fig:atm_cmb_Q_mm_no_wind_no_mm}
+\end{figure}
+
+\subsubsection{Mixing-Matrix reconstruction}
+
+The reconstruction of the mixing matrix is the key element for component separation. To separate the CMB from the atmospheric emission, we adopt the Blind CMM approach introduced in Section~\ref{section:cmm_blind}, which reconstructs the mixing matrix without assuming any model for the emission spectra.
+
+Figure~\ref{fig:atm_cmb_mixing_matrix_low_noise} presents the reconstruction of the mixing matrix in a low-noise configuration. This preliminary test is intended to verify that the mixing matrix can indeed be recovered from the reconstructed maps.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=1\linewidth]{atm_mixing_matrix_low_noise.png}
+\caption{Reconstruction of the atmosphere mixing matrix in a low-noise configuration. The dots correspond to the input values, while the crosses denote the reconstructed ones.}
+\label{fig:atm_cmb_mixing_matrix_low_noise}
+\end{figure}
+
+Having validated this first step, we then run the complete alternate-convergence algorithm to jointly reconstruct the mixing matrix and the component maps. We found that this procedure rapidly becomes computationally prohibitive. To obtain converged results within a reasonable computation time, several simplifying assumptions were introduced.
+
+First, the observation time was reduced, which decreases both the memory required to store the data and the instrument model and the computational cost of applying the acquisition operator\footnote{This reduction can also be an issue for the reconstruction, a trade-off needs to be found.}. Second, the amplitude of the atmospheric fluctuations was artificially reduced. We observed that larger atmospheric fluctuations require significantly more iterations to converge. While this was not an issue when solving only the map-making problem with the PCG algorithm, it becomes a severe limitation once the alternate reconstruction of the mixing matrix is included. Finally, following the approach proposed in Subsection~\ref{sub:atm_maps_fixing}, the CMB intensity map was fixed to the corresponding Planck map, while the atmospheric polarisation maps were fixed to zero.
+
+With these simplifications, it becomes possible to run the atmospheric CMM algorithm with blind mixing-matrix reconstruction, even for a realistic level of instrumental noise. The reconstructed mixing matrix is shown in Figure~\ref{fig:atm_cmb_mixing_matrix}. Although the recovered coefficients are not fully consistent with the input values, especially near the edges of the frequency range, the overall agreement remains satisfactory.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=1\linewidth]{atm_mixing_matrix.png}
+\caption{Reconstruction of the atmosphere mixing matrix. The dots correspond to the input values, while the crosses denote the reconstructed ones.}
+\label{fig:atm_cmb_mixing_matrix}
+\end{figure}
+
+Despite these imperfections, the reconstructed mixing matrix is sufficiently accurate to enable a successful reconstruction of the atmospheric intensity map and the CMB polarisation maps, shown in Figures~\ref{fig:atm_cmb_mixing_matrix_I_map} and~\ref{fig:atm_cmb_mixing_matrix_Pol_map}. This result is achieved thanks to the additional constraints introduced above, namely fixing the CMB intensity map to the Planck solution and constraining the atmospheric polarisation to zero, which substantially reduces the degeneracies between the two components.
+
+It is nevertheless worth noting that the residual map of the atmospheric intensity exhibits large-scale structures. These features may indicate that the alternate-convergence algorithm has not yet fully converged, suggesting that further optimisation of the reconstruction procedure will be required.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{atm_mixing_matrix_I_map.png}
+    \caption{Atmosphere Intensity map, jointly reconstructed with the mixing matrix. Large angular scale structure are visible in the residual map.}
+    \label{fig:atm_cmb_mixing_matrix_I_map}
+\end{figure}
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{atm_mixing_matrix_Pol_maps.png}
+    \caption{CMB polarisation maps, jointly reconstructed with the mixing matrix.}
+    \label{fig:atm_cmb_mixing_matrix_Pol_map}
+\end{figure}
 
 \subsection{Joint atmosphere separation and reconstruction}
 
 \subsection{Wind reconstruction}
+
+The final step is to also include the wind reconstruction in the alternate loop. The full description of the fitting process is detailed in subsection~\ref{subsub:atm_wind_reconstruction}, and requires a map-making by chunks. As one can expect, the reconstruction is even more complicated in this case. 
+Still, the wind has been properly reconstructed, with the algorithm converging to the expected solution with the loop iterations, as presented in Figure~\ref{fig:atm_wind_reconstruction}.  
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{atm_wind_reconstructoin.png}
+    \caption{Fitted value of the wind speed (in m/s) as a function of loop iteration number for the two X and Y directions.}
+    \label{fig:atm_wind_reconstruction}
+\end{figure}
 
 \section{Alternative method: successive map-making (\rmk{Appendix ?})}
 \label{sec:successive_mapmaking}
 
 \subsection{Motivation \& principle}
 
+As discussed previously, including the wind reconstruction within the CMM fitting loop makes the algorithm both extremely computationally expensive and difficult to converge. We therefore came to the conclusion that attempting to reconstruct all the unknowns simultaneously from relatively small chunks of data might be too ambitious.
+
+After identifying this limitation, we explored an alternative approach in which the wind is no longer reconstructed explicitly. Instead, the atmosphere is reconstructed iteratively over successive time chunks. The reconstructed atmosphere from one chunk is then propagated to the next as the initial guess for PCG, without explicitly estimating the wind vector itself.
+
 \subsection{Implementation}
+
+he underlying principle of this approach is closely related to the wind reconstruction method presented previously, in which the observation is also divided into successive time chunks. The implementation of this new map-making algorithm, which we refer to as \emph{Successive Map-Making}, is therefore largely based on the infrastructure developed for wind reconstruction.
+
+The complete observation is divided into several consecutive chunks. An iterative process then applies the PCG solver to reconstruct the atmosphere map for each chunk. The reconstruction obtained for one chunk is used as the initial estimate for the following one, since the large-scale atmospheric fluctuation pattern is expected to evolve smoothly from one chunk to the next.
+
+So far, this method has only been tested for atmosphere reconstruction alone, without including the reconstruction of the mixing matrix. Extending the method to full component separation therefore remains an open question. Two possible strategies can be envisaged: either reconstruct the mixing matrix after the PCG reconstruction of each chunk, or estimate a single mixing matrix using all chunks simultaneously. In the first approach, the mixing matrix reconstructed for one chunk could naturally be used as the initial estimate for the next, potentially improving the convergence of the algorithm.
 
 \subsection{Results \& comparison}
 
-\section{Conclusions \& further developments}
-\label{sec:conclusions}
+Figures~\ref{fig:atm_successive_reconstructed} and~\ref{fig:atm_successive_residual} show, respectively, the reconstructed atmosphere map and the associated residual map obtained with the Successive Map-Making algorithm for each of the six successive time chunks.
 
-\subsection{Parametric reconstruction}
+In Figure~\ref{fig:atm_successive_reconstructed}, we can see the effect of wind, moving the fluctuations toward the top-right direction. 
 
-\subsection{External data}
+\begin{figure}[!htbp]
+    \centering
+    \begin{minipage}{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{reconstructed_frame_00.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{reconstructed_frame_01.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{reconstructed_frame_02.png}
+    \end{minipage}
 
-\subsection{Reconstruction optimisation}
+    \vspace{0.3cm}
+
+    \begin{minipage}{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{reconstructed_frame_03.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{reconstructed_frame_04.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{reconstructed_frame_05.png}
+    \end{minipage}
+    \caption{Reconstructed atmosphere intensity map for each of the six successive time chunks, using the Successive Map-Making algorithm.}
+    \label{fig:atm_successive_reconstructed}
+\end{figure}
+
+Still, proper reconstruction can be achieved even with a low observation time, assuming a small instrumental noise as shown in Figure~\ref{fig:atm_successive_residual}. Residual noise is visible at the edge of the patch for each chunk, corresponding to regions where atmospheric signal is not seen enough.
+
+\begin{figure}[!htbp]
+    \centering
+    \begin{minipage}{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{residual_frame_00.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{residual_frame_01.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{residual_frame_02.png}
+    \end{minipage}
+
+    \vspace{0.3cm}
+
+    \begin{minipage}{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{residual_frame_03.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{residual_frame_04.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{residual_frame_05.png}
+    \end{minipage}
+    \caption{Residual map (difference between the reconstructed and true atmosphere maps) for each of the six successive time chunks, corresponding to Figure~\ref{fig:atm_successive_reconstructed}.}
+    \label{fig:atm_successive_residual}
+\end{figure}
+
+\section{Discussion \& further developments}
+
+\subsection{Discussion}
+
+\subsubsection{General hypothesis \& simplification}
+
+\subsubsection{Criticism}
+
+\subsection{Future developments}
+
+\subsubsection{Parametric reconstruction}
+
+While only the Blind approach was developed during this thesis, the Parametric approach could also be applied to this problem. Instead of reconstructing the elements of the mixing matrix directly, which can be challenging, one could reconstruct the physical atmospheric parameters that determine the emission spectrum, namely the PWV, temperature, and pressure.
+From these parameters, the atmospheric spectrum can be computed using the \emph{am} framework~\cite{paine2024}, resulting in a model with significantly fewer degrees of freedom than the Blind approach. However, calling \emph{am} at each iteration of the reconstruction would likely be computationally expensive. A more efficient strategy would consist of precomputing atmospheric spectra over a sufficiently dense grid of parameter values and interpolating between them during the optimisation. This would make the evaluation of the atmospheric model inexpensive while retaining the physical description provided by \emph{am}.
+
+This approach was not investigated during this thesis due to time constraints, but there is no obvious reason why it should not be applicable.
+
+\subsubsection{External data}
+
+The inclusion of external atmospheric measurements is one of the most promising improvements for the proposed method. Two types of external information could be incorporated into the reconstruction: measurements of the wind and measurements of the atmospheric properties. Both would significantly improve the reconstruction of the atmosphere and its separation from the CMB signal.
+
+Two levels of external information can be considered. The first consists of meteorological stations, which provide measurements of the wind, humidity, temperature, and pressure. Their main limitation is that these measurements are generally performed at ground level or at low altitude. As a result, they are not fully representative of the atmospheric layers responsible for the contamination observed by the instrument. Consequently, such measurements would be better used as priors for the reconstruction rather than as direct estimates of the atmospheric parameters.
+
+A second, more accurate, approach would consist of using a \emph{Light Detection and Ranging} (LIDAR) system to probe the atmosphere. A LIDAR emits laser pulses into the atmosphere and measures the light scattered back by air molecules, aerosols, or clouds. These measurements provide information on the atmospheric structure and, through the Doppler effect, can also be used to estimate the wind velocity.
+If a LIDAR were operated simultaneously with the CMB observations, it could provide measurements of the atmospheric properties throughout the observation. In principle, these data could be used to estimate the PWV, temperature, pressure, and wind vector associated with each time sample. Such information could then be incorporated directly into the atmosphere reconstruction, potentially avoiding the need for the iterative wind and mixing matrix estimations procedure developed in this chapter. Even if the measurements are not sufficiently accurate to be used directly, they would still provide valuable priors, significantly improving the stability and accuracy of the reconstruction.
+
+A fish-eye IR camera is planned to be installed at the QUBIC site. This device can provide a starting guess for the morphology of the atmosphere map.
+
+\subsubsection{Reconstruction optimisation}
+
+As discussed in Section~\ref{sub:atm_maps_fixing}, the current pipeline is limited by the computational time required to obtain results. Improving the efficiency of the implementation is therefore an important objective for future developments.
+
+The application of CMM to atmosphere reconstruction suffers from the same limitation as its application to astrophysical components: the alternate convergence scheme leads to a very high computational cost, due to its poor convergence speed. This issue is even more significant in the atmospheric case, as an additional reconstruction step is introduced in each loop to estimate the wind vector. Moreover, this additional step is the most computationally demanding part of the algorithm. Therefore, developing a non-linear solver capable of reconstructing all parameters simultaneously would provide a significant improvement, although such a development would require substantial effort.
+
+Without considering such a major modification, several optimisations can still be implemented, particularly regarding the wind operator. As mentioned in Section~\ref{sub:wind}, the performance could be improved by applying the shift operator before the mixing matrix rather than after it. Although this would require additional developments, it would not require fundamental changes to the reconstruction method.
+Furthermore, since the shift operator is implemented using PyOperators~\cite{PyOperators}, it should be possible to parallelise its execution efficiently. However, the current implementation relies internally on a method from \texttt{healpy}, which appears to prevent execution on multiple CPU cores. Resolving this issue would significantly improve the performance of the shift operator.
+
+Finally, a more detailed study of the convergence behaviour, and of its dependence on the simulation and reconstruction parameters, would help identify optimal choices for these parameters and reduce the number of iterations required for convergence.
+
+\subsubsection{Convergence improvements}
+
+\section*{Conclusion}
+
+In this chapter, we presented a new method for mitigating atmospheric contamination, based on an extension of the Component Map-Making algorithm to a joint reconstruction of the CMB and the atmosphere. We first described the physical properties of the atmosphere and the simulation software developed to model its mean emission and its turbulent fluctuations. We then showed that the multi-peaked synthesized beam of a bolometric interferometer preserves atmospheric correlations over longer time scales than the narrow beam of a classical imager, as well as improving the spectral resolution, motivating the use of QUBIC's spectral imaging capabilities to separate the two components. Extending the data acquisition model to account for local coordinates and wind advection, we demonstrated, as a proof of concept, that the atmosphere and the CMB can be jointly recovered with the Blind CMM algorithm, including the reconstruction of the mixing matrix and of the wind vector. This reconstruction remains, however, severely limited by its computational cost and convergence speed, which motivated the development of an alternative, wind-free approach, the Successive Map-Making. Several directions were identified to address these limitations and improve the physical realism of the method, in particular a parametric description of the atmospheric spectrum, the inclusion of external measurements from meteorological stations or a LIDAR system, and further optimisation of the reconstruction code.
 
 \acknowledgments
 QUBIC is funded by the following agencies. France: ANR (Agence Nationale de la
@@ -185,7 +779,7 @@ Antartide) until 2016, INFN (Istituto Nazionale di Fisica Nucleare) since 2017. 
 
 \appendix
 
-\section{Appendix}
-\label{sec:appendixA}
+\section{Atmospheric correlations: Imager vs BI}
+\label{sec:atm_correlations}
 
 \end{document}
