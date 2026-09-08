@@ -85,6 +85,17 @@
 \subsection{Motivations}
 \label{sec:motivations}
 
+Atmospheric emission represents one of the major sources of contamination for ground-based CMB experiments. The atmosphere is only partially transparent at millimetre wavelengths, as shown in Figure\~\ref{fig\:atm\_transmitivity}, due to emission lines from *$H_2O$* and *$CO_2$*, which restrict observations to specific frequency windows. In addition, atmospheric emission contributes to the photon noise, thereby reducing the instrumental sensitivity. Most importantly, however, the atmosphere is highly inhomogeneous and time-dependent, introducing temporal and spatial correlations into the data that make it particularly challenging to model and mitigate.
+
+Although space missions avoid atmospheric contamination, they are considerably more expensive and face several additional constraints, including stringent requirements on payload mass and volume, the inability to repair the instrument once deployed, and the need to withstand the launch environment and the space environment. Consequently, mitigating atmospheric effects has become one of the major challenges in the search for primordial B-modes.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{atm_transmittance_pwv.pdf}
+    \caption{Zenith atmospheric transmittance as a function of frequency for different PWV values. The two observational bands and the main absorption lines and their associated molecules are indicated. Simulated using the \emph{am} software~\cite{paine2024}.}
+    \label{fig:atm_transmitivity}
+\end{figure}
+
 \subsection{Classical solutions}
 
 \subsection{Goals}
@@ -120,13 +131,6 @@ where $\rho_w$ is the density of liquid water ($1000\,\mathrm{kg/m^3}$), and $\r
 \subsubsection{Atmosphere transmission \& brightness}
 
 The first difficulty is that the atmosphere is not a fully transparent medium across the relevant frequency range. Its transmission spectrum, shown in Figure~\ref{fig:atm_transmitivity}, contains absorption lines from $O_2$ and $H_2O$, limiting observations to the atmospheric windows between these lines. For this reason, the QUBIC instrument operates in two bands, between $131$ and $169$ GHz and between $192.5$ and $247.5$ GHz. Additionally, the atmospheric transmittance decreases at higher frequencies even within these windows due to PWV absorption. This is one of the main motivations for observing from a dry, high-altitude site, which reduces the water vapour density $\rho_v$.
-
-\begin{figure}[!htbp]
-    \centering
-    \includegraphics[width=1\linewidth]{atm_transmittance_pwv.pdf}
-    \caption{Zenith atmospheric transmittance as a function of frequency for different PWV values. The two observational bands and the main absorption lines and their associated molecules are indicated. Simulated using the \emph{am} software~\cite{paine2024}.}
-    \label{fig:atm_transmitivity}
-\end{figure}
 
 From atmosphere transmission, we can compute the atmospheric brightness (using equation \ref{eq:atm_emission}), which is shown in Figure~\ref{fig:atm_brightness_bis}, and represents a major source of noise. The higher the brightness temperature, the larger the photon noise induced in the detectors. It also contributes to the thermal load of the detectors, meaning that it is more challenging to cool down the detectors at the temperature required for superconductivity while observing through atmosphere. The brightness similarly scales with the PWV at the observation site, further reinforcing the need for a dry location.
 
