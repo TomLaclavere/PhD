@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+title: "QUBIC Data Analysis: Realistic astrophysical comonents reconstruction and atmosphereic mitigation using spectral-imaging."
+message: "If you use this work, please cite it as below."
+type: thesis
+authors:
+  - family-names: Laclavère
+    given-names: Tom
+date-released: 2026-01-01
+license: CC-BY-4.0
+repository-code: https://github.com/TomLaclavere/PhD
+keywords:
+  - physics
+  - cosmology
+  - QUBIC
+  - CMB
+  - thesis
+  - research
+abstract: >
+  Doctoral thesis and associated research materials, including publications,
+  presentations, and thesis.
