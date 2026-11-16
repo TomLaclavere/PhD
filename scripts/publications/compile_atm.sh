@@ -7,8 +7,9 @@ set -e
 cd "$(dirname "$0")/../../publications/Atm"
 
 case "$1" in
-    watch) latexmk -pdf -pvc -interaction=nonstopmode -outdir=output main.tex ;;
+    watch) latexmk -pdf -pvc -synctex=1 -interaction=nonstopmode -outdir=output main.tex ;;
     clean) latexmk -c -outdir=output main.tex ;;
-    *)     latexmk -pdf -interaction=nonstopmode -halt-on-error -outdir=output main.tex
-           cp output/main.pdf main.pdf ;;
+    *)     latexmk -pdf -synctex=1 -interaction=nonstopmode -halt-on-error -outdir=output main.tex
+           cp output/main.pdf main.pdf
+           cp output/main.synctex.gz main.synctex.gz ;;
 esac
